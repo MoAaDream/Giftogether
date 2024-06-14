@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### propeties ###
+src/main/resources/application-API-KEY.properties
+
+
+### wallet ###
+src/main/resources/wallet/**

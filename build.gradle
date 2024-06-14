@@ -35,11 +35,11 @@ dependencies {
 
 	/* Spring validation */
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+
+	/* Spring Security */
+//	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+//	testImplementation 'org.springframework.security:spring-security-test'
 
 	/* dev tools */
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -52,6 +52,12 @@ dependencies {
 
 	/* oracle db */
 	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+
+	/* oracle cloud db connect */
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+	implementation 'com.oracle.database.security:osdt_cert'
+	implementation 'com.oracle.database.security:oraclepki'
+	implementation 'com.oracle.database.security:osdt_core'
 
 	/* junit test */
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
