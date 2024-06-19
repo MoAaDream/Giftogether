@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
+import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.wishlist.model.WishList;
 
 import jakarta.persistence.Column;
@@ -29,7 +30,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "T_Message")
-public class Message {
+public class Message extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +43,6 @@ public class Message {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-    @Column(name = "created_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createAt;
-
-    @Column(name = "updated_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime updateAt;
-
-    
     @ManyToOne
     @JoinColumn(name = "wishlist_id", nullable = false)
     private WishList wishlist;

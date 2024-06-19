@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
+import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.wishlist.model.WishList;
 
 //import com.moadream.giftogether.wishList.Wishlist;
@@ -33,7 +34,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @Table(name = "T_Product")
-public class Product {
+public class Product extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,14 +68,6 @@ public class Product {
     @Column(name = "goal_amount", nullable = false)
     private int goalAmount;
 
-    @Column(name = "created_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createAt;
-
-    @Column(name = "updated_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime updateAt;
-    
 	@ManyToOne
 	@JoinColumn(name = "wishlist_id")
 	private WishList wishlist; // FK

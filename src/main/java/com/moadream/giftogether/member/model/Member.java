@@ -8,6 +8,7 @@ import java.util.List;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.bank.model.Bank;
 import com.moadream.giftogether.funding.model.Funding;
+import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.wishlist.model.WishList;
 
 import jakarta.persistence.Column;
@@ -27,14 +28,13 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "T_Member")
-public class Member {
+public class Member extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(length=30, nullable=false)
 	private String username;// 실명
-	
 
 	@Column(length=30,nullable=false)
 	private String nickname;
@@ -59,13 +59,7 @@ public class Member {
 	@Column(nullable=false)
 	@Enumerated(EnumType.STRING)
 	private Status status;
-	
 
-	private LocalDateTime createdAt;
-	
-
-	private LocalDateTime updatedAt;
-	
 	@OneToMany(mappedBy="member")
 	private List<Funding> fundingLists= new ArrayList<>();
 	

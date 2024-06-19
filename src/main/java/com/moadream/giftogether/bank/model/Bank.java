@@ -2,6 +2,7 @@ package com.moadream.giftogether.bank.model;
 
 import java.time.LocalDateTime;
 
+import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.member.model.Member;
 
 import jakarta.persistence.Column;
@@ -21,7 +22,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "T_Bank")
-public class Bank {
+public class Bank extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,10 +35,6 @@ public class Bank {
     
     @Column(nullable = false)
     private Integer deposit;
-    
-    private LocalDateTime createAt; 
-
-    private LocalDateTime updateAt;    
 
     @ManyToOne
     @JoinColumn(name = "member_id")

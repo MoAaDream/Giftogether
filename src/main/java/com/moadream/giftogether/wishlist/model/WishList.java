@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.moadream.giftogether.Status;
+import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.message.model.Message;
 import com.moadream.giftogether.product.model.Product;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "T_WishList")
-public class WishList {
+public class WishList extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -55,10 +56,6 @@ public class WishList {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Status status;
-
-	private LocalDateTime createAt;
-
-	private LocalDateTime updateAt;
 
 	@OneToMany(mappedBy = "wishlist")
 	private List<Message> MessagesList = new ArrayList<>();

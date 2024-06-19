@@ -3,6 +3,7 @@ package com.moadream.giftogether.funding.model;
 import java.time.LocalDateTime;
 
 import com.moadream.giftogether.Status;
+import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.message.model.Message;
 import com.moadream.giftogether.product.model.Product;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "T_Funding")
-public class Funding {
+public class Funding extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,15 +41,9 @@ public class Funding {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-    private LocalDateTime createAt; 
-
-    private LocalDateTime updateAt;
-
-    
     @OneToOne(mappedBy = "funding") 
     private Message message; 
-    
-    
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member; 
