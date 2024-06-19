@@ -1,55 +1,45 @@
 package com.moadream.giftogether.wishlist.model;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.message.model.Message;
 import com.moadream.giftogether.product.model.Product;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "T_WishList")
 public class WishList extends BaseTimeEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false)
 	private String link;
 
 	@Column(nullable = false, length = 30)
 	private String name;
 
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false)
 	private String description;
 
-	@Column(nullable = false, length = 255)
-	private String listimg;
+	@Column(nullable = false)
+	private String listImg;
 
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false)
 	private String address;
 
 	@Column(nullable = false, length = 30)
-	private String phonenumber;
+	private String phoneNumber;
 
 	private LocalDateTime deadline;
 
