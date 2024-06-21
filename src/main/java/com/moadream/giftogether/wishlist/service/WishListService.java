@@ -7,9 +7,11 @@ import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class WishListService {
 
@@ -24,7 +26,7 @@ public class WishListService {
         WishList wishList = WishList.createWishList(wishListForm, member);
 
         wishListRepository.save(wishList);
-
+        log.info("SERVICE = [" + socialId + "]" + "새 위시리스트 생성");
     }
 
 }

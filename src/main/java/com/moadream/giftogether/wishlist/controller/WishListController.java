@@ -25,7 +25,7 @@ public class WishListController {
         String socialId = session.getAttribute("kakaoId").toString();
 
         wishListService.createWishList(wishListForm, socialId);
-        log.info("[" + socialId + "]" + "새 위시리스트 생성");
+        log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
 
         return "redirect:/wishlists";
     }
