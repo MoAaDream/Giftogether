@@ -16,7 +16,7 @@ public class MemberService {
 	
 	// 회원 가입된 사용자인지 확인
 	public boolean isMemberExists(String socialLoginId, String socialProvider) {
-        Member member = memberRepository.findBySocialLoginIdAndSocailProvider(socialLoginId, socialProvider);
+        Member member = memberRepository.findBySocialLoginIdAndSocialProvider(socialLoginId, socialProvider);
         return member != null;
     }
 
@@ -25,11 +25,7 @@ public class MemberService {
 		newMember.setRole(Role.MEMBER);
 
 		memberRepository.save(newMember);
-		
 	}
-	
-	// 사용자 정보 수정
-	
 	
 	// 탈퇴
 }
