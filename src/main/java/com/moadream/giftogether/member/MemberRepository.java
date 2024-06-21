@@ -6,5 +6,5 @@ import com.moadream.giftogether.member.model.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long>{
 	//소셜 로그인 아이디로 회원 찾기
-    Member findBySocialLoginIdAndSocailProvider(String socialLoginId, String socialProvider);
+    Member findBySocialLoginIdAndSocialProvider(String socialLoginId, String socialProvider);
 }
