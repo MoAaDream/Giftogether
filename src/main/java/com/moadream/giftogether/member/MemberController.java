@@ -127,10 +127,10 @@ public class MemberController {
         session.invalidate(); // 세션 무효화
         log.info("logout 경로 도착");
         // 세션 데이터 출력
-        session.getAttributeNames().asIterator()
+        /*session.getAttributeNames().asIterator()
                 .forEachRemaining(name -> log.info("session name = {}, value = {}", name, session.getAttribute(name)));
-	 
-        return "redirect:/";
+         */
+        return "redirect:/home";
     }
 
 
