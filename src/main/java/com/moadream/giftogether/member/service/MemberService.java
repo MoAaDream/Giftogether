@@ -28,4 +28,9 @@ public class MemberService {
 	}
 	
 	// 탈퇴
-}
+	
+	// 사용자 정보 가져오기
+	public Member getMemberInfo(Long id) {
+		return memberRepository.findMemberById(id);
+	}
+}	
