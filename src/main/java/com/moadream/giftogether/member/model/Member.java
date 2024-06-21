@@ -36,7 +36,7 @@ public class Member extends BaseTimeEntity {
     private String socialLoginId;
     
     @Column(nullable =false)
-    private String socailProvider;
+    private String socialProvider;
     
     /*
     @Column(length = 30, nullable = false)

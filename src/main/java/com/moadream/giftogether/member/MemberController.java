@@ -51,17 +51,17 @@ public class MemberController {
 	// 로그인 콜백
 	@GetMapping("/login/oauth2/code/kakao")
 	public String kakaoLogin(@RequestParam("code") String code, HttpSession session) throws JsonProcessingException {
-		// SETP1 : 인가코드 받기
-		// (카카오 인증 서버는 서비스 서버의 Redirect URI로 인가 코드를 전달합니다.)
+		// 1. 인가코드 받기
+		// redirect_uri로 인가 코드 전달
 
-		// STEP2: 인가코드를 기반으로 토큰(Access Token) 발급
+		// 2. 인가코드를 기반으로 Access Token 발급
 		String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
-		// STEP3: 사용자 정보 받기
+		// 3. 사용자 정보 받기
 		// return ResponseEntity.ok(memberService.getKakaoUserInfo(accessToken));
 		HashMap<String, Object> userInfo = kakaoService.getKakaoUserInfo(accessToken);
 
-		// STEP4: 사용자 정보에서 kakaoId, nickname, profile_image 추출
+		// 4. 사용자 정보에서 kakaoId, nickname, profile_image 추출
 		String kakaoId = userInfo.get("id").toString();
 		// 사용자 정보에서 properties 객체 추출
 	    Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
@@ -71,17 +71,18 @@ public class MemberController {
 	    String profileImage = properties.get("profile_image").toString();
 
 		
-		 // 사용자 정보를 세션에 저장
+		 // 5. 사용자 정보를 세션에 저장
 	    session.setAttribute("kakaoId", kakaoId);
 	    session.setAttribute("nickname", nickname);
 	    session.setAttribute("profileImage", profileImage);
+	    //session.setAttribute("accessToken", accessToken);
 	    
 	    // STEP5 : 회원가입 여부 확인 및 처리
 	    if (!memberService.isMemberExists(kakaoId, "Kakao")) {
 	        // 회원 가입 처리
 	        Member newMember = new Member();
 	        newMember.setSocialLoginId(kakaoId);
-	        newMember.setSocailProvider("Kakao");
+	        newMember.setSocialProvider("Kakao");
 	        newMember.setNickname(nickname);
 	        newMember.setProfile(profileImage);
 	        
@@ -101,6 +102,39 @@ public class MemberController {
 		return "home";
 	}
 
+	/**
+	 * 카카오 로그아웃
+	 * 
+	 * @return
+	 * @throws JsonProcessingException 
+	 */
+
+	@GetMapping("logout")
+	public String logout(HttpSession session) throws JsonProcessingException {
+        
+		if(session == null) {
+        	return "세션이 없습니다.";
+        }
+		
+		String accessToken = (String) session.getAttribute("accessToken");
+
+        
+        if (accessToken != null && !accessToken.isEmpty()) {
+            kakaoService.logoutFromKakao(accessToken);
+        } else {
+            log.info("No access token found in session.");
+        }
+        session.invalidate(); // 세션 무효화
+        log.info("logout 경로 도착");
+        // 세션 데이터 출력
+        session.getAttributeNames().asIterator()
+                .forEachRemaining(name -> log.info("session name = {}, value = {}", name, session.getAttribute(name)));
+	 
+        return "redirect:/";
+    }
+
+
+	
 	
 	
 	/**

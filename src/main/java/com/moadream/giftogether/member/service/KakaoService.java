@@ -29,7 +29,7 @@ public class KakaoService {
 
 
 	@Autowired
-	private final MemberRepository userRepository;
+	private final MemberRepository memberRepository;
 	 
 	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
 	private String clientId;
