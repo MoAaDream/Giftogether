@@ -12,6 +12,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -57,4 +58,28 @@ public class WishList extends BaseTimeEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+
+	public static WishList createWishList(WishListForm wishListForm, Member member){
+		WishList wishList = new WishList();
+		wishList.link = UUID.randomUUID().toString().replace("-", "");
+		wishList.name = wishListForm.getName();
+		wishList.description = wishListForm.getDescription();
+
+		if(wishListForm.getImgLink() == null || wishListForm.getImgLink().equals(""))
+			wishListForm.setImgLink("main.png");
+
+		wishList.listImg = wishListForm.getImgLink();
+
+		wishList.address = wishListForm.getAddress();
+
+		wishList.phoneNumber = wishListForm.getPhoneNumber();
+
+		wishList.deadline = wishListForm.getDeadLine();
+
+		wishList.status = Status.A;
+
+		wishList.member = member;
+
+		return wishList;
+	}
 }
