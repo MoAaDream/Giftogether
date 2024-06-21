@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.moadream.giftogether.member.model.GetMemberRes;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.service.KakaoService;
 import com.moadream.giftogether.member.service.MemberService;
@@ -91,15 +93,15 @@ public class MemberController {
 	    }
 	    
 	    // 홈 화면으로 리다이렉트
-	    return "redirect:/home";
+	    return "redirect:/mypage";
 		}
 
-	@GetMapping("/home")
+	@GetMapping("/mypage")
 	public String home(Model model, HttpSession session) {
 		// 세션에서 사용자 이름 가져오기
 		String nickname = (String) session.getAttribute("nickname");
 		model.addAttribute("name", nickname);
-		return "home";
+		return "mypage";
 	}
 
 	/**
@@ -130,10 +132,31 @@ public class MemberController {
         /*session.getAttributeNames().asIterator()
                 .forEachRemaining(name -> log.info("session name = {}, value = {}", name, session.getAttribute(name)));
          */
-        return "redirect:/home";
+        return "redirect:/mypage";
     }
 
-
+	/**
+	 * 마이페이지
+	 * @return
+	 */
+	@GetMapping("/{id}")
+	public String getUserInfo(@PathVariable("id") Long id, Model model ) {
+		System.out.println("===============" + id+"번째 회원의 마이페이지");
+		Member member = memberService.getMemberInfo(id);
+		GetMemberRes getMemberRes = new GetMemberRes();
+		getMemberRes.setId(member.getId());
+		getMemberRes.setNickname(member.getNickname());
+		getMemberRes.setBirth(member.getBirth());
+		getMemberRes.setPhoneNumber(member.getPhoneNumber());
+		getMemberRes.setProfile(member.getProfile());
+		getMemberRes.setRole(member.getRole());
+		getMemberRes.setStatus(member.getStatus());
+		System.out.println(member.getProfile());
+		System.out.println(member.getNickname());
+		model.addAttribute("member", getMemberRes);
+		return  "mypage" ;
+		
+	}
 	
 	
 	
@@ -141,17 +164,18 @@ public class MemberController {
 	 * 사용자 정보 수정
 	 * @return
 	 */
+	/*
+	@PostMapping("/{id}")
+	public GetMemberRes updateMemberInfo(@PathVariable("id") Long id, Model model ) {
 
+	
+	*/
 	
 	/**
 	 * 회원 탈퇴
 	 * @return 
 	 */
-
 	
-	/**
-	 * 마이페이지
-	 * @return
-	 */
+	
 	
 }

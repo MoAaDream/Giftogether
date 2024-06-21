@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 300px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            background-color: #e0e0e0;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            width: 45%;
+        }
+        .info {
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>마이페이지</h2>
+        </div>
+         <div class="profile-pic"> </div>
+        <div class="header" th:text="${member.nickname} + ' 님'">사용자 이름</div>
+        <div class="buttons">
+            <button onclick="location.href='/edit'">정보수정</button>
+            <button onclick="location.href='/logout'">로그아웃</button>
+        </div>
+        <div class="info">닉네임: <span th:text="${member.nickname != null ? member.nickname : '입력해 주세요'}">닉네임</span></div>
+        <div class="info">전화번호: <span th:text="${member.phoneNumber != null ? member.phoneNumber : '입력해 주세요'}">전화번호</span></div>
+        <div class="info">주소: <span th:text="${member.address != null ? member.address : '입력해 주세요'}">주소</span></div>
+    </div>
+</body>
+</html>
