@@ -75,7 +75,7 @@ public class MemberController {
 	    session.setAttribute("kakaoId", kakaoId);
 	    session.setAttribute("nickname", nickname);
 	    session.setAttribute("profileImage", profileImage);
-	    //session.setAttribute("accessToken", accessToken);
+	    session.setAttribute("accessToken", accessToken);
 	    
 	    // STEP5 : 회원가입 여부 확인 및 처리
 	    if (!memberService.isMemberExists(kakaoId, "Kakao")) {
