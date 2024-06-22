@@ -1,5 +1,6 @@
 package com.moadream.giftogether.member;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,16 +9,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.member.model.GetMemberRes;
 import com.moadream.giftogether.member.model.Member;
+import com.moadream.giftogether.member.model.UpdateMemberReq;
 import com.moadream.giftogether.member.service.KakaoService;
 import com.moadream.giftogether.member.service.MemberService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -93,15 +99,15 @@ public class MemberController {
 	    }
 	    
 	    // 홈 화면으로 리다이렉트
-	    return "redirect:/mypage";
+	    return "redirect:/home";
 		}
 
-	@GetMapping("/mypage")
+	@GetMapping("/home")
 	public String home(Model model, HttpSession session) {
 		// 세션에서 사용자 이름 가져오기
 		String nickname = (String) session.getAttribute("nickname");
 		model.addAttribute("name", nickname);
-		return "mypage";
+		return "home";
 	}
 
 	/**
@@ -111,13 +117,8 @@ public class MemberController {
 	 * @throws JsonProcessingException 
 	 */
 
-	@GetMapping("logout")
-	public String logout(HttpSession session) throws JsonProcessingException {
-        
-		if(session == null) {
-        	return "세션이 없습니다.";
-        }
-		
+	@GetMapping("/logout")
+	public String logout(HttpSession session) throws JsonProcessingException {		
 		String accessToken = (String) session.getAttribute("accessToken");
 
         
@@ -132,44 +133,89 @@ public class MemberController {
         /*session.getAttributeNames().asIterator()
                 .forEachRemaining(name -> log.info("session name = {}, value = {}", name, session.getAttribute(name)));
          */
-        return "redirect:/mypage";
+        return "redirect:/home";
     }
 
 	/**
 	 * 마이페이지
 	 * @return
 	 */
-	@GetMapping("/{id}")
-	public String getUserInfo(@PathVariable("id") Long id, Model model ) {
-		System.out.println("===============" + id+"번째 회원의 마이페이지");
-		Member member = memberService.getMemberInfo(id);
-		GetMemberRes getMemberRes = new GetMemberRes();
-		getMemberRes.setId(member.getId());
-		getMemberRes.setNickname(member.getNickname());
-		getMemberRes.setBirth(member.getBirth());
-		getMemberRes.setPhoneNumber(member.getPhoneNumber());
-		getMemberRes.setProfile(member.getProfile());
-		getMemberRes.setRole(member.getRole());
-		getMemberRes.setStatus(member.getStatus());
-		System.out.println(member.getProfile());
-		System.out.println(member.getNickname());
-		model.addAttribute("member", getMemberRes);
-		return  "mypage" ;
-		
-	}
-	
+	@GetMapping("/member/{id}")
+	public String getUserInfo(@PathVariable("id") Long id, Model model) {
+        Member member = memberService.getMemberInfo(id);
+
+        GetMemberRes getMemberRes = new GetMemberRes();
+        getMemberRes.setId(member.getId());
+        getMemberRes.setNickname(member.getNickname());
+        getMemberRes.setBirth(member.getBirth());
+        getMemberRes.setPhoneNumber(member.getPhoneNumber());
+       // getMemberRes.setProfile(member.getProfile());
+        getMemberRes.setRole(member.getRole());
+        getMemberRes.setStatus(member.getStatus());
+        getMemberRes.setAddress(member.getAddress());
+       
+        model.addAttribute("member", getMemberRes);
+        
+        
+        return "mypage";
+    }
 	
 	
 	/**
-	 * 사용자 정보 수정
-	 * @return
-	 */
-	/*
-	@PostMapping("/{id}")
-	public GetMemberRes updateMemberInfo(@PathVariable("id") Long id, Model model ) {
+     * 사용자 정보 수정 페이지
+     * @return
+     */
+	
 
 	
-	*/
+    @GetMapping("/member/{id}/edit")
+    public String editUserInfo(@PathVariable("id") Long id, Model model) {
+        Member member = memberService.getMemberInfo(id);
+        if (member == null) {
+        	log.info("member가 존재하지 않습니다.");
+            // 멤버가 존재하지 않는 경우 에러 페이지로 리다이렉트
+            return "redirect:/error"; 
+        }
+
+        UpdateMemberReq updateMemberReq = new UpdateMemberReq();
+        updateMemberReq.setNickname(member.getNickname());
+        updateMemberReq.setBirth(member.getBirth());
+        updateMemberReq.setPhoneNumber(member.getPhoneNumber());
+        updateMemberReq.setProfile(member.getProfile());
+        updateMemberReq.setAddress(member.getAddress());
+        
+        model.addAttribute("member", updateMemberReq);
+        model.addAttribute("id", id);
+        return "edit";
+    }
+
+	
+	 /**
+     * 사용자 정보 수정
+     * @return
+	 * @throws ParseException 
+     */
+    @PostMapping("/member/{id}")
+    public String updateUserInfo(
+            @PathVariable("id") Long id,
+            @Valid @ModelAttribute("member")  UpdateMemberReq updateMemberReq,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws ParseException {
+    	
+    	 if (profileImage != null && !profileImage.isEmpty()) {
+             try {
+                 // 이미지 업로드 처리
+                 String imageUrl = memberService.uploadProfileImage(profileImage);
+                 updateMemberReq.setProfile(imageUrl); // 프로필 이미지 URL 업데이트
+             } catch (Exception e) {
+                 e.printStackTrace();
+             }
+         }
+    	
+        memberService.updateMember(id, updateMemberReq);
+        return "redirect:/member/" + id;
+    }
+	
+
 	
 	/**
 	 * 회원 탈퇴

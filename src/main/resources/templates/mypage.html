@@ -6,6 +6,12 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
         }
         .container {
             width: 300px;
@@ -25,6 +31,12 @@
             background-color: #e0e0e0;
             margin: 0 auto 10px;
             border-radius: 50%;
+            overflow: hidden;
+        }
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .buttons {
             display: flex;
@@ -33,12 +45,28 @@
         }
         .buttons button {
             width: 45%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .buttons button.logout {
+            background-color: #f44336;
         }
         .info {
+            display: flex;
+            justify-content: space-between;
             background-color: #f1f1f1;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
+        }
+        .info label {
+            font-weight: bold;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -47,15 +75,30 @@
         <div class="header">
             <h2>마이페이지</h2>
         </div>
-         <div class="profile-pic"> </div>
+        <div class="profile-pic">
+            <img src="default_profile.png" alt="프로필 이미지" th:src="${member.profile}">
+        </div>
         <div class="header" th:text="${member.nickname} + ' 님'">사용자 이름</div>
         <div class="buttons">
-            <button onclick="location.href='/edit'">정보수정</button>
-            <button onclick="location.href='/logout'">로그아웃</button>
+            <button type="button" th:onclick="'location.href=\'/member/' + ${id} + '/edit\''">정보수정</button>
+            <button class="logout" onclick="location.href='/logout'">로그아웃</button>
         </div>
-        <div class="info">닉네임: <span th:text="${member.nickname != null ? member.nickname : '입력해 주세요'}">닉네임</span></div>
-        <div class="info">전화번호: <span th:text="${member.phoneNumber != null ? member.phoneNumber : '입력해 주세요'}">전화번호</span></div>
-        <div class="info">주소: <span th:text="${member.address != null ? member.address : '입력해 주세요'}">주소</span></div>
+        <div class="info">
+            <label>닉네임:</label>
+            <span th:text="${member.nickname != null ? member.nickname : '입력해 주세요'}">닉네임</span>
+        </div>
+        <div class="info">
+            <label>전화번호:</label>
+            <span th:text="${member.phoneNumber != null ? member.phoneNumber : '입력해 주세요'}">전화번호</span>
+        </div>
+        <div class="info">
+            <label>주소:</label>
+            <span th:text="${member.address != null ? member.address : '입력해 주세요'}">주소</span>
+        </div>
+        <div class="info">
+            <label>생일:</label>
+            <span th:text="${member.birth != null ? #dates.format(member.birth, 'yyyy-MM-dd') : '입력해 주세요'}">생일</span>
+        </div>
     </div>
 </body>
 </html>
