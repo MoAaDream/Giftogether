@@ -16,6 +16,8 @@ public class WishListModifyForm {
     @NotBlank(message = "설명은 필수입니다.")
     private String description;
 
+    private String imgLink;
+
     @NotBlank(message = "주소는 필수입니다.")
     private String address;
 
