@@ -18,4 +18,5 @@ public interface WishListRepository extends JpaRepository<WishList, Long> {
     List<WishList> findAllByMember_Id(Long memberId);
 
     Page<WishList> findAllByMember_Id(Long memberId, Pageable pageable);
+
 }

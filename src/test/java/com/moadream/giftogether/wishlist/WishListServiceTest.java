@@ -24,6 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
+
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class WishListServiceTest {
@@ -127,7 +128,6 @@ public class WishListServiceTest {
         Assertions.assertThat(wishList.getDescription()).isEqualTo(modifyDes);
 
     }
-
 
     @Test
     @DisplayName("위시 리스트 삭제 - 성공")

@@ -11,8 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 
 @Controller
 @Slf4j
@@ -22,10 +24,11 @@ public class WishListController {
 
     private final WishListServiceI wishListService;
 
+
+    @PostMapping("/")
     public String wishListCreate(@Valid WishListForm wishListForm, HttpSession session) {
         String socialId = checkSession(session);
-
-
+      
         wishListService.createWishList(wishListForm, socialId);
         log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
 
@@ -61,7 +64,6 @@ public class WishListController {
 
         return "wishlists";
     }
-
 
     private String checkSession(HttpSession session){
         if (session == null)
