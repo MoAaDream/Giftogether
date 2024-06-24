@@ -1,6 +1,6 @@
 package com.moadream.giftogether.wishlist.repository;
 
-import com.moadream.giftogether.member.model.Member;
+import com.moadream.giftogether.Status;
 import com.moadream.giftogether.wishlist.model.WishList;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,5 +18,7 @@ public interface WishListRepository extends JpaRepository<WishList, Long> {
     List<WishList> findAllByMember_Id(Long memberId);
 
     Page<WishList> findAllByMember_Id(Long memberId, Pageable pageable);
+
+    List<WishList> findAllByStatus(Status status);
 
 }

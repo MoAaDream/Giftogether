@@ -27,7 +27,7 @@ import java.util.List;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class WishListServiceTest {
+class WishListServiceTest {
 
     @Autowired
     private WishListServiceI wishListService;
@@ -37,7 +37,7 @@ public class WishListServiceTest {
     @Autowired
     private WishListRepository wishListRepository;
 
-    public Member createMember(){
+    Member createMember() {
         Member member = new Member();
         member.setSocialLoginId("3051424432");
         member.setSocialProvider("k");
@@ -53,7 +53,7 @@ public class WishListServiceTest {
         return member;
     }
 
-    public WishListForm createWishlistForm(){
+    WishListForm createWishlistForm() {
         WishListForm wishListForm = WishListForm.builder()
                 .name("위시리스트 제목")
                 .description("위시리스트 설명")
@@ -68,9 +68,9 @@ public class WishListServiceTest {
 
     @Test
     @DisplayName("위시리스트 생성 - 실패")
-    public void createWishListFail() throws Exception {
+    void createWishListFail() {
         //given
-        Member member = createMember();
+        createMember();
         WishListForm wishListForm = createWishlistForm();
 
         //when
@@ -82,7 +82,7 @@ public class WishListServiceTest {
     @Test
     @DisplayName("위시리스트 생성 테스트 - 성공")
     @Transactional
-    public void createWishListSuccess() throws Exception {
+    void createWishListSuccess() {
         //given
         Member member = createMember();
         WishListForm wishListForm = createWishlistForm();
@@ -93,7 +93,7 @@ public class WishListServiceTest {
 
 
         //then
-        Assertions.assertThat(wishList.getListImg()).isEqualTo("main.png");
+        Assertions.assertThat(wishList.getListImg()).isEqualTo("https://moadreambk.s3.ap-northeast-2.amazonaws.com/wishlists/wishlist.png");
         Assertions.assertThat(wishListForm.getName()).isEqualTo(wishList.getName());
 
     }
@@ -101,7 +101,7 @@ public class WishListServiceTest {
     @Test
     @DisplayName("위시 리스트 수정 - 성공")
     @Transactional
-    public void modifyWishListSuccess() throws Exception {
+    void modifyWishListSuccess() {
         //given
         Member member = createMember();
         WishListForm wishListForm = createWishlistForm();
@@ -132,7 +132,7 @@ public class WishListServiceTest {
     @Test
     @DisplayName("위시 리스트 삭제 - 성공")
     @Transactional
-    void deleteWishListSuccess() throws Exception {
+    void deleteWishListSuccess() {
         //given
         Member member = createMember();
         WishListForm wishListForm = createWishlistForm();
@@ -144,18 +144,18 @@ public class WishListServiceTest {
 
         //then
         wishlists = wishListRepository.findAllByMember_Id(member.getId());
-        Assertions.assertThat(wishlists.size()).isEqualTo(0);
+        Assertions.assertThat(wishlists.size()).isZero();
 
     }
 
     @Test
     @DisplayName("위시 리스트 정보 반환 - 성공")
     @Transactional
-    void getAllWishListSuccess() throws Exception {
+    void getAllWishListSuccess() {
         //given
         Member member = createMember();
         WishListForm wishListForm = createWishlistForm();
-        for(int i = 0 ; i<9; i++)
+        for (int i = 0; i < 9; i++)
             wishListService.createWishList(wishListForm, member.getSocialLoginId());
 
         //when
@@ -163,8 +163,8 @@ public class WishListServiceTest {
         Page<WishList> list1 = wishListService.getList(member.getSocialLoginId(), 1);
 
         //then
-        for(int i = 0 ; i < 6; i++)
-            Assertions.assertThat(list0.stream().toList().get(i).getId()).isEqualTo(i+1);
+        for (int i = 0; i < 6; i++)
+            Assertions.assertThat(list0.stream().toList().get(i).getId()).isEqualTo(i + 1);
 
         Assertions.assertThat(list1.stream().toList().get(0).getId()).isEqualTo(7);
         Assertions.assertThat(list1.stream().toList().get(1).getId()).isEqualTo(8);
