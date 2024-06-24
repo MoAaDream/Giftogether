@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -18,6 +19,7 @@ public class WishListController {
 
     private final WishListService wishListService;
 
+    @PostMapping("/")
     public String WishListCreate(@Valid WishListForm wishListForm, HttpSession session){
         if(session == null)
             log.error("세션이 없습니다.");

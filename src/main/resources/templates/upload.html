@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload</title>
+  <script th:inline="javascript">
+    function uploadFile(event) {
+      var file = event.target.files[0];
+      var formData = new FormData();
+      formData.append('file', file);
+
+      fetch("/files/image/wishlists", {
+        method: 'POST',
+        body: formData
+      })
+              .then(response => {
+                if (response.ok) {
+                  return response.text();
+                } else {
+                  throw new Error('파일 업로드 실패');
+                }
+              })
+              .then(imageUri => {
+                document.getElementById('uploadedImage').src = imageUri;
+                document.getElementById('uploadedImage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+              })
+              .catch(error => {
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+              });
+    }
+  </script>
+</head>
+<body>
+
+
+
+
+
+<div>
+  <h2>위시 리스트 생성</h2>
+  <form id="wishlist-form" method="post">
+    <input placeholder="위시 리스트이름"/>
+    <input type="기념 날짜" />
+    <div>
+      <input type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="사진등록하기">
+      <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
+    </div>
+    <input placeholder="주소" />
+    <input placeholder="핸드폰번호" />
+    <input placeholder="설명" />
+
+    <button>
+      위시 리스트 생성하기
+    </button>
+  </form>
+
+</div>
+
+
+
+<div id="errorMessage" style="display: none;">
+  <h2>Error</h2>
+  <p></p>
+</div>
+</body>
+</html>
