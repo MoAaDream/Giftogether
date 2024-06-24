@@ -6,9 +6,9 @@ import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.model.Role;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
+import com.moadream.giftogether.wishlist.model.WishListModifyForm;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
-import com.moadream.giftogether.wishlist.service.WishListService;
-import jakarta.persistence.*;
+import com.moadream.giftogether.wishlist.service.WishListServiceI;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,25 +21,20 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Optional;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class WishListServiceTest {
 
     @Autowired
-    private WishListService wishListService;
+    private WishListServiceI wishListService;
 
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
     private WishListRepository wishListRepository;
 
-
-    @Test
-    @DisplayName("위시리스트 생성 - 실패")
-    public void createWishListFail() throws Exception {
-        //given
+    public Member createMember(){
         Member member = new Member();
         member.setSocialLoginId("3051424432");
         member.setSocialProvider("k");
@@ -52,6 +47,10 @@ public class WishListServiceTest {
         member.setStatus(Status.A);
         memberRepository.save(member);
 
+        return member;
+    }
+
+    public WishListForm createWishlistForm(){
         WishListForm wishListForm = WishListForm.builder()
                 .name("위시리스트 제목")
                 .description("위시리스트 설명")
@@ -60,6 +59,16 @@ public class WishListServiceTest {
                 .address("위시리스트 주소")
                 .phoneNumber("01011112222")
                 .build();
+
+        return wishListForm;
+    }
+
+    @Test
+    @DisplayName("위시리스트 생성 - 실패")
+    public void createWishListFail() throws Exception {
+        //given
+        Member member = createMember();
+        WishListForm wishListForm = createWishlistForm();
 
         //when
         Assertions.assertThatThrownBy(
@@ -72,35 +81,48 @@ public class WishListServiceTest {
     @Transactional
     public void createWishListSuccess() throws Exception {
         //given
-        Member member = new Member();
-        member.setSocialLoginId("3051424432");
-        member.setSocialProvider("k");
-        member.setNickname("테스트닉네임");
-        member.setProfile("main.png");
-        member.setBirth(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-        member.setPhoneNumber("01011112222");
-        member.setAddress("test");
-        member.setRole(Role.MEMBER);
-        member.setStatus(Status.A);
-        memberRepository.save(member);
-
-        WishListForm wishListForm = WishListForm.builder()
-                .name("위시리스트 제목")
-                .description("위시리스트 설명")
-                .deadLine(LocalDateTime.now().plus(4, ChronoUnit.DAYS))
-                .imgLink(null)
-                .address("위시리스트 주소")
-                .phoneNumber("01011112222")
-                .build();
+        Member member = createMember();
+        WishListForm wishListForm = createWishlistForm();
 
         //when
-        wishListService.createWishList(wishListForm, "3051424432");
+        wishListService.createWishList(wishListForm, member.getSocialLoginId());
         WishList wishList = wishListRepository.findByMember_Id(member.getId()).get();
 
 
         //then
         Assertions.assertThat(wishList.getListImg()).isEqualTo("main.png");
         Assertions.assertThat(wishListForm.getName()).isEqualTo(wishList.getName());
+
+    }
+
+    @Test
+    @DisplayName("위시 리스트 수정 - 성공")
+    @Transactional
+    public void modifyWishListSuccess() throws Exception {
+        //given
+        Member member = createMember();
+        WishListForm wishListForm = createWishlistForm();
+
+        //when
+        wishListService.createWishList(wishListForm, member.getSocialLoginId());
+        WishList wishList = wishListRepository.findByMember_Id(member.getId()).get();
+
+        String modifyName = "수정된 이름";
+        String modifyDes = "수정된 내용";
+
+
+        WishListModifyForm wishListModifyForm = WishListModifyForm.builder()
+                .name(modifyName)
+                .description(modifyDes)
+                .address(wishListForm.getAddress())
+                .phoneNumber(wishListForm.getPhoneNumber())
+                .build();
+
+        wishListService.modifyWishList(wishListModifyForm, member.getSocialLoginId(), wishList.getLink());
+
+        //then
+        Assertions.assertThat(wishList.getName()).isEqualTo(modifyName);
+        Assertions.assertThat(wishList.getDescription()).isEqualTo(modifyDes);
 
     }
 }
