@@ -66,4 +66,11 @@ public class S3FileUploadService {
         return imageUrl;
     }
 
+    public void deleteFile(String imageUrl, String folder) {
+        String deleteUrl = imageUrl.replaceAll("^.*?/wishlists/", "");
+        amazonS3Client.deleteObject(bucket + "/" + folder, deleteUrl);
+        log.info("url = " + deleteUrl);
+        log.info("end");
+    }
+
 }

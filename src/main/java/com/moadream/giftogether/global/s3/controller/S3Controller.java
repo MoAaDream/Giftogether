@@ -18,10 +18,16 @@ public class S3Controller {
 
     @PostMapping("/image/{folderType}")
     @ResponseBody
-    public ResponseEntity<String> uploadFile(@PathVariable("folderType") String folder, @RequestParam("file") MultipartFile file, Model model) {
+    public ResponseEntity<String> uploadFile(@PathVariable("folderType") String folder, @RequestParam("file") MultipartFile file,
+                                             @RequestParam(value = "imageUri", required = false) String existingImageUri,
+                                             Model model) {
         try {
             String fileUri = s3FileUploadService.uploadFile(file, folder);
             model.addAttribute("imageUri", fileUri);
+
+            if(existingImageUri != null) {
+                s3FileUploadService.deleteFile(existingImageUri, folder);
+            }
 
             return new ResponseEntity<>(fileUri, HttpStatus.OK);
         }
