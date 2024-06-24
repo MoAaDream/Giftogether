@@ -1,6 +1,7 @@
 package com.moadream.giftogether.wishlist.controller;
 
 
+import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishListModifyForm;
 import com.moadream.giftogether.wishlist.service.WishListServiceI;
@@ -8,10 +9,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @Slf4j
@@ -39,6 +40,26 @@ public class WishListController {
         log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 수정");
         
         return "redirect:/wishlists";
+    }
+
+    @DeleteMapping("/{wishlistlink}")
+    public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session){
+        String socialId = checkSession(session);
+        
+        wishListService.deleteWishList(socialId, wishlistLink);
+        log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 삭제");
+
+        return "redirect:/wishlists";
+    }
+
+    @GetMapping("/my/{page}")
+    public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model){
+        String socialId = checkSession(session);
+
+        Page<WishList> list = wishListService.getList(socialId, page);
+        model.addAttribute("paging", list);
+
+        return "wishlists";
     }
 
 

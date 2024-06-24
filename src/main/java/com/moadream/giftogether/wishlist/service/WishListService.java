@@ -9,6 +9,10 @@ import com.moadream.giftogether.wishlist.model.WishListModifyForm;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,10 +41,34 @@ public class WishListService implements WishListServiceI {
         Member member = findMemberBySocialId(socialId);
         WishList wishList = findWishListByLink(wishlistLink);
 
-        if(wishList.getMember().getId() != member.getId())
-            throw new RuntimeException();
+        checkMyWishList(wishList, member);
 
         wishList.modifyWishList(wishListModifyForm);
+    }
+
+    @Override
+    @Transactional
+    public void deleteWishList(String socialId, String wishlistLink) {
+        Member member = findMemberBySocialId(socialId);
+        WishList wishList = findWishListByLink(wishlistLink);
+
+        checkMyWishList(wishList, member);
+
+        wishListRepository.deleteById(wishList.getId());
+    }
+
+    @Override
+    @Transactional
+    public Page<WishList> getList(String socialId, int page) {
+        Member member = findMemberBySocialId(socialId);
+        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.ASC, "id"));
+
+        return wishListRepository.findAllByMember_Id(member.getId(), pageable);
+    }
+
+    private void checkMyWishList(WishList wishList, Member member) {
+        if(wishList.getMember().getId() != member.getId())
+            throw new RuntimeException();
     }
 
 
