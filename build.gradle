@@ -67,16 +67,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
+
 	/* portone */
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
-	/* gson */
-	//implementation 'com.google.code.gson:gson:2.8.8'
-	// https://mvnrepository.com/artifact/com.squareup.retrofit2/adapter-rxjava2
-    //implementation group: 'com.squareup.retrofit2', name: 'adapter-rxjava2', version: '2.9.0'
-    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
-    //implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
-    // https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson
-    //implementation group: 'com.squareup.retrofit2', name: 'converter-gson', version: '2.3.0'
+
+
+	/* aws */
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 }
 
 tasks.named('test') {

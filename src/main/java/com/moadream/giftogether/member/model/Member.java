@@ -42,14 +42,14 @@ public class Member extends BaseTimeEntity {
     private String socialLoginId;
     
     @Column(nullable =false)
-    private String socailProvider;
+    private String socialProvider;
     
-    
+    /*
     @Column(length = 30, nullable = false)
-    private String username;
-
+    private String username; // 실명 
+*/
     @Column(length = 30, nullable = false)
-    private String nickname;
+    private String nickname; // 카카오 계정에 설정한 닉네임 
 
     // 이미지 처리
     private String profile;
