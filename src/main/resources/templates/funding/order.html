@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>모금</title>
+</head>
+<body>
+    <form method="post">
+        <h1>모금 페이지</h1>
+        <div>
+            <input type="submit" value="모금하기">
+        </div>
+        <div style="margin-top: 20px">
+            <a th:href="@{/fundings/payment/{fundingUid} (fundingUid=${fundingUid})}">결제 페이지로 이동</a>
+        </div>
+        <p th:text="${message}"></p>
+    </form>
+</body>
+</html>

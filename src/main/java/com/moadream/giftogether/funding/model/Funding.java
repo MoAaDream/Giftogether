@@ -17,13 +17,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
+import jakarta.persistence.FetchType;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "T_Funding")
 public class Funding extends BaseTimeEntity {
     @Id
@@ -37,14 +46,22 @@ public class Funding extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+//    private String itemName;
+    private String fundingUid;
+
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
     @OneToOne(mappedBy = "funding")
     private Message message;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType. LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType. LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
