@@ -66,7 +66,7 @@ public class WishList extends BaseTimeEntity {
 		wishList.description = wishListForm.getDescription();
 
 		if(wishListForm.getImgLink() == null || wishListForm.getImgLink().equals(""))
-			wishListForm.setImgLink("main.png");
+			wishListForm.setImgLink("https://moadreambk.s3.ap-northeast-2.amazonaws.com/wishlists/wishlist.png");
 
 		wishList.listImg = wishListForm.getImgLink();
 

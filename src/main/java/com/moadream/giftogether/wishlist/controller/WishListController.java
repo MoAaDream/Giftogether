@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +22,10 @@ public class WishListController {
 
     private final WishListServiceI wishListService;
 
+    @PostMapping("/")
     public String wishListCreate(@Valid WishListForm wishListForm, HttpSession session) {
         String socialId = checkSession(session);
-
-
+      
         wishListService.createWishList(wishListForm, socialId);
         log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
 
