@@ -21,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -65,6 +66,11 @@ dependencies {
 	/* thymeleaf */
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+
+	/* portone */
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
+
 
 	/* aws */
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
