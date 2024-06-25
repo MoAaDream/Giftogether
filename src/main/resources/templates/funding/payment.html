@@ -5,6 +5,14 @@
     <title>1달러샵</title>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    
+</head>
+<body>
+    <h1>결제 페이지</h1>
+    <button th:with="requestDto = ${requestDto}" onclick="requestPay()">
+        결제하기
+    </button>
+    
     <script>
         var IMP = window.IMP;
         IMP.init("imp21002744"); //f12 보임
@@ -12,15 +20,13 @@
         function requestPay() {
 
         	
-            this.fundingUid = fundingUid; 
-            this.buyerName = buyerName;
+            this.fundingUid = fundingUid;  
             this.paymentAmount = paymentAmount; 
             this.buyerAddress = buyerAddress;
             
             
             var fundingUid = '[[${requestDto.fundingUid}]]'; 
-            var paymentAmount = '[[${requestDto.paymentAmount}]]';
-            var buyerName = '[[${requestDto.buyerName}]]'; 
+            var paymentAmount = '[[${requestDto.paymentAmount}]]'; 
             var buyerAddress = '[[${requestDto.buyerAddress}]]';
 
             IMP.request_pay({
@@ -30,7 +36,7 @@
                     name : 'itemName', // 상품 이름
                     amount : paymentAmount, // 상품 가격
                     buyer_email : 'buyerEmail', // 구매자 이메일
-                    buyer_name : buyerName, // 구매자 이름
+                    buyer_name : '길동', // 구매자 이름
                     buyer_tel : '010-1234-5678', // 임의의 값
                     buyer_addr : buyerAddress, // 구매자 주소
                     buyer_postcode : '123-456', // 임의의 값
@@ -63,11 +69,5 @@
                 });
         }
     </script>
-</head>
-<body>
-    <h1>결제 페이지</h1>
-    <button th:with="requestDto = ${requestDto}" onclick="requestPay()">
-        결제하기
-    </button>
 </body>
 </html>

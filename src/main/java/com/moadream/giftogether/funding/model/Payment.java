@@ -1,7 +1,5 @@
 package com.moadream.giftogether.funding.model;
 
-import com.moadream.giftogether.funding.PaymentStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -27,7 +25,7 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
     
-    @Column(nullable = false, length = 30, unique = true)
+    @Column(length = 30, unique = true)
     private String paymentUid; // 결제 고유 번호
     
     @Builder

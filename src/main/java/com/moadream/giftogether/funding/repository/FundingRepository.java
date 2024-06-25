@@ -1,4 +1,4 @@
-package com.moadream.giftogether.funding;
+package com.moadream.giftogether.funding.repository;
 
 import java.util.Optional;
 
