@@ -1,0 +1,91 @@
+<body>
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Link</th>
+            <th>listImg</th>
+            <th>deadline</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="wishlist : ${paging.content}" class="d-flex justify-content-center">
+            <td class="col-6">
+                <div class="wishlist-box">
+                    <p th:text="${wishlist.name}"></p>
+                    <p th:text="${wishlist.link}"></p>
+                </div>
+            </td>
+            <td class="col-6">
+                <div class="wishlist-box">
+                    <p th:text="${wishlist.listImg}"></p>
+                    <p th:text="${wishlist.deadline}"></p>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${paging.number == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/wishlists/my/{page}(page=${paging.number - 1})}" aria-label="Previous"
+                   th:if="${paging.number > 0}">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, paging.totalPages - 1)}"
+                th:classappend="${pageNum == paging.number} ? 'active'">
+                <a class="page-link" th:href="@{/wishlists/my/{page}(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${paging.number == paging.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/wishlists/my/{page}(page=${paging.number + 1})}" aria-label="Next"
+                   th:if="${paging.number < paging.totalPages - 1}">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination .page-item {
+        display: inline-block;
+        margin: 0 5px;
+    }
+
+    .pagination .page-link {
+        display: block;
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #f5f5f5;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+
+    .wishlist-box {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px;
+    }
+</style>

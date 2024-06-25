@@ -28,14 +28,14 @@ public class WishListController {
     @GetMapping("/")
     public String getMapping(Model model){
         model.addAttribute("wishListForm", new WishListForm());
-        return "upload";
+        return "wishlists/wishlist_form";
     }
 
     @PostMapping("/")
     public String wishListCreate(@Valid @ModelAttribute WishListForm wishListForm, HttpSession session, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
             model.addAttribute("wishListForm", wishListForm);
-            return "upload";
+            return "wishlists/wishlist_form";
         }
 
         String socialId = checkSession(session);
@@ -68,12 +68,16 @@ public class WishListController {
 
     @GetMapping("/my/{page}")
     public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model){
+        //=================
+        session.setAttribute("kakaoId", 303303303);
+        //=================
+
         String socialId = checkSession(session);
 
         Page<WishList> list = wishListService.getList(socialId, page);
         model.addAttribute("paging", list);
 
-        return "wishlists";
+        return "wishlists/wishlists";
     }
 
     private String checkSession(HttpSession session){
