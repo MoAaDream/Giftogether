@@ -49,11 +49,6 @@ public class MemberController {
 		model.addAttribute("location", location);
 		return "login";
 	}
-
-	
-	
-	
-	
 	
 	// 로그인 콜백
 	@GetMapping("/login/oauth2/code/kakao")
