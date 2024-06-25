@@ -1,14 +1,11 @@
 package com.moadream.giftogether.wishlist;
 
-import com.moadream.giftogether.Status;
-import com.moadream.giftogether.member.MemberRepository;
-import com.moadream.giftogether.member.model.Member;
-import com.moadream.giftogether.member.model.Role;
-import com.moadream.giftogether.wishlist.model.WishList;
-import com.moadream.giftogether.wishlist.model.WishListForm;
-import com.moadream.giftogether.wishlist.model.WishListModifyForm;
-import com.moadream.giftogether.wishlist.repository.WishListRepository;
-import com.moadream.giftogether.wishlist.service.WishListServiceI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.List;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +15,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
+import com.moadream.giftogether.Status;
+import com.moadream.giftogether.member.MemberRepository;
+import com.moadream.giftogether.member.model.Member;
+import com.moadream.giftogether.member.model.Role;
+import com.moadream.giftogether.wishlist.model.WishList;
+import com.moadream.giftogether.wishlist.model.WishListForm;
+import com.moadream.giftogether.wishlist.model.WishListModifyForm;
+import com.moadream.giftogether.wishlist.repository.WishListRepository;
+import com.moadream.giftogether.wishlist.service.WishListServiceI;
 
 
 @SpringBootTest

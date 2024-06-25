@@ -1,4 +1,4 @@
-package com.moadream.giftogether.funding;
+package com.moadream.giftogether.funding.model;
 
 public enum PaymentStatus {
     O,//ok

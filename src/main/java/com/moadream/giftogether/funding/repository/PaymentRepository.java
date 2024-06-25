@@ -1,4 +1,4 @@
-package com.moadream.giftogether.funding;
+package com.moadream.giftogether.funding.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

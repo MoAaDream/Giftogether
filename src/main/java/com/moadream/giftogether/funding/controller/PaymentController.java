@@ -1,4 +1,4 @@
-package com.moadream.giftogether.funding;
+package com.moadream.giftogether.funding.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
