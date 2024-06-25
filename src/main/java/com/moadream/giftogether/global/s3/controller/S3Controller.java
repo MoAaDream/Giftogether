@@ -2,26 +2,32 @@ package com.moadream.giftogether.global.s3.controller;
 
 import com.moadream.giftogether.global.s3.service.S3FileUploadService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/files")
 public class S3Controller {
 
     private final S3FileUploadService s3FileUploadService;
 
     @PostMapping("/image/{folderType}")
-    @ResponseBody
-    public ResponseEntity<String> uploadFile(@PathVariable("folderType") String folder, @RequestParam("file") MultipartFile file, Model model) {
+    public ResponseEntity<String> uploadFile(@PathVariable("folderType") String folder, @RequestParam("file") MultipartFile file,
+                                             @RequestParam(value = "imageUri", required = false) String existingImageUri,
+                                             Model model) {
         try {
             String fileUri = s3FileUploadService.uploadFile(file, folder);
             model.addAttribute("imageUri", fileUri);
+
+            if(existingImageUri != null || !existingImageUri.equals("")) {
+                s3FileUploadService.deleteFile(existingImageUri, folder);
+            }
 
             return new ResponseEntity<>(fileUri, HttpStatus.OK);
         }
@@ -31,8 +37,4 @@ public class S3Controller {
         }
     }
 
-    @GetMapping("/upload")
-    public String getMapping(){
-        return "upload";
-    }
 }

@@ -31,7 +31,7 @@ public class S3FileUploadService {
 
     @Transactional
     public String uploadFile(MultipartFile uploadFile, String folder) throws AmazonS3Exception {
-        if(!folder.equals("products") && !folder.equals("wishlists"))
+        if(!folder.equals("products") && !folder.equals("wishlists") && !folder.equals("profiles"))
             throw new AmazonS3Exception("이미지 링크 오류");
 
         String origName = uploadFile.getOriginalFilename();
@@ -64,6 +64,14 @@ public class S3FileUploadService {
         file.delete();
         log.info("SERVICE Uri = " + imageUrl);
         return imageUrl;
+    }
+
+    public void deleteFile(String imageUrl, String folder) {
+        String deleteUrl = imageUrl.replaceAll("^.*?/"+folder + "/", "");
+        amazonS3Client.deleteObject(bucket + "/" + folder, deleteUrl);
+        log.info("SERVICE Uri = " + imageUrl);
+        log.info("url = " + deleteUrl);
+        log.info("end");
     }
 
 }
