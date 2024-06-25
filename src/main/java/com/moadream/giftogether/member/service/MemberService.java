@@ -27,10 +27,26 @@ public class MemberService {
 		memberRepository.save(newMember);
 	}
 	
-	// 탈퇴
+
 	
 	// 사용자 정보 가져오기
 	public Member getMemberInfo(Long id) {
 		return memberRepository.findMemberById(id);
+	}
+	
+	
+	// 탈퇴
+	public void deleteMember(Long id) {
+		Member member = memberRepository.findById(id).orElseThrow(() ->
+        new RuntimeException("Member not found"));
+		memberRepository.deleteById(id);
+	}
+	
+	
+	public void softDeleteMember(Long id) {
+		Member member = memberRepository.findById(id).orElseThrow(() ->
+        new RuntimeException("Member not found"));
+		member.setStatus(Status.D);
+		memberRepository.save(member);
 	}
 }	
