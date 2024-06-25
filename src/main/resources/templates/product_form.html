@@ -6,31 +6,37 @@
 <link rel="stylesheet" href="/css/messageForm.css">
 <script th:inline="javascript">
     function uploadFile(event) {
-      var file = event.target.files[0];
-      var formData = new FormData();
-      formData.append('file', file);
+        var file = event.target.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('imageUri', document.getElementById('uploadedImage').src);
 
-      fetch("/files/image/products", {
-        method: 'POST',
-        body: formData
-      })
-              .then(response => {
+        fetch("/files/image/products", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
                 if (response.ok) {
-                  return response.text();
+                    return response.text();
                 } else {
-                  throw new Error('파일 업로드 실패');
+                    throw new Error('파일 업로드 실패');
                 }
-              })
-              .then(imageUri => {
-                document.getElementById('uploadedImage').src = imageUri;
-                //document.getElementById('uploadedImage').value = imageUrl; // URL을 hidden input에 저장
+            })
+            .then(imageUri => {
                 document.getElementById('uploadedImage').style.display = 'block';
-                document.getElementById('errorMessage').style.display = 'none';
-              })
-              .catch(error => {
-                document.getElementById('errorMessage').textContent = error.message;
-                document.getElementById('errorMessage').style.display = 'block';
-              });
+                document.getElementById('uploadedImage').src = imageUri;
+                document.getElementById('uploadedImageUri').value = imageUri;
+            })
+            .catch(error => {
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = error.message;
+                    errorMessageElement.style.display = 'block';
+                } else {
+                    console.error('errorMessage 요소를 찾을 수 없습니다.');
+                    // 다른 오류 처리 로직 추가
+                }
+            });
     }
   </script>
 </head>
@@ -41,27 +47,24 @@
 			<div th:each="err : ${#fields.allErrors()}" th:text="${err}" /> 
 		</div>
         <label for="name">제품 명:</label>
-        <input type="text" id="name" name="name" required><br><br>
+        <input type="text" id="name" th:field="*{name}">
 
         <label for="description">제품 설명:</label><br>
-        <textarea id="description" name="description" rows="4" cols="50"></textarea><br><br>
+        <input type="text" id="description" th:field="*{description}">
 
         <label for="externalLink">제품 구매 링크:</label>
-        <input type="url" id="externalLink" name="externalLink" rows="4" cols="50"></input><br><br> 
+        <input type="text" id="externalLink" th:field="*{externalLink}">
         
-        <label for="productImage" >제품 사진:</label>
-		<!--<input type="file" id="productImg" name="productImg" accept="image/png, image/jpeg, image/jpg"><br><br> 
-		<input type="text" id="productImg" name="productImg" required><br> <br>-->
-		
-			<input type="file" id="file" name="file" onchange="uploadFile(event)"placeholder="사진등록하기">
-			<img id="uploadedImage" alt="Uploaded Image" style="display: none;">
-			<input type="hidden" id="uploadedImageUri" name="uploadedImage">	
+        <label >제품 사진:</label>
+        <input type="file" id="file" name="file" onchange="uploadFile(event)"placeholder="사진등록하기">
+        <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
+        <input type="hidden" id="uploadedImageUri" name="uploadedImage">
 			
-		<label for="optionName">제품 옵션:</label>
-        <input type="text" id="optionName" name="optionName"><br><br>
+		<label for="optionDetail">제품 옵션:</label>
+        <input type="text" id="optionDetail" th:field="*{optionDetail}">
 
         <label for="goalAmount">제품 금액 :</label>
-        <input type="number" id="goalAmount" name="goalAmount" step="1000"><br><br>
+        <input type="text" id="goalAmount" th:field="*{goalAmount}">
 
         <input type="submit" value="추가하기">
     </form>

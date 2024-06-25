@@ -47,8 +47,8 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{wishlist_link}/create")
-	public String Create(ProductForm productForm, Model model) {
-		model.addAttribute("productForm",productForm);
+	public String createProduct(Model model) {
+		model.addAttribute("productForm",new ProductForm());
 		return "product_form";
 	}
 
@@ -69,15 +69,16 @@ public class ProductController {
     }*/
 	
 	@PostMapping("/{wishlist_link}/create")
-	public String Create(Model model, @PathVariable("wishlist_link") String wishlistLink, @Valid @ModelAttribute ProductForm productForm, BindingResult bindingResult) {
+	public String createProduct(Model model, @PathVariable("wishlist_link") String wishlistLink, @Valid @ModelAttribute ProductForm productForm, BindingResult bindingResult) {
 		
 		String productLink = UUID.randomUUID().toString().replace("-", "");
 		model.addAttribute("wishlistLink",wishlistLink);
 		
 		if (bindingResult.hasErrors()) {
+			model.addAttribute("productForm", productForm);
 			return "product_form";
 		}
-		
+		log.info("Creating product link: " + productForm.getUploadedImage());
 		this.productService.create(productForm.getName(), productForm.getDescription(),productForm.getExternalLink(), 
 				productForm.getUploadedImage(), productForm.getOptionDetail(), productForm.getGoalAmount(), productLink, wishlistLink);
 		return "redirect:/{wishlist_link}/products"; // 질문 저장후 질문목록으로 이동

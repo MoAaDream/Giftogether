@@ -3,13 +3,13 @@ package com.moadream.giftogether.product.model;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 //@Builder
 public class ProductForm {
 
