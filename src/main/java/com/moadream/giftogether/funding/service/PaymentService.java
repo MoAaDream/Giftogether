@@ -5,12 +5,12 @@ import java.io.IOException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.moadream.giftogether.funding.FundingRepository;
-import com.moadream.giftogether.funding.PaymentRepository;
-import com.moadream.giftogether.funding.PaymentStatus;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.PaymentCallbackRequest;
+import com.moadream.giftogether.funding.model.PaymentStatus;
 import com.moadream.giftogether.funding.model.RequestPayDto;
+import com.moadream.giftogether.funding.repository.FundingRepository;
+import com.moadream.giftogether.funding.repository.PaymentRepository;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -33,7 +33,7 @@ public class PaymentService {
 		Funding fund = fundingRepository.findFundingAndPaymentAndMember(fundingUid)
 				.orElseThrow(() -> new IllegalArgumentException("주문이 없습니다."));
 
-		return RequestPayDto.builder().buyerName(fund.getMember().getUsername())
+		return RequestPayDto.builder()
 				.buyerAddress(fund.getMember().getAddress()).paymentAmount(fund.getPayment().getAmount())
 				.fundingUid(fund.getFundingUid()).build();
 	}

@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.moadream.giftogether.Status;
-import com.moadream.giftogether.funding.FundingRepository;
-import com.moadream.giftogether.funding.PaymentRepository;
-import com.moadream.giftogether.funding.PaymentStatus;
-import com.moadream.giftogether.funding.ProductRepository;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.Payment;
+import com.moadream.giftogether.funding.model.PaymentStatus;
+import com.moadream.giftogether.funding.repository.FundingRepository;
+import com.moadream.giftogether.funding.repository.PaymentRepository;
+import com.moadream.giftogether.funding.repository.ProductRepository;
+import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.product.model.Product;
 
@@ -27,12 +28,15 @@ public class FundingService {
 	private final FundingRepository fundingRepository;
     private final PaymentRepository paymentRepository;
     private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
 
-    public Funding fund(Member member,Long productId) {
+    public Funding fund(String socialId,String productLink, Integer amount) {
 
+    	Member member = findMemberBySocialId(socialId);
+    	
         // 임시 결제내역 생성
         Payment payment = Payment.builder()
-                .amount(1000) // 검증 
+                .amount(amount) // 검증 할 값
                 .status(PaymentStatus.R)
                 .build();
 
@@ -43,13 +47,13 @@ public class FundingService {
 //        for(Product p : list)
 //        	log.info("log = " + p.getId());
         
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + productId));
+        Product product = productRepository.findByProductLink(productLink)
+                    .orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
 
         
         // 주문 생성
         Funding funding = Funding.builder()
-                .amount(1000)
+                .amount(amount)
                 .status(Status.A)
                 .fundingUid(UUID.randomUUID().toString())
                 .payment(payment)
@@ -59,4 +63,10 @@ public class FundingService {
 
         return fundingRepository.save(funding);
     }
+    
+    private Member findMemberBySocialId(String socialId) {
+        return memberRepository.findBySocialLoginId(socialId)
+                .orElseThrow(() -> new RuntimeException("Member not found for socialId: " + socialId));
+    }
+
 }
