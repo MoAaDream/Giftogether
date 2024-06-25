@@ -76,7 +76,9 @@
             <h2>마이페이지</h2>
         </div>
 
-         <div class="profile-pic"> </div>
+        <div class="profile-pic">
+            <img th:if="${member != null && member.profile != null}" th:src="${member.profile}" alt="프로필 이미지">
+        </div>
         <div class="header" th:text="${member != null ? member.nickname : 'Guest'} + ' 님'">사용자 이름</div>
 
         <div class="buttons">

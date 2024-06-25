@@ -96,15 +96,15 @@
             <h2>사용자 정보 수정</h2>
         </div>
         <form th:action="@{'/member/' + ${id}}" th:object="${member}" method="post" enctype="multipart/form-data">
-            <!--  <div class="form-group">
+            <div class="form-group">
                 <div class="profile-pic">
                     <img id="profileImage" src="default_profile.png" alt="프로필 이미지">
-                    <input type="file" id="profile" name="profile" accept="image/*" onchange="previewProfileImage(event)">
-                    <label for="profile">이미지 선택</label>
+                    <input type="file" id="profileImageInput" name="profileImage" accept="image/*" onchange="previewProfileImage(event)">
+                    <label for="profileImageInput">이미지 선택</label>
                 </div>
             </div>
-            
-            -->
+            <input type="hidden" id="profile" name="profile" th:field="*{profile}"/>
+
             <div class="form-group">
                 <label for="nickname">닉네임</label>
                 <input type="text" id="nickname" th:field="*{nickname}" required>
@@ -134,6 +134,33 @@
                 output.src = reader.result;
             };
             reader.readAsDataURL(event.target.files[0]);
+            
+            uploadFile(event); // 파일 업로드 함수 호출
+        }
+        
+        function uploadFile(event) {
+            var file = event.target.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('imageUri', document.getElementById('profile').value);
+
+            fetch("/files/image/profiles", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error('파일 업로드 실패');
+                    }
+                })
+                .then(imageUri => {
+                    document.getElementById('profile').value = imageUri;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
     </script>
 </body>

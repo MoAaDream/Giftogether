@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.moadream.giftogether.global.s3.service.S3FileUploadService;
 import com.moadream.giftogether.member.model.GetMemberRes;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.model.UpdateMemberReq;
@@ -35,6 +36,9 @@ public class MemberController {
 
 	@Autowired
 	MemberService memberService;
+	
+	@Autowired
+	S3FileUploadService s3FileUploadFileService;
 
 	/**
 	 * 카카오 callback [GET] /oauth/kakao/callback
@@ -153,7 +157,7 @@ public class MemberController {
         getMemberRes.setNickname(member.getNickname());
         getMemberRes.setBirth(member.getBirth());
         getMemberRes.setPhoneNumber(member.getPhoneNumber());
-       // getMemberRes.setProfile(member.getProfile());
+        getMemberRes.setProfile(member.getProfile());
         getMemberRes.setRole(member.getRole());
         getMemberRes.setStatus(member.getStatus());
         getMemberRes.setAddress(member.getAddress());
@@ -209,8 +213,9 @@ public class MemberController {
     	 if (profileImage != null && !profileImage.isEmpty()) {
              try {
                  // 이미지 업로드 처리
-                 String imageUrl = memberService.uploadProfileImage(profileImage);
-                 updateMemberReq.setProfile(imageUrl); // 프로필 이미지 URL 업데이트
+                 String imageUrl =  s3FileUploadFileService.uploadFile(profileImage, "profiles" );
+				  updateMemberReq.setProfile(imageUrl); // 프로필 이미지 URL 업데이트
+              
              } catch (Exception e) {
                  e.printStackTrace();
              }

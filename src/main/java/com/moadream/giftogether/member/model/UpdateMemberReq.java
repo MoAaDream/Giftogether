@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class UpdateMemberReq {
 	
-	@Size(min=3, max=30)
+	@Size(min=2, max=30)
 	private String nickname; // 실명 이슈 해결 여부에 따라 추후 수정 불가능으로 변경될 수 있음
 	
 	private String profile;
