@@ -49,7 +49,7 @@ public class Member extends BaseTimeEntity {
     private String username; // 실명 
 */
     @Column(length = 30, nullable = false)
-    private String nickname; // 카카오 계정에 설정한 닉네임 
+    private String nickname; // 카카오 계정에 설정한 닉네임 (수정 가능)
 
     // 이미지 처리
     private String profile;

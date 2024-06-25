@@ -55,7 +55,7 @@ public class MemberController {
 		model.addAttribute("location", location);
 		return "login";
 	}
-
+	
 	// 로그인 콜백
 	@GetMapping("/login/oauth2/code/kakao")
 	public String kakaoLogin(@RequestParam("code") String code, HttpSession session) throws JsonProcessingException {
@@ -67,17 +67,18 @@ public class MemberController {
 
 		// 3. 사용자 정보 받기
 		// return ResponseEntity.ok(memberService.getKakaoUserInfo(accessToken));
-		HashMap<String, Object> userInfo = kakaoService.getKakaoUserInfo(accessToken);
+		HashMap<String, Object> kakaoUserInfo = kakaoService.getKakaoUserInfo(accessToken);
 
 		// 4. 사용자 정보에서 kakaoId, nickname, profile_image 추출
-		String kakaoId = userInfo.get("id").toString();
+		String kakaoId = kakaoUserInfo.get("id").toString();
 		// 사용자 정보에서 properties 객체 추출
-	    Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
+	    Map<String, Object> properties = (Map<String, Object>) kakaoUserInfo.get("properties");
 	    
 	    // properties 객체에서 nickname과 profile_image 추출
 	    String nickname = properties.get("nickname").toString();
 	    String profileImage = properties.get("profile_image").toString();
-
+	    log.info("==================================" + nickname);
+	    log.info("==================================" + profileImage);
 		
 		 // 5. 사용자 정보를 세션에 저장
 	    session.setAttribute("kakaoId", kakaoId);
@@ -102,6 +103,7 @@ public class MemberController {
 	    return "redirect:/home";
 		}
 
+
 	@GetMapping("/home")
 	public String home(Model model, HttpSession session) {
 		// 세션에서 사용자 이름 가져오기
@@ -109,6 +111,7 @@ public class MemberController {
 		model.addAttribute("name", nickname);
 		return "home";
 	}
+	
 
 	/**
 	 * 카카오 로그아웃
@@ -129,18 +132,19 @@ public class MemberController {
         }
         session.invalidate(); // 세션 무효화
         log.info("logout 경로 도착");
-        // 세션 데이터 출력
-        /*session.getAttributeNames().asIterator()
-                .forEachRemaining(name -> log.info("session name = {}, value = {}", name, session.getAttribute(name)));
-         */
+
         return "redirect:/home";
     }
+    
+
+	
 
 	/**
 	 * 마이페이지
 	 * @return
 	 */
 	@GetMapping("/member/{id}")
+
 	public String getUserInfo(@PathVariable("id") Long id, Model model) {
         Member member = memberService.getMemberInfo(id);
 
@@ -158,15 +162,16 @@ public class MemberController {
         
         
         return "mypage";
-    }
+    
+	}
+	
+
 	
 	
 	/**
      * 사용자 정보 수정 페이지
      * @return
      */
-	
-
 	
     @GetMapping("/member/{id}/edit")
     public String editUserInfo(@PathVariable("id") Long id, Model model) {

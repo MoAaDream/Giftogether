@@ -75,10 +75,10 @@
         <div class="header">
             <h2>마이페이지</h2>
         </div>
-        <div class="profile-pic">
-            <img src="default_profile.png" alt="프로필 이미지" th:src="${member.profile}">
-        </div>
-        <div class="header" th:text="${member.nickname} + ' 님'">사용자 이름</div>
+
+         <div class="profile-pic"> </div>
+        <div class="header" th:text="${member != null ? member.nickname : 'Guest'} + ' 님'">사용자 이름</div>
+
         <div class="buttons">
             <button type="button" th:onclick="'location.href=\'/member/' + ${id} + '/edit\''">정보수정</button>
             <button class="logout" onclick="location.href='/logout'">로그아웃</button>
