@@ -58,7 +58,7 @@ public class WishListServiceTest {
                 .name("위시리스트 제목")
                 .description("위시리스트 설명")
                 .deadLine(LocalDateTime.now().plus(4, ChronoUnit.DAYS))
-                .imgLink(null)
+                .uploadedImage(null)
                 .address("위시리스트 주소")
                 .phoneNumber("01011112222")
                 .build();
