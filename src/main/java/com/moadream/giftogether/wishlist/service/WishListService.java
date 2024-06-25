@@ -1,6 +1,7 @@
 package com.moadream.giftogether.wishlist.service;
 
 
+import com.moadream.giftogether.Status;
 import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.wishlist.model.WishList;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -66,8 +70,19 @@ public class WishListService implements WishListServiceI {
         return wishListRepository.findAllByMember_Id(member.getId(), pageable);
     }
 
+        @Override
+        public void updateWishListStatus() {
+            List<WishList> activeWishlist = wishListRepository.findAllByStatus(Status.A);
+            LocalDateTime now = LocalDateTime.now();
+            for (WishList wishList : activeWishlist) {
+                if(wishList.getDeadline().isBefore(now)){
+                    wishList.setStatus(Status.I);
+                }
+            }
+        }
+
     private void checkMyWishList(WishList wishList, Member member) {
-        if(wishList.getMember().getId() != member.getId())
+        if(!wishList.getMember().getId().equals(member.getId()))
             throw new RuntimeException();
     }
 
