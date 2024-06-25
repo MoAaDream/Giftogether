@@ -48,7 +48,7 @@
             <h2>마이페이지</h2>
         </div>
          <div class="profile-pic"> </div>
-        <div class="header" th:text="${member.nickname} + ' 님'">사용자 이름</div>
+        <div class="header" th:text="${member != null ? member.nickname : 'Guest'} + ' 님'">사용자 이름</div>
         <div class="buttons">
             <button onclick="location.href='/edit'">정보수정</button>
             <button onclick="location.href='/logout'">로그아웃</button>
