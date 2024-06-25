@@ -1,24 +1,19 @@
 package com.moadream.giftogether.wishlist.controller;
 
 
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishListModifyForm;
 import com.moadream.giftogether.wishlist.service.WishListServiceI;
-
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 
 @Controller
@@ -30,14 +25,25 @@ public class WishListController {
     private final WishListServiceI wishListService;
 
 
+    @GetMapping("/")
+    public String getMapping(Model model){
+        model.addAttribute("wishListForm", new WishListForm());
+        return "upload";
+    }
+
     @PostMapping("/")
-    public String wishListCreate(@Valid WishListForm wishListForm, HttpSession session) {
+    public String wishListCreate(@Valid @ModelAttribute WishListForm wishListForm, HttpSession session, BindingResult bindingResult, Model model) {
+        if(bindingResult.hasErrors()) {
+            model.addAttribute("wishListForm", wishListForm);
+            return "upload";
+        }
+
         String socialId = checkSession(session);
       
         wishListService.createWishList(wishListForm, socialId);
         log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
-        
-        return "redirect:/wishlists";
+
+        return "redirect:/wishlists/my/0";
     }
 
     @PostMapping("/{wishlistlink}")

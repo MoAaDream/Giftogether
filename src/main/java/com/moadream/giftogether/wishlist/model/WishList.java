@@ -60,10 +60,10 @@ public class WishList extends BaseTimeEntity {
 	private Status status;
 
 	@OneToMany(mappedBy = "wishlist")
-	private List<Message> MessagesList = new ArrayList<>();
+	private List<Message> messageList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "wishlist")
-	private List<Product> ProductsList = new ArrayList<>();
+	private List<Product> productList = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "member_id")
@@ -76,10 +76,10 @@ public class WishList extends BaseTimeEntity {
 		wishList.name = wishListForm.getName();
 		wishList.description = wishListForm.getDescription();
 
-		if(wishListForm.getImgLink() == null || wishListForm.getImgLink().equals(""))
-			wishListForm.setImgLink("https://moadreambk.s3.ap-northeast-2.amazonaws.com/wishlists/wishlist.png");
+		if(wishListForm.getUploadedImage() == null || wishListForm.getUploadedImage().equals(""))
+			wishListForm.setUploadedImage("https://moadreambk.s3.ap-northeast-2.amazonaws.com/wishlists/wishlist.png");
 
-		wishList.listImg = wishListForm.getImgLink();
+		wishList.listImg = wishListForm.getUploadedImage();
 
 		wishList.address = wishListForm.getAddress();
 
