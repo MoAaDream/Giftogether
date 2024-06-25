@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/css/messageForm.css">
+<script th:inline="javascript">
+    function uploadFile(event) {
+      var file = event.target.files[0];
+      var formData = new FormData();
+      formData.append('file', file);
+
+      fetch("/files/image/products", {
+        method: 'POST',
+        body: formData
+      })
+              .then(response => {
+                if (response.ok) {
+                  return response.text();
+                } else {
+                  throw new Error('파일 업로드 실패');
+                }
+              })
+              .then(imageUri => {
+                document.getElementById('uploadedImage').src = imageUri;
+                //document.getElementById('uploadedImage').value = imageUrl; // URL을 hidden input에 저장
+                document.getElementById('uploadedImage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+              })
+              .catch(error => {
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+              });
+    }
+  </script>
+</head>
+<body>
+<h2>위시리스트에 물건 추가하기</h2>
+	<form th:action="@{/${wishlistLink}/create}"th:object="${productForm}" method="post">
+		<div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+			<div th:each="err : ${#fields.allErrors()}" th:text="${err}" /> 
+		</div>
+        <label for="name">제품 명:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="description">제품 설명:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50"></textarea><br><br>
+
+        <label for="externalLink">제품 구매 링크:</label>
+        <input type="url" id="externalLink" name="externalLink" rows="4" cols="50"></input><br><br> 
+        
+        <label for="productImage" >제품 사진:</label>
+		<!--<input type="file" id="productImg" name="productImg" accept="image/png, image/jpeg, image/jpg"><br><br> 
+		<input type="text" id="productImg" name="productImg" required><br> <br>-->
+		
+			<input type="file" id="file" name="file" onchange="uploadFile(event)"placeholder="사진등록하기">
+			<img id="uploadedImage" alt="Uploaded Image" style="display: none;">
+			<input type="hidden" id="uploadedImageUri" name="uploadedImage">	
+			
+		<label for="optionName">제품 옵션:</label>
+        <input type="text" id="optionName" name="optionName"><br><br>
+
+        <label for="goalAmount">제품 금액 :</label>
+        <input type="number" id="goalAmount" name="goalAmount" step="1000"><br><br>
+
+        <input type="submit" value="추가하기">
+    </form>
+    
+</body>
+</html>

@@ -1,10 +1,10 @@
 package com.moadream.giftogether.member;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.moadream.giftogether.member.model.Member;
-
-import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long>{
 	
