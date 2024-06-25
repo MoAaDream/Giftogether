@@ -5,6 +5,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +18,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.moadream.giftogether.Status;
+import com.moadream.giftogether.funding.model.Funding;
+import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.service.MemberService;
+import com.moadream.giftogether.wishlist.model.WishList;
+import com.moadream.giftogether.wishlist.repository.WishListRepository;
 
 @SpringBootTest
 public class MemberServiceTest {
@@ -27,6 +33,12 @@ public class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+    
+    @Mock
+    private FundingRepository fundingRepository;
+    
+    @Mock
+    private WishListRepository wishListRepository;
 
     @BeforeEach
     public void setUp() {
@@ -34,7 +46,7 @@ public class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원 정보 가져오기 - 성공")
+    @DisplayName("회원 정보 가져오기 ")
     public void getMemberInfoSuccess() {
         // given
         Long memberId = 1L;
@@ -51,35 +63,56 @@ public class MemberServiceTest {
         assertThat(result.getId()).isEqualTo(memberId);
     }
 
-    @Test
-    @DisplayName("회원 Hard Delete - 성공")
-    public void deleteMemberSuccess() {
-        // given
-        Long memberId = 1L;
-
-        // when
-        memberService.deleteMember(memberId);
-
-        // then
-        verify(memberRepository, times(1)).deleteById(memberId);
-    }
 
     @Test
-    @DisplayName("회원 Soft Delete - 성공")
+    @DisplayName("회원 삭제")
     public void softDeleteMemberSuccess() {
-        // given
+    	 // Given
         Long memberId = 1L;
         Member member = new Member();
         member.setId(memberId);
-        member.setStatus(Status.A);
+        member.setStatus(Status.A); // Assuming A is Active
 
+        Funding funding1 = new Funding();
+        funding1.setId(1L);
+        funding1.setStatus(Status.A);
+
+        Funding funding2 = new Funding();
+        funding2.setId(2L);
+        funding2.setStatus(Status.A);
+        
+        WishList wishList1 = new WishList();
+        wishList1.setId(1L);
+        wishList1.setStatus(Status.A);
+
+        WishList wishList2 = new WishList();
+        wishList2.setId(2L);
+        wishList2.setStatus(Status.A);
+
+        List<WishList> wishLists = new ArrayList<>();
+        wishLists.add(wishList1);
+        wishLists.add(wishList2);
+        
+        member.setWishLists(wishLists);
+        
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(fundingRepository.findAllByMember_Id(memberId)).thenReturn(List.of(funding1, funding2));
+        when(wishListRepository.findAllByMember_Id(memberId)).thenReturn(wishLists);
+        
+        // When
+        memberService.deleteMember(memberId);
 
-        // when
-        memberService.softDeleteMember(memberId);
+        // Then
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(fundingRepository, times(1)).findAllByMember_Id(memberId);
 
-        // then
+        // Verify soft delete for member and funding
         assertThat(member.getStatus()).isEqualTo(Status.D);
-        verify(memberRepository, times(1)).save(member);
+        assertThat(funding1.getStatus()).isEqualTo(Status.D);
+        assertThat(funding2.getStatus()).isEqualTo(Status.D);
+
+        // Verify hard delete for wishlists
+        verify(wishListRepository, times(1)).deleteAll(wishLists);
     }
+    
 }

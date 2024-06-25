@@ -177,26 +177,17 @@ public class MemberController {
 	 * 회원 탈퇴
 	 * @return 
 	 */
-	/*
-	@PostMapping("/member/{id}/d")
+
+	@DeleteMapping("/member/{id}/d")
 	public ResponseEntity<String> softDeleteMember(@PathVariable("id") Long id) {
         try {
  			
-            memberService.softDeleteMember(id);
+            memberService.deleteMember(id);
             return ResponseEntity.ok("탈퇴하였습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("탈퇴 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
-	*/
-	@DeleteMapping("/member/{id}/d")
-    public ResponseEntity<String> deleteMember(@PathVariable("id") Long id) {
-        try {
-            memberService.deleteMember(id);
-            return ResponseEntity.ok("회원 정보가 정상적으로 삭제되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("회원 삭제 중 오류가 발생했습니다: " + e.getMessage());
-        }
-    }
+	
 	
 }

@@ -1,5 +1,6 @@
 package com.moadream.giftogether.funding.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
             " left join fetch o.payment p" +
             " where o.fundingUid = :fundingUid")
     Optional<Funding> findFundingAndPayment(@Param("fundingUid") String fundingUid);
+    
+    
+    List<Funding> findAllByMember_Id(Long memberId);
 }

@@ -69,13 +69,13 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" )
     private List<Funding> fundingLists = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" )
     private List<WishList> wishLists = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" ) 
     private List<Bank> bankLists = new ArrayList<>();
 
     
