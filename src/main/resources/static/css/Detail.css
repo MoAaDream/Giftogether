@@ -1,0 +1,81 @@
+.product-detail {
+    display: flex;
+    align-items: center; /* 수직 정렬 */
+    max-width: 800px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    /*transition: transform 0.3s ease-in-out; /* 호버 효과용 트랜지션
+}
+
+.product-detail:hover {
+    transform: translateY(-5px); /* 호버 시 약간 위로 이동 */
+}
+
+.product-image {
+    /*flex: 0 0 auto; /* 이미지 크기 유지 */
+    max-width: 450px;
+    wid: auto;
+    height:auto;
+    margin-right: 20px; /* 이미지 오른쪽 간격 */
+}
+
+.product-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* 이미지에 둥근 모서리 적용 */
+}
+
+.product-info {
+    flex: 1; /* 남은 공간을 차지하도록 설정 */
+}
+
+.product-info h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333; /* 제목색 */
+}
+
+.goal-amount-box {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 외부 그림자 */
+}
+
+.percent{
+	font-size: 24px;
+	text-align:center;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 25px; /* 더 낮은 높이로 조정 */
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: #FFAEA5; /* 프로그래스 바 색상 */
+    width: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+.rest-amount {
+    margin-top: 10px;
+    font-size: 15px;
+    color: #666666;
+    text-align:right;
+}
+
+/* 호버 효과 */
+.goal-amount-box:hover .progress {
+    background-color: #FF5050; /* 호버 시 색상 변화 */
+}
