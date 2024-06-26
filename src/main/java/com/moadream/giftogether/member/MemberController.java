@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.global.s3.service.S3FileUploadService;
@@ -208,20 +207,8 @@ public class MemberController {
     @PostMapping("/member/{id}")
     public String updateUserInfo(
             @PathVariable("id") Long id,
-            @Valid @ModelAttribute("member")  UpdateMemberReq updateMemberReq,
-            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws ParseException {
-    	
-    	 if (profileImage != null && !profileImage.isEmpty()) {
-             try {
-                 // 이미지 업로드 처리
-                 String imageUrl =  s3FileUploadFileService.uploadFile(profileImage, "profiles" );
-				  updateMemberReq.setProfile(imageUrl); // 프로필 이미지 URL 업데이트
-              
-             } catch (Exception e) {
-                 e.printStackTrace();
-             }
-         }
-    	
+            @Valid @ModelAttribute("member")  UpdateMemberReq updateMemberReq) throws ParseException {
+  
         memberService.updateMember(id, updateMemberReq);
         return "redirect:/member/" + id;
     }
@@ -232,7 +219,6 @@ public class MemberController {
 	 * 회원 탈퇴
 	 * @return 
 	 */
-
 	@DeleteMapping("/member/{id}/d")
 	public ResponseEntity<String> softDeleteMember(@PathVariable("id") Long id) {
         try {
