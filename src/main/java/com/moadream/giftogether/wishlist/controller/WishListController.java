@@ -2,7 +2,6 @@ package com.moadream.giftogether.wishlist.controller;
 
 
 import com.moadream.giftogether.wishlist.model.WishListForm;
-import com.moadream.giftogether.wishlist.model.WishListModifyForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
 import com.moadream.giftogether.wishlist.service.WishListServiceI;
 import jakarta.servlet.http.HttpSession;
@@ -51,27 +50,28 @@ public class WishListController {
     }
 
     @GetMapping("/{wishlistlink}")
-    public String getModifyForm(@PathVariable("wishlistlink") String wishlistLink, @Valid @ModelAttribute WishListModifyForm wishListModifyForm,
+    public String getModifyForm(@PathVariable("wishlistlink") String wishlistLink, @Valid @ModelAttribute WishListForm wishListForm,
                                 BindingResult bindingResult, HttpSession session, Model model){
         String socialId = checkSession(session);
 
-        if(wishListService.checkMyPage(socialId, wishlistLink)) {
+        if(!wishListService.checkMyPage(socialId, wishlistLink)) {
             model.addAttribute("message", "본인이 아닙니다.");
             model.addAttribute("link",  "/products/" + wishlistLink);
             return "wishlists/wishlistalert";
         }
 
+        WishListForm wishlist = wishListService.getWishlist(wishlistLink);
 
-        model.addAttribute("wishListForm", new WishListForm());
+        model.addAttribute("wishListForm", wishlist);
         return "wishlists/wishlist_modifyform";
     }
 
     @PostMapping("/{wishlistlink}")
-    public String wishListModify(@PathVariable("wishlistlink") String wishlistLink, @Valid @ModelAttribute WishListModifyForm wishListModifyForm,
+    public String wishListModify(@PathVariable("wishlistlink") String wishlistLink, @Valid @ModelAttribute WishListForm wishListForm,
                                  BindingResult bindingResult, HttpSession session, Model model) {
         String socialId = checkSession(session);
 
-        wishListService.modifyWishList(wishListModifyForm, socialId, wishlistLink);
+        wishListService.modifyWishList(wishListForm, socialId, wishlistLink);
         log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 수정");
 
         model.addAttribute("message", "제출이 완료되었습니다!");
@@ -93,9 +93,6 @@ public class WishListController {
 
     @GetMapping("/my/{page}")
     public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model){
-        //=================
-        session.setAttribute("kakaoId", 303303303);
-        //=================
 
         String socialId = checkSession(session);
 

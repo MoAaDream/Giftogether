@@ -6,7 +6,6 @@ import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
-import com.moadream.giftogether.wishlist.model.WishListModifyForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +38,13 @@ public class WishListService implements WishListServiceI {
 
     @Override
     @Transactional
-    public void modifyWishList(WishListModifyForm wishListModifyForm, String socialId, String wishlistLink) {
+    public void modifyWishList(WishListForm wishListForm, String socialId, String wishlistLink) {
         Member member = findMemberBySocialId(socialId);
         WishList wishList = findWishListByLink(wishlistLink);
 
         checkMyWishList(wishList, member);
 
-        wishList.modifyWishList(wishListModifyForm);
+        wishList.modifyWishList(wishListForm);
     }
 
     @Override
@@ -82,6 +81,13 @@ public class WishListService implements WishListServiceI {
                 }
             }
         }
+
+    @Override
+    public WishListForm getWishlist(String wishlistLink) {
+        WishList wishlist = findWishListByLink(wishlistLink);
+
+        return new WishListForm(wishlist);
+    }
 
     @Override
     public boolean checkMyPage(String socialId, String wishlistLink) {

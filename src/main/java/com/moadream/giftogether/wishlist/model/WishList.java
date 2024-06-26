@@ -83,12 +83,12 @@ public class WishList extends BaseTimeEntity {
 		return wishList;
 	}
 
-	public void modifyWishList(WishListModifyForm wishListModifyForm){
-		this.name = wishListModifyForm.getName();
-		this.description = wishListModifyForm.getDescription();
-		this.listImg = wishListModifyForm.getUploadedImage();
-		this.address = wishListModifyForm.getAddress();
-		this.phoneNumber = wishListModifyForm.getPhoneNumber();
+	public void modifyWishList(WishListForm wishListForm){
+		this.name = wishListForm.getName();
+		this.description = wishListForm.getDescription();
+		this.listImg = wishListForm.getUploadedImage();
+		this.address = wishListForm.getAddress();
+		this.phoneNumber = wishListForm.getPhoneNumber();
 	}
 
 }
