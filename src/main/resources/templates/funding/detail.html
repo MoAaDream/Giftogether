@@ -4,68 +4,96 @@
 <meta charset="UTF-8">
 <title>모금 상세보기</title>
 <style>
-    .detail-container {
-        margin-top: 30px;
-        border: 1px solid #ddd;
-        padding: 20px;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-    }
-    .detail-item {
-        margin-bottom: 10px;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-    }
-    .detail-label {
-        font-weight: bold;
-        color: #333;
-    }
-    .detail-value {
-        margin-left: 10px;
-        color: #666;
-    }
+.detail-container {
+	margin-top: 30px;
+	border: 1px solid #ddd;
+	padding: 20px;
+	border-radius: 8px;
+	background-color: #f9f9f9;
+}
+
+.detail-item {
+	margin-bottom: 10px;
+	padding: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+	font-weight: bold;
+	color: #333;
+}
+
+.detail-value {
+	margin-left: 10px;
+	color: #666;
+}
 </style>
 </head>
-<body>  
-    <h2 th:text="'(' + ${fundingDetail.fundingUid} + ')의 상세보기'">모금 상세보기</h2>
-    <div class="detail-container">
-        <div class="detail-item">
-            <span class="detail-label">Product Name:</span>
-            <span class="detail-value" th:text="${fundingDetail.productName}">Product Name</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Amount:</span>
-            <span class="detail-value" th:text="${fundingDetail.amount}">Amount</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Status:</span>
-            <span class="detail-value" th:text="${fundingDetail.status}">Status</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Message:</span>
-            <span class="detail-value" th:text="${fundingDetail.messageContent}">Message</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Giver:</span>
-            <span class="detail-value" th:text="${fundingDetail.giverNickname}">Giver</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Receiver:</span>
-            <span class="detail-value" th:text="${fundingDetail.receiverNickname}">Receiver</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Funding UID:</span>
-            <span class="detail-value" th:text="${fundingDetail.fundingUid}">Funding UID</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Created At:</span>
-            <span class="detail-value" th:text="${fundingDetail.createdAt != null ? #temporals.format(fundingDetail.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'}">createdAt</span>
-        </div>
-        <div class="detail-item">
-            <span class="detail-label">Deadline:</span>
-            <span class="detail-value" th:text="${fundingDetail.deadline != null ? #temporals.format(fundingDetail.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">Deadline</span>
-                        
-        </div>
-    </div>
+<body> 
+	<div class="detail-container" th:with="fundingUid=${fundingDetail.fundingUid}">
+		<h2 th:text="'(' + ${fundingUid} + ')의 상세보기'">모금
+		상세보기</h2>
+		<div class="detail-item">
+			<span class="detail-label">Product Name:</span> <span
+				class="detail-value" th:text="${fundingDetail.productName}">Product
+				Name</span>
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Amount:</span> 
+			<span class="detail-value"
+				th:text="${fundingDetail.amount}">Amount</span>
+			<br><span class="detail-value"> 주의 : 결제 취소시 메시지도 삭제됩니다. </span> 
+			<!-- 결제 취소 버튼 추가 -->
+			<form
+				th:action="@{/fundings/cancel-payment/{id} (id=${fundingUid})}"
+				method="post"> 
+				<!-- Spring Security  CSRF 토큰 -->
+				<input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf.token}"/>
+				<button type="submit" style="margin-left: 10px;">결제 취소</button>
+			</form>
+
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Status:</span> <span class="detail-value"
+				th:text="${fundingDetail.status}">Status</span>
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Message:</span> <span class="detail-value"
+				th:text="${fundingDetail.messageContent}">Message</span>
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Giver:</span> <span class="detail-value"
+				th:text="${fundingDetail.giverNickname}">Giver</span>
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Receiver:</span> <span
+				class="detail-value" th:text="${fundingDetail.receiverNickname}">Receiver</span>
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Funding UID:</span> <span
+				class="detail-value" th:text="${fundingUid}">Funding
+				UID</span>
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Created At:</span> <span
+				class="detail-value"
+				th:text="${fundingDetail.createdAt != null ? #temporals.format(fundingDetail.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'}">createdAt</span>
+		</div>
+		<div class="detail-item">
+			<span class="detail-label">Deadline:</span> <span
+				class="detail-value"
+				th:text="${fundingDetail.deadline != null ? #temporals.format(fundingDetail.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">Deadline</span>
+
+		</div>
+	</div>
+<div th:if="${message}" th:text="${message}" id="hiddenMessage" style="display:none;"></div>
+<script>
+    window.onload = function() {
+        var message = document.getElementById('hiddenMessage').innerText;
+        if (message) {
+            alert(message);
+        }
+    };
+</script>
 </body>
 </html>
