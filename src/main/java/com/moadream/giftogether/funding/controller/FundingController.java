@@ -1,19 +1,27 @@
 package com.moadream.giftogether.funding.controller;
 
-import com.moadream.giftogether.funding.model.Funding;
-import com.moadream.giftogether.funding.model.FundingDetailsDTO;
-import com.moadream.giftogether.funding.service.FundingService;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+ 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.moadream.giftogether.funding.model.Funding;
+import com.moadream.giftogether.funding.model.FundingDetailsDTO;
+import com.moadream.giftogether.funding.service.FundingService;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
@@ -29,10 +37,12 @@ public class FundingController {
 			@RequestParam(name = "messageT", required = false) String messageT,
 			@RequestParam(name = "fundingUid", required = false) String id, HttpSession session, Model model) {
 
-		int[] amountOptions = { 5000, 10000, 20000, 30000, 40000, 50000 };
+		
+		int[] amountOptions = fundingService.getFundingAmounts(productLink);
 		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("messageT", messageT);
 		model.addAttribute("fundingUid", id);
+
 
 
 		// 제품의 펀딩 리스트
