@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.moadream.giftogether.product.Service.ProductService;
 import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.product.model.ProductForm;
-import com.moadream.giftogether.wishlist.service.WishListService;
+import com.moadream.giftogether.wishlist.repository.WishListRepository;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,8 @@ public class ProductController {
 
 	
 	private final ProductService productService;
-	private final WishListService wishlistService;
+	//private final WishListService wishlistService;
+	private final WishListRepository wishListRepository;
 	
 	@GetMapping("/{wishlist_link}/products")
     public String list(Model model,  @PathVariable("wishlist_link") String wishlistLink) {
@@ -47,8 +48,9 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{wishlist_link}/create")
-	public String createProduct(Model model) {
+	public String createProduct(Model model, @PathVariable("wishlist_link") String wishlistLink) {
 		model.addAttribute("productForm",new ProductForm());
+		model.addAttribute("wishlistLink",wishlistLink);
 		return "product_form";
 	}
 
@@ -73,7 +75,7 @@ public class ProductController {
 		
 		String productLink = UUID.randomUUID().toString().replace("-", "");
 		model.addAttribute("wishlistLink",wishlistLink);
-		
+
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("productForm", productForm);
 			return "product_form";
@@ -81,13 +83,15 @@ public class ProductController {
 		log.info("Creating product link: " + productForm.getUploadedImage());
 		this.productService.create(productForm.getName(), productForm.getDescription(),productForm.getExternalLink(), 
 				productForm.getUploadedImage(), productForm.getOptionDetail(), productForm.getGoalAmount(), productLink, wishlistLink);
-		return "redirect:/{wishlist_link}/products"; // 질문 저장후 질문목록으로 이동
+		
+	    return "redirect:/{wishlist_link}/products"; // 질문 저장후 질문목록으로 이동
 	}
+	
 
+	
 	
 		        
     
 	
 }  
-
 

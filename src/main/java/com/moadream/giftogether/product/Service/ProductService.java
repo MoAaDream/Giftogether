@@ -56,9 +56,16 @@ public class ProductService {
 	
 
 	
-	public void create(String name,String description,String externalLink, String productImg , String optionDetail, int goalAmount, String productLink, String wishlistLink) {
+	public void create(String name,String description,String externalLink, String productImg , String optionDetail, 
+			int goalAmount, String productLink, String wishlistLink) {
 		Product p = new Product();
-		WishList wishlist = wishListRepository.findByLink(wishlistLink).get();
+		WishList wishlist = wishListRepository.findFirstByLink(wishlistLink).get();
+		/*if (optionalWishList.isPresent()) {
+		    WishList wishlist = optionalWishList.get();
+		    p.setWishlist(wishlist);
+		} else {
+			throw new DataNotFoundException("wishlist sssss not found");
+	    }*/
 		p.setName(name);
 		p.setDescription(description);
 		p.setExternalLink(externalLink);
@@ -69,7 +76,7 @@ public class ProductService {
 		p.setGoalAmount(goalAmount);
 		p.setProductLink(productLink);
 		p.setWishlist(wishlist);
-        this.productRepository.save(p);
+        productRepository.save(p);
     }
 	
 
