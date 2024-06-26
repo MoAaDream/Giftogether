@@ -1,5 +1,7 @@
 package com.moadream.giftogether.funding.model;
 
+import com.moadream.giftogether.global.audit.BaseTimeEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "T_Payment")
-public class Payment {
+public class Payment extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +36,7 @@ public class Payment {
         this.status = status;
     }
 
+    // setter 
     public void changePaymentStatus(PaymentStatus status, String paymentUid) {
         this.status = status;
         this.paymentUid = paymentUid;
