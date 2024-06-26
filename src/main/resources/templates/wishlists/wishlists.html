@@ -1,27 +1,29 @@
 <body>
 <div class="container">
     <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Link</th>
-            <th>listImg</th>
-            <th>deadline</th>
-        </tr>
-        </thead>
+        <h1>나의 위시리스트</h1>
         <tbody>
-        <tr th:each="wishlist : ${paging.content}" class="d-flex justify-content-center">
-            <td class="col-6">
+        <tr>
+            <td>
                 <div class="wishlist-box">
-                    <p th:text="${wishlist.name}"></p>
-                    <p th:text="${wishlist.link}"></p>
+                    <a th:href="@{/wishlists/}">
+                        추가하기
+                    </a>
                 </div>
             </td>
-            <td class="col-6">
+        </tr>
+        <tr th:each="wishlist : ${paging.content}">
+            <td>
                 <div class="wishlist-box">
-                    <p th:text="${wishlist.listImg}"></p>
-                    <p th:text="${wishlist.deadline}"></p>
+                    <a th:href="@{'/products/' + ${wishlist.link}}" class="wishlist-link">
+                        <img th:src="${wishlist.listImg}" class="wishlist-img" />
+                        <div class="wishlist-info">
+                            <h4 th:text="${wishlist.name}"></h4>
+                            <p th:text="${wishlist.dDay}"></p>
+                        </div>
+                    </a>
                 </div>
+
             </td>
         </tr>
         </tbody>
@@ -50,7 +52,75 @@
 </div>
 </body>
 
+
 <style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 90vh; /* 화면 전체 높이를 사용하도록 설정 */
+    }
+
+    .table {
+        border-collapse: collapse; /* 셀 간격 없애기 */
+    }
+
+    .table tbody {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .table tbody tr {
+        display: flex;
+        flex: 1 1 45%; /* 각 아이템이 45%의 너비를 차지하도록 설정 */
+        justify-content: center;
+        align-items: center;
+        margin: 10px; /* 아이템 간의 간격을 추가 */
+    }
+
+    .table tbody td {
+        flex: 1;
+        text-align: center;
+        padding: 0; /* td 간격 없애기 */
+        box-sizing: border-box; /* 패딩과 보더를 포함한 박스 크기를 설정 */
+    }
+
+    .wishlist-box {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%; /* td와 너비를 맞추기 위해 100%로 설정 */
+        height: 100%; /* td와 높이를 맞추기 위해 100%로 설정 */
+        box-sizing: border-box; /* 패딩과 보더를 포함한 박스 크기를 설정 */
+    }
+
+    .wishlist-link {
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .wishlist-img {
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .wishlist-info {
+        text-align: center;
+    }
+
+    .wishlist-info h4 {
+        margin-bottom: 5px;
+    }
+
     .pagination {
         display: flex;
         justify-content: center;
@@ -81,11 +151,6 @@
         color: #fff;
         border-color: #007bff;
     }
-
-    .wishlist-box {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        margin: 10px;
-    }
 </style>
+
+
