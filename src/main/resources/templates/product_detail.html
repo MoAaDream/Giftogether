@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/css/Detail.css">
+<link rel="stylesheet" href="/css/messageForm.css">
+</head>
+<body>
+<div class="product-detail">
+    <div class="product-image">
+        <img th:src="${product.productImg}" alt="Product Image">
+    </div>
+    <div class="product-info">
+        <h1 th:text="${product.name}"></h1>
+        <div class="description" th:text="${product.description}"></div>
+    </div>
+</div>
+
+<div class="goal-amount-box">
+	<p class="percent" th:text="${(product.currentAmount * 100.0 / product.goalAmount).toString().substring(0, (product.currentAmount * 100.0 / product.goalAmount).toString().indexOf('.')) + '% 달성 했어요!'}"></p>
+	<div class="progress-bar">
+    	<div class="progress" th:style="'width: ' + ${product.currentAmount}/${product.goalAmount}*100 + '%;'"></div>
+	</div>
+	<div class="rest-amount" th:text="${product.goalAmount}-${product.currentAmount} + '원 남았어요!'"></div>
+</div>
+
+<!-- <form th:action="@{|/message/create/${product.wishlist.id}/${product.id}|}" method="post" class="custom-form">
+    <div class="form-group">
+        <label for="amount">금액</label>
+        <textarea name="amount" id="amount" rows="1" cols="50" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="content">내용</label>
+        <textarea name="content" id="content" rows="5" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">선물 펀딩 하기</button>
+</form> -->
+
+		
+</body>
+</html>

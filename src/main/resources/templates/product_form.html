@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/css/messageForm.css">
+<script th:inline="javascript">
+    function uploadFile(event) {
+        var file = event.target.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('imageUri', document.getElementById('uploadedImage').src);
+
+        fetch("/files/image/products", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('파일 업로드 실패');
+                }
+            })
+            .then(imageUri => {
+                document.getElementById('uploadedImage').style.display = 'block';
+                document.getElementById('uploadedImage').src = imageUri;
+                document.getElementById('uploadedImageUri').value = imageUri;
+            })
+            .catch(error => {
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = error.message;
+                    errorMessageElement.style.display = 'block';
+                } else {
+                    console.error('errorMessage 요소를 찾을 수 없습니다.');
+                    // 다른 오류 처리 로직 추가
+                }
+            });
+    }
+  </script>
+</head>
+<body>
+<h2>위시리스트에 물건 추가하기</h2>
+	<form th:action="@{|/${wishlistLink}/create|}"th:object="${productForm}" method="post">
+		<div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+			<div th:each="err : ${#fields.allErrors()}" th:text="${err}" /> 
+		</div>
+        <label for="name">제품 명:</label>
+        <input type="text" id="name" th:field="*{name}">
+
+        <label for="description">제품 설명:</label><br>
+        <input type="text" id="description" th:field="*{description}">
+
+        <label for="externalLink">제품 구매 링크:</label>
+        <input type="text" id="externalLink" th:field="*{externalLink}">
+        
+        <label >제품 사진:</label>
+        <input type="file" id="file" name="file" onchange="uploadFile(event)"placeholder="사진등록하기">
+        <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
+        <input type="hidden" id="uploadedImageUri" name="uploadedImage">
+			
+		<label for="optionDetail">제품 옵션:</label>
+        <input type="text" id="optionDetail" th:field="*{optionDetail}">
+
+        <label for="goalAmount">제품 금액 :</label>
+        <input type="text" id="goalAmount" th:field="*{goalAmount}">
+
+        <input type="submit" value="추가하기">
+    </form>
+    
+</body>
+</html>

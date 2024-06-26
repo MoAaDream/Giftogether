@@ -15,11 +15,11 @@ import com.moadream.giftogether.funding.model.Payment;
 import com.moadream.giftogether.funding.model.PaymentStatus;
 import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.funding.repository.PaymentRepository;
-import com.moadream.giftogether.funding.repository.ProductRepository;
 import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.message.model.Message;
 import com.moadream.giftogether.message.repository.MessageRepository;
+import com.moadream.giftogether.product.Repository.ProductRepository;
 import com.moadream.giftogether.product.model.Product;
 
 import lombok.RequiredArgsConstructor;
