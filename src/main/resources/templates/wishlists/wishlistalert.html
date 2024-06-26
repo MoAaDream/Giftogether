@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Alert</title>
+</head>
+<body>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        var message = '[[${message}]]'
+        var link = '[[${link}]]'
+        alert(message);
+        window.location.href = link;
+    });
+</script>
+</body>
+</html>
