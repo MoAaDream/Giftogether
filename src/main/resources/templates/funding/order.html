@@ -4,18 +4,57 @@
 <meta charset="UTF-8">
 <title>모금</title>
 </head>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 20px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+a {
+	color: blue;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+</style>
 <body>
+<h1>ttest(productlink)에서 온 모금 생성하는 페이지</h1>
+		
 	<form method="post">
-		<h1>모금 페이지</h1>
 		<div>
-			<input type="submit" value="모금하기">
+			<input type="submit" value="모금액 결정">
 		</div>
-		<label for="amount">결제 금액 선택:</label> 
-		<select id="amount" name="amount">
+		<label for="amount">결제 금액 선택:</label> <select id="amount"
+			name="amount">
 			<option th:each="amount : ${amountOptions}" th:value="${amount}"
 				th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + '원'"></option>
-		</select> 
-<!-- 		<label for="amount">결제 금액:</label> 
+		</select>
+
+		<div style="margin-top: 20px">
+			<label for="message">메시지:</label>
+			<textarea id="message" name="message" placeholder="여기에 메시지 입력"
+				maxlength="100" rows="5" style="width: 80%;"></textarea>
+		</div>
+
+
+		<!-- 		<label for="amount">결제 금액:</label> 
 		<select id="amount" name="amount">
 			<option value="5000">5,000원</option>
 			<option value="10000">10,000원</option>
@@ -29,7 +68,105 @@
 				th:href="@{/fundings/payment/{fundingUid} (fundingUid=${fundingUid})}">결제
 				페이지로 이동</a>
 		</div>
-		<p th:text="${message}"></p>
 	</form>
+	<!-- HTML 태그를 이스케이프 처리하지 않고 출력 -->
+	<p th:utext="${messageT}"></p>
+	<hr>
+	<br>
+	<br>
+	<h2>ttest(productlink)의 결제 리스트</h2>
+	<div style="margin-top: 30px">
+		<div>
+			<table>
+				<thead>
+					<tr>
+						<th>Product Name</th>
+						<th>Amount</th>
+						<th>Status</th>
+						<th>Message</th>
+						<th>Giver</th>
+						<th>Receiver</th>
+						<th>Funding UID</th>
+						<th>Created At</th>
+						<th>Deadline</th>
+						<th>Details</th>
+					</tr>
+				</thead>
+				<!-- th:with를 사용하면 각 속성값을 로컬 변수로 저장 -->
+				<tbody>
+					<tr th:each="funding : ${fundingDetailP}"
+						th:with="productName=${funding.productName},
+                 amount=${funding.amount},
+                 status=${funding.status},
+                 messageContent=${funding.messageContent},
+                 giverNickname=${funding.giverNickname},
+                 receiverNickname=${funding.receiverNickname},
+                 fundingUid=${funding.fundingUid},
+                 createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
+                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
+						<td th:text="${productName}">Product Name</td>
+						<td th:text="${amount}">Amount</td>
+						<td th:text="${status}">Status</td>
+						<td th:text="${messageContent}">Message</td>
+						<td th:text="${giverNickname}">Giver</td>
+						<td th:text="${receiverNickname}">Receiver</td>
+						<td th:text="${fundingUid}">Funding UID</td>
+						<td th:text="${createdAtFormatted}">createdAt</td>
+						<td th:text="${deadlineFormatted}">Deadline</td>
+						<td><a th:href="@{'/fundings/detail/' + ${fundingUid}}"
+							th:text="'View Details'">View Details</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<br>
+		<hr>
+		<br>
+		<h2>나(세션)의(임의테스트유저)결제 리스트</h2>
+		<div style="margin-top: 30px">
+			<div>
+				<table>
+					<thead>
+						<tr>
+							<th>Product Name</th>
+							<th>Amount</th>
+							<th>Status</th>
+							<th>Message</th>
+							<th>Giver</th>
+							<th>Receiver</th>
+							<th>Funding UID</th>
+							<th>Created At</th>
+							<th>Deadline</th>
+							<th>Details</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="funding : ${fundingDetailM}"
+							th:with="productName=${funding.productName},
+                 amount=${funding.amount},
+                 status=${funding.status},
+                 messageContent=${funding.messageContent},
+                 giverNickname=${funding.giverNickname},
+                 receiverNickname=${funding.receiverNickname},
+                 fundingUid=${funding.fundingUid},
+                 createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
+                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
+							<td th:text="${productName}">Product Name</td>
+							<td th:text="${amount}">Amount</td>
+							<td th:text="${status}">Status</td>
+							<td th:text="${messageContent}">Message</td>
+							<td th:text="${giverNickname}">Giver</td>
+							<td th:text="${receiverNickname}">Receiver</td>
+							<td th:text="${fundingUid}">Funding UID</td>
+							<td th:text="${createdAtFormatted}">createdAt</td>
+							<td th:text="${deadlineFormatted}">Deadline</td>
+							<td><a th:href="@{'/fundings/detail/' + ${fundingUid}}"
+								th:text="'View Details'">View Details</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<br> <br> <br> <br>
 </body>
 </html>
