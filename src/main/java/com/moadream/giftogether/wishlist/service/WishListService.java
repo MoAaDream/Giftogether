@@ -6,14 +6,11 @@ import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
-import com.moadream.giftogether.wishlist.model.WishListModifyForm;
+import com.moadream.giftogether.wishlist.model.WishlistDto;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,13 +38,13 @@ public class WishListService implements WishListServiceI {
 
     @Override
     @Transactional
-    public void modifyWishList(WishListModifyForm wishListModifyForm, String socialId, String wishlistLink) {
+    public void modifyWishList(WishListForm wishListForm, String socialId, String wishlistLink) {
         Member member = findMemberBySocialId(socialId);
         WishList wishList = findWishListByLink(wishlistLink);
 
         checkMyWishList(wishList, member);
 
-        wishList.modifyWishList(wishListModifyForm);
+        wishList.modifyWishList(wishListForm);
     }
 
     @Override
@@ -63,11 +60,15 @@ public class WishListService implements WishListServiceI {
 
     @Override
     @Transactional
-    public Page<WishList> getList(String socialId, int page) {
+    public Page<WishlistDto> getList(String socialId, int page) {
         Member member = findMemberBySocialId(socialId);
-        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, "id"));
+        Page<WishList> wishListPage = wishListRepository.findAllByMember_Id(member.getId(), pageable);
+        List<WishlistDto> wishlists = wishListPage.stream()
+                .map(wishList -> new WishlistDto(wishList))
+                .toList();
 
-        return wishListRepository.findAllByMember_Id(member.getId(), pageable);
+        return new PageImpl<>(wishlists, pageable, wishListPage.getTotalElements());
     }
 
         @Override
@@ -80,6 +81,24 @@ public class WishListService implements WishListServiceI {
                 }
             }
         }
+
+    @Override
+    public WishListForm getWishlist(String wishlistLink) {
+        WishList wishlist = findWishListByLink(wishlistLink);
+
+        return new WishListForm(wishlist);
+    }
+
+    @Override
+    public boolean checkMyPage(String socialId, String wishlistLink) {
+        Member member = findMemberBySocialId(socialId);
+        WishList wishList = findWishListByLink(wishlistLink);
+
+        if(!member.getId().equals(wishList.getMember().getId()))
+            return false;
+
+        return true;
+    }
 
     private void checkMyWishList(WishList wishList, Member member) {
         if(!wishList.getMember().getId().equals(member.getId()))

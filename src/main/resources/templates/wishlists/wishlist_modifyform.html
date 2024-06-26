@@ -22,9 +22,7 @@
                     }
                 })
                 .then(imageUri => {
-
                     document.getElementById('uploadedImage').style.display = 'block'; // 이미지 태그의 display 속성을 block으로 변경
-                    document.getElementById('errorMessage').style.display = 'none';
                     document.getElementById('uploadedImage').src = imageUri;
                     document.getElementById('uploadedImageUri').value = imageUri;
                 })
@@ -34,33 +32,30 @@
                 });
         }
     </script>
-</head>y
+</head>
 <body>
 
 
 <div>
-    <h2>위시 리스트 생성</h2>
-    <form th:action="@{/wishlists/}" th:object="${wishListForm}" method="post">
+    <h2>위시 리스트 수정</h2>
+    <form th:action="@{'/wishlists/' + ${wishListForm.link}}" th:object="${wishListForm}" method="post">
         <label for="name">위시리스트 이름</label>
         <input type="text" id="name" th:field="*{name}">
 
         <label for="description">설명</label>
         <input type="text" id="description" th:field="*{description}">
 
-        <label for="deadLine">기한 날짜</label>
-        <input type="datetime-local" id="deadLine" th:field="*{deadLine}">
-
         <input for="uploadedImage" type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="사진등록하기">
-        <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
+        <img id="uploadedImage" th:src="*{uploadedImage}"  alt="Uploaded Image" style="display: none;" >
         <input type="hidden" id="uploadedImageUri" th:field="*{uploadedImage}">
 
         <label for="address">주소</label>
-        <input type="text" id="address" th:field="*{address}">
+        <input type="text" id="address" th:field="*{address}" >
 
         <label for="phoneNumber">핸드폰번호</label>
-        <input type="text" id="phoneNumber" th:field="*{phoneNumber}">
+        <input type="text" id="phoneNumber" th:field="*{phoneNumber}" >
 
-        <button type="submit">위시 리스트 생성</button>
+        <button type="submit">위시 리스트 수정</button>
     </form>
 </div>
 

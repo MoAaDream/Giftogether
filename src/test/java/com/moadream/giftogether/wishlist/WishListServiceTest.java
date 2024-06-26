@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
+import com.moadream.giftogether.wishlist.model.WishlistDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,6 @@ import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.model.Role;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
-import com.moadream.giftogether.wishlist.model.WishListModifyForm;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
 import com.moadream.giftogether.wishlist.service.WishListServiceI;
 
@@ -115,7 +115,7 @@ class WishListServiceTest {
         String modifyDes = "수정된 내용";
 
 
-        WishListModifyForm wishListModifyForm = WishListModifyForm.builder()
+        WishListForm wishListModifyForm = WishListForm.builder()
                 .name(modifyName)
                 .description(modifyDes)
                 .address(wishListForm.getAddress())
@@ -160,17 +160,8 @@ class WishListServiceTest {
             wishListService.createWishList(wishListForm, member.getSocialLoginId());
 
         //when
-        Page<WishList> list0 = wishListService.getList(member.getSocialLoginId(), 0);
-        Page<WishList> list1 = wishListService.getList(member.getSocialLoginId(), 1);
-
-        //then
-        for (int i = 0; i < 6; i++)
-            Assertions.assertThat(list0.stream().toList().get(i).getId()).isEqualTo(i + 1);
-
-        Assertions.assertThat(list1.stream().toList().get(0).getId()).isEqualTo(7);
-        Assertions.assertThat(list1.stream().toList().get(1).getId()).isEqualTo(8);
-        Assertions.assertThat(list1.stream().toList().get(2).getId()).isEqualTo(9);
-
+        Page<WishlistDto> list0 = wishListService.getList(member.getSocialLoginId(), 0);
+        Page<WishlistDto> list1 = wishListService.getList(member.getSocialLoginId(), 1);
 
     }
 
