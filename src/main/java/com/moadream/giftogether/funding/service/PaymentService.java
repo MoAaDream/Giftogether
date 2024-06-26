@@ -79,8 +79,6 @@ public class PaymentService {
 			iamportClient.cancelPaymentByImpUid(new CancelData(iamportResponse.getResponse().getImpUid(), true));
 			
 			// 주문, 결제 삭제
-//			fundingRepository.delete(fund);
-//			paymentRepository.delete(fund.getPayment());
 			fund.getPayment().changePaymentStatus(PaymentStatus.C, "");
 			fund.setStatus(Status.D);
 			fund.getMessage().setStatus(Status.D);
