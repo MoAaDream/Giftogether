@@ -6,8 +6,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,9 +83,7 @@ public class MemberController {
 	    // properties 객체에서 nickname과 profile_image 추출
 	    String nickname = properties.get("nickname").toString();
 	    String profileImage = properties.get("profile_image").toString();
-	    log.info("==================================" + nickname);
-	    log.info("==================================" + profileImage);
-		
+	   
 		 // 5. 사용자 정보를 세션에 저장
 	    session.setAttribute("kakaoId", kakaoId);
 	    session.setAttribute("nickname", nickname);
@@ -124,8 +124,9 @@ public class MemberController {
 	 * @throws JsonProcessingException 
 	 */
 
+
 	@GetMapping("/logout")
-	public String logout(HttpSession session) throws JsonProcessingException {		
+	public String logout(HttpSession session) throws JsonProcessingException {
 		String accessToken = (String) session.getAttribute("accessToken");
 
         
@@ -231,7 +232,17 @@ public class MemberController {
 	 * 회원 탈퇴
 	 * @return 
 	 */
-	
+
+	@DeleteMapping("/member/{id}/d")
+	public ResponseEntity<String> softDeleteMember(@PathVariable("id") Long id) {
+        try {
+ 			
+            memberService.deleteMember(id);
+            return ResponseEntity.ok("탈퇴하였습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("탈퇴 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
 	
 	
 }
