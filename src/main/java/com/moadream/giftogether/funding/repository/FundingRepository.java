@@ -24,6 +24,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
     Optional<Funding> findFundingAndPayment(@Param("fundingUid") String fundingUid);
     
     
+
 //    List<Funding> findByProductId(Long productId);
 //    List<Funding> findByMemberId(Long memberId);
     
@@ -34,4 +35,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
     List<Funding> findByMemberSocialIdWithDetails(@Param("socialId") String socialId);
     
     Funding findByFundingUid(String fundingUid);
+
+    List<Funding> findAllByMember_Id(Long memberId);
+
 }

@@ -17,4 +17,6 @@ public interface WishListServiceI {
 
     public Page<WishList> getList(String socialId, int page);
 
+    public void updateWishListStatus();
+
 }

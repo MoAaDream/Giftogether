@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,14 +25,25 @@ public class WishListController {
     private final WishListServiceI wishListService;
 
 
+    @GetMapping("/")
+    public String getMapping(Model model){
+        model.addAttribute("wishListForm", new WishListForm());
+        return "upload";
+    }
+
     @PostMapping("/")
-    public String wishListCreate(@Valid WishListForm wishListForm, HttpSession session) {
+    public String wishListCreate(@Valid @ModelAttribute WishListForm wishListForm, HttpSession session, BindingResult bindingResult, Model model) {
+        if(bindingResult.hasErrors()) {
+            model.addAttribute("wishListForm", wishListForm);
+            return "upload";
+        }
+
         String socialId = checkSession(session);
       
         wishListService.createWishList(wishListForm, socialId);
         log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
 
-        return "redirect:/wishlists";
+        return "redirect:/wishlists/my/0";
     }
 
     @PostMapping("/{wishlistlink}")

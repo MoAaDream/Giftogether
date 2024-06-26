@@ -3,12 +3,16 @@ package com.moadream.giftogether.wishlist.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class WishListForm {
 
@@ -21,7 +25,7 @@ public class WishListForm {
     @NotNull(message = "기한 날짜는 필수입니다.")
     private LocalDateTime deadLine;
 
-    private String imgLink;
+    private String uploadedImage;
 
     @NotBlank(message = "주소는 필수입니다.")
     private String address;
