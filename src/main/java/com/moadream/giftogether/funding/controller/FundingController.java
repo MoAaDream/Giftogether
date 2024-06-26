@@ -1,27 +1,19 @@
 package com.moadream.giftogether.funding.controller;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
 import com.moadream.giftogether.funding.service.FundingService;
-import com.moadream.giftogether.member.service.MemberService;
-
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -30,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @SessionAttributes("confirmedAmount") // 세션에 confirmedAmount 속성을 저장
 public class FundingController {
 
-	private final MemberService memberService;
 	private final FundingService fundingService;
 
 	@GetMapping("/{productlink}")
@@ -43,8 +34,6 @@ public class FundingController {
 		model.addAttribute("messageT", messageT);
 		model.addAttribute("fundingUid", id);
 
-		// push 전에 제거 테스트용
-		session.setAttribute("kakaoId", "3051424432");
 
 		// 제품의 펀딩 리스트
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
