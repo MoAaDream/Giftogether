@@ -1,5 +1,6 @@
 package com.moadream.giftogether.funding.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -36,7 +37,32 @@ public class FundingService {
 	private final MemberRepository memberRepository;
 	private final MessageRepository messageRepository;
 	
+	public int[] getFundingAmounts(String productLink) {
+	    // 제품을 찾아 없으면 예외 발생
+	    Product product = productRepository.findByProductLink(productLink)
+	            .orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
 
+	    // 남은 모금 필요 금액 계산
+	    int remainingAmount = product.getGoalAmount() - product.getCurrentAmount();
+
+	    // 기본 펀딩 옵션 설정
+	    int[] defaultOptions = {5000, 10000, 20000, 30000, 40000, 50000};
+
+	    // 남은 모금 필요 금액보다 작은 펀딩 옵션만 필터링
+	    List<Integer> filteredOptions = Arrays.stream(defaultOptions)
+	            .filter(amount -> amount <= remainingAmount)
+	            .boxed()
+	            .collect(Collectors.toList());
+
+	    // 남은 모금 필요 금액을 목록의 맨 끝에 추가
+	    filteredOptions.add(remainingAmount);
+
+	    // 결과를 int 배열로 변환하여 반환
+	    return filteredOptions.stream().mapToInt(i -> i).toArray();
+	}
+
+	
+	
 	@Transactional 
 	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
 
@@ -62,7 +88,7 @@ public class FundingService {
 
 		fundingRepository.save(funding);
 		
-		// message .save
+	 
 		Message message = Message.builder().content(messageF).status(Status.I)
 				.funding(funding).wishlist(product.getWishlist()).build();
 		
@@ -70,7 +96,8 @@ public class FundingService {
 		
 		return funding;
 	}
-
+	
+	
 	public List<FundingDetailsDTO> findFundingsByProductLink(String productLink) {
 		return productRepository.findByProductLink(productLink)
 				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))

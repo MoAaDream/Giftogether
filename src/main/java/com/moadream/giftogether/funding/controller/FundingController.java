@@ -37,10 +37,12 @@ public class FundingController {
 			@RequestParam(name = "messageT", required = false) String messageT,
 			@RequestParam(name = "fundingUid", required = false) String id, HttpSession session, Model model) {
 
-		int[] amountOptions = { 5000, 10000, 20000, 30000, 40000, 50000 };
+		
+		int[] amountOptions = fundingService.getFundingAmounts(productLink);
 		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("messageT", messageT);
 		model.addAttribute("fundingUid", id);
+
 
 
 		// 제품의 펀딩 리스트
