@@ -22,9 +22,7 @@
                     }
                 })
                 .then(imageUri => {
-
                     document.getElementById('uploadedImage').style.display = 'block'; // 이미지 태그의 display 속성을 block으로 변경
-                    document.getElementById('errorMessage').style.display = 'none';
                     document.getElementById('uploadedImage').src = imageUri;
                     document.getElementById('uploadedImageUri').value = imageUri;
                 })

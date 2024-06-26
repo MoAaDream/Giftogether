@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
+import com.moadream.giftogether.wishlist.model.WishlistDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -160,8 +161,8 @@ class WishListServiceTest {
             wishListService.createWishList(wishListForm, member.getSocialLoginId());
 
         //when
-        Page<WishList> list0 = wishListService.getList(member.getSocialLoginId(), 0);
-        Page<WishList> list1 = wishListService.getList(member.getSocialLoginId(), 1);
+        Page<WishlistDto> list0 = wishListService.getList(member.getSocialLoginId(), 0);
+        Page<WishlistDto> list1 = wishListService.getList(member.getSocialLoginId(), 1);
 
         //then
         for (int i = 0; i < 6; i++)
