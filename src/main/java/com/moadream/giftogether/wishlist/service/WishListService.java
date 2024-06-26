@@ -2,8 +2,10 @@ package com.moadream.giftogether.wishlist.service;
 
 
 import com.moadream.giftogether.Status;
+import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.model.Member;
+import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
@@ -54,6 +56,8 @@ public class WishListService implements WishListServiceI {
         WishList wishList = findWishListByLink(wishlistLink);
 
         checkMyWishList(wishList, member);
+
+        checkFundingExist(wishList);
 
         wishListRepository.deleteById(wishList.getId());
     }
@@ -114,5 +118,15 @@ public class WishListService implements WishListServiceI {
     private WishList findWishListByLink(String wishlistLink){
         return wishListRepository.findByLink(wishlistLink)
                 .orElseThrow(() -> new RuntimeException());
+    }
+
+    private static void checkFundingExist(WishList wishList) {
+        wishList.getProductList().stream()
+                .flatMap(product -> product.getFundingList().stream())
+                .filter(funding -> funding.getStatus() == Status.A)
+                .findAny()
+                .ifPresent(funding -> {
+                    throw new RuntimeException();
+                });
     }
 }
