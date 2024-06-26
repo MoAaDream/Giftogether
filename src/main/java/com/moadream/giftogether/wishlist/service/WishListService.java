@@ -98,7 +98,4 @@ public class WishListService implements WishListServiceI {
         return wishListRepository.findByLink(wishlistLink)
                 .orElseThrow(() -> new RuntimeException());
     }
-    
-    
-    
 }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.moadream.giftogether.DataNotFoundException;
 import com.moadream.giftogether.Status;
-import com.moadream.giftogether.product.Repository.ProductRepository;
 import com.moadream.giftogether.product.model.Product;
+import com.moadream.giftogether.product.repository.ProductRepository;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
 

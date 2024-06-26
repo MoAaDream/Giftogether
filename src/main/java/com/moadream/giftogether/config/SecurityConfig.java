@@ -44,7 +44,7 @@ public class SecurityConfig {
 				.formLogin(AbstractHttpConfigurer::disable) // HTTP 기본 인증을 비활성화. JWT를 사용하여 인증 처리
 				.authorizeHttpRequests((authorize) -> authorize
 						.requestMatchers("/", "/login/**" ,"/home").permitAll()
-						.requestMatchers("/mypage/**",  "/member/**").hasAnyRole("MEMBER","ADMIN")
+						//.requestMatchers("/mypage/**",  "/member/**").hasAnyRole("MEMBER","ADMIN")
 						//.anyRequest().authenticated())
 						.anyRequest().permitAll())
 				.formLogin(formLogin -> formLogin

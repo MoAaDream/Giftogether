@@ -37,8 +37,4 @@ public class S3Controller {
         }
     }
 
-    @GetMapping("/upload")
-    public String getMapping(){
-        return "upload";
-    }
 }

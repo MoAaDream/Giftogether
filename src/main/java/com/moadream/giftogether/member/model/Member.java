@@ -49,7 +49,7 @@ public class Member extends BaseTimeEntity {
     private String username; // 실명 
 */
     @Column(length = 30, nullable = false)
-    private String nickname; // 카카오 계정에 설정한 닉네임 
+    private String nickname; // 카카오 계정에 설정한 닉네임 (수정 가능)
 
     // 이미지 처리
     private String profile;
@@ -69,13 +69,13 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" )
     private List<Funding> fundingLists = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" )
     private List<WishList> wishLists = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member" ) 
     private List<Bank> bankLists = new ArrayList<>();
 
     

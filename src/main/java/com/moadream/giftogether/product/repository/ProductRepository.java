@@ -1,4 +1,4 @@
-package com.moadream.giftogether.product.Repository;
+package com.moadream.giftogether.product.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +10,9 @@ import com.moadream.giftogether.product.model.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+	
 	Optional<Product> findByProductLink(String productLink);
+	
 	List<Product> findByWishlistLink(String wishlistLink);
+	
 }

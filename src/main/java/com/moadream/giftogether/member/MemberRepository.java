@@ -1,5 +1,6 @@
 package com.moadream.giftogether.member;
 
+
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,8 @@ import com.moadream.giftogether.member.model.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long>{
 	
+	Optional<Member> findById(Long id);
+	
 	//id로 Member 찾기
 	Member findMemberById(Long id);
 	
@@ -15,6 +18,9 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     Member findBySocialLoginIdAndSocialProvider(String socialLoginId, String socialProvider);
 
     Optional<Member> findBySocialLoginId(String socialLoginId);
-}
+    
 
+    
+    
+}
 

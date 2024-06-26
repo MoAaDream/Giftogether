@@ -2,7 +2,6 @@ package com.moadream.giftogether.funding.service;
 
 import java.util.UUID;
 
-import com.moadream.giftogether.product.Repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +14,7 @@ import com.moadream.giftogether.funding.repository.PaymentRepository;
 import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.product.model.Product;
+import com.moadream.giftogether.product.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
