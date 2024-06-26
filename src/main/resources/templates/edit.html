@@ -98,7 +98,7 @@
         <form th:action="@{'/member/' + ${id}}" th:object="${member}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <div class="profile-pic">
-                    <img id="profileImage" src="default_profile.png" alt="프로필 이미지">
+                    <img id="profileImage" src="${member.profile != null ? member.profile : 'default_profile.png'}" alt="프로필 이미지">
                     <input type="file" id="profileImageInput" name="profileImage" accept="image/*" onchange="previewProfileImage(event)">
                     <label for="profileImageInput">이미지 선택</label>
                 </div>
@@ -107,19 +107,19 @@
 
             <div class="form-group">
                 <label for="nickname">닉네임</label>
-                <input type="text" id="nickname" th:field="*{nickname}" required>
+                <input type="text" id="nickname" th:field="*{nickname}" >
             </div>
             <div class="form-group">
                 <label for="phoneNumber">전화번호</label>
-                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" required>
+                <input type="text" id="phoneNumber" th:field="*{phoneNumber}" >
             </div>
             <div class="form-group">
                 <label for="address">주소</label>
-                <input type="text" id="address" th:field="*{address}" required>
+                <input type="text" id="address" th:field="*{address}" >
             </div>
             <div class="form-group">
                 <label for="birth">생일</label>
-                <input type="date" id="birth" th:field="*{birth}" required>
+                <input type="date" id="birth" th:field="*{birth}" >
             </div>
             <div class="buttons">
                 <button type="submit">수정 완료</button>
@@ -135,15 +135,13 @@
             };
             reader.readAsDataURL(event.target.files[0]);
             
-            uploadFile(event); // 파일 업로드 함수 호출
         }
         
         function uploadFile(event) {
             var file = event.target.files[0];
             var formData = new FormData();
             formData.append('file', file);
-            formData.append('imageUri', document.getElementById('profile').value);
-
+			formData.append('imageUri', document.getElementById('profile').src);
             fetch("/files/image/profiles", {
                 method: 'POST',
                 body: formData
@@ -156,12 +154,24 @@
                     }
                 })
                 .then(imageUri => {
+                	// 이미지 URL을 hidden input에 설정
                     document.getElementById('profile').value = imageUri;
+                    // 이미지 업로드 후 프로필 이미지 미리보기 업데이트
+                    document.getElementById('profileImage').src = imageUri;
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
+            
+     
         }
+        
+        
+        // 파일 선택 시 uploadFile 함수 호출
+        document.getElementById('profileImageInput').addEventListener('change', function(event) {
+            previewProfileImage(event);
+            uploadFile(event);
+        });
     </script>
 </body>
 </html>
