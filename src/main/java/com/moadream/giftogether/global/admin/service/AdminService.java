@@ -85,23 +85,20 @@ public class AdminService {
 
     //총 모금량 찾기
     private int getTotalAmount() {
-        int totalAmount = paymentRepository.getTotalAmountByPaymentStatusO();
 
-        return totalAmount;
+        return paymentRepository.getTotalAmountByPaymentStatusO();
     }
 
     private int getTotalProductCount() {
-        int totalProductCount = productRepository.findAll().size();
-        return totalProductCount;
+        return productRepository.findAll().size();
     }
 
     private int getFinishedProductCount() {
-        int totalFinishedProductCount = productRepository.findFinishedCount();
-        return totalFinishedProductCount;
+        return productRepository.findFinishedCount();
     }
 
 
     private PriceRangeDto getPriceRange(int min, int max) {
-        return new PriceRangeDto(min + " ~ " + max, productRepository.getProductCountByAmountRange(min, max));
+        return new PriceRangeDto(min + "원 ~ " + max +"원", productRepository.getProductCountByAmountRange(min, max));
     }
 }
