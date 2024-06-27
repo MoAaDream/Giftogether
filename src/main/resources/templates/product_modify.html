@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/css/messageForm.css">
+<script th:inline="javascript">
+//페이지 로딩 후 초기화 함수 호출
+document.addEventListener('DOMContentLoaded', function() {
+    initializeImages();
+});
+
+// 이미지 초기화 함수
+function initializeImages() {
+    // 기존 이미지 URI 가져오기
+    const currentImageUri = document.getElementById('currentImageUri').getAttribute('src');
+    
+    // 기존 이미지를 UI에 표시
+    document.getElementById('currentImageUri').style.display = 'block';
+    document.getElementById('uploadedImage').src = currentImageUri;
+    document.getElementById('uploadedImageUri').value = currentImageUri;
+}
+
+    function uploadFile(event) {
+        var file = event.target.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('imageUri', document.getElementById('uploadedImage').src);
+
+        fetch("/files/image/products", {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+            	console.log('nonono');
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('파일 업로드 실패');
+                }
+            })
+            .then(imageUri => {
+            	console.log('Received image URI:', imageUri);
+		        document.getElementById('uploadedImage').style.display = 'block';
+		        if (imageUri.trim() !== '') {
+		            // 이미지가 업로드된 경우 새로운 이미지 URI로 업데이트		            
+		            console.log(document.getElementById('currentImageUri').getAttribute('src'));
+		            document.getElementById('uploadedImage').src = imageUri;
+		            document.getElementById('uploadedImageUri').value = imageUri;
+		        } else {
+		            // 이미지가 업로드되지 않은 경우 기존 이미지 URI 유지
+		            const currentImageUri = document.getElementById('currentImageUri').getAttribute('src');
+		            console.log(document.getElementById('currentImageUri').getAttribute('src'));
+		            document.getElementById('uploadedImage').src = currentImageUri;
+		            document.getElementById('uploadedImageUri').value = currentImageUri;
+		        }
+		    })
+            .catch(error => {
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = error.message;
+                    errorMessageElement.style.display = 'block';
+                } else {
+                    console.error('errorMessage 요소를 찾을 수 없습니다.');
+                    // 다른 오류 처리 로직 추가
+                }
+            });
+    }
+  </script>
+</head>
+<body>
+<h2>제품 정보 수정</h2>
+<form th:action="@{|/products/${product.productLink}/modify|}" th:object="${productModifyForm}" method="post">
+    <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+        <div th:each="err : ${#fields.allErrors()}" th:text="${err}" /> 
+    </div>
+    <label for="name">제품 명:</label>
+    <input type="text" id="name" th:field="*{name}">
+
+    <label for="description">제품 설명:</label><br>
+    <input type="text" id="description" th:field="*{description}">
+
+    <label>제품 사진:</label>
+    <input type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="사진등록하기">
+    <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
+    <input type="hidden" id="uploadedImageUri" name="uploadedImage">
+    <p>기존 이미지</p>
+    <img id="currentImageUri" th:src="${product.productImg}"  alt="Current Image"> <!-- 기존 이미지를 표시할 이미지 태그 -->
+
+    
+    <label for="optionDetail">제품 옵션:</label>
+    <input type="text" id="optionDetail" th:field="*{optionDetail}">
+
+    <input type="submit" value="수정하기">
+</form>
+</body>
+</html>

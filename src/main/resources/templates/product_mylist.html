@@ -14,6 +14,7 @@
 
 <div class="container">
 	<div class="card-list" th:if="${productList != null}">
+		<a th:href="@{|/${wishlistLink}/create|}" class="card" id="input">+</a>
 		<a th:each="product : ${productList}" th:href="@{|/products/${product.productLink}|}" class="card">
 			<img th:src="${product.productImg}" alt="Product Image" class="card-image">
 			<div class="card-details">

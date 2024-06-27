@@ -17,7 +17,7 @@
 .product-image {
     /*flex: 0 0 auto; /* 이미지 크기 유지 */
     max-width: 450px;
-    wid: auto;
+    width: auto;
     height:auto;
     margin-right: 20px; /* 이미지 오른쪽 간격 */
 }
@@ -79,3 +79,17 @@
 .goal-amount-box:hover .progress {
     background-color: #FF5050; /* 호버 시 색상 변화 */
 }
+.btn-primary {
+    text-align: center;
+    display: flex;
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    max-width: 800px; /* 최대 너비 설정 */
+    min-width: 300px;
+    margin: 15px auto; /* 가운데 정렬 */
+    text-decoration: none;
+}
+
+
+
+
