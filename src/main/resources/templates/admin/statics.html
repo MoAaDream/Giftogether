@@ -3,25 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Statistics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; /* 컨테이너에서 넘치는 부분 숨김 */
+        }
+
+        .top, .bottom {
+            flex: 0 1 auto; /* 크기가 자동으로 조정되도록 설정 */
+            display: flex;
+            overflow: auto; /* 넘치는 부분 스크롤 가능하게 설정 */
+            align-content: center;
+        }
+
+        .chart-container {
+            flex: 1;
+            overflow: auto; /* 차트 컨테이너가 넘칠 경우 스크롤 가능하게 설정 */
+        }
+
+    </style>
 </head>
 <body>
-<h1>Admin Statistics</h1>
-
-<div>
-    <h2>Total Amount: [[${data.totalAmount}]]</h2>
-    <h2>Total Product Count: [[${data.productTotalCount}]]</h2>
-    <h2>Finished Product Count: [[${data.finishedProductTotalCount}]]</h2>
+<h1>Admin Statistics12</h1>
+<div class="container">
+    <div class="top">
+        <div class="chart-container">
+            <canvas id="totalAmountChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="totalProductCountChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="finishedProductCountChart"></canvas>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="chart-container">
+            <canvas id="priceRangeChart"></canvas>
+        </div>
+    </div>
 </div>
 
-<div>
-    <h2 th:if="${data.priceRangeDtos[0] != null}" th:text="${data.priceRangeDtos[0].priceRange} + ': ' + ${data.priceRangeDtos[0].count}"></h2>
-    <h2 th:if="${data.priceRangeDtos[1] != null}" th:text="${data.priceRangeDtos[1].priceRange} + ': ' + ${data.priceRangeDtos[1].count}"></h2>
-    <h2 th:if="${data.priceRangeDtos[2] != null}" th:text="${data.priceRangeDtos[2].priceRange} + ': ' + ${data.priceRangeDtos[2].count}"></h2>
-    <h2 th:if="${data.priceRangeDtos[3] != null}" th:text="${data.priceRangeDtos[3].priceRange} + ': ' + ${data.priceRangeDtos[3].count}"></h2>
-    <h2 th:if="${data.priceRangeDtos[4] != null}" th:text="${data.priceRangeDtos[4].priceRange} + ': ' + ${data.priceRangeDtos[4].count}"></h2>
-    <h2 th:if="${data.priceRangeDtos[5] != null}" th:text="${data.priceRangeDtos[5].priceRange} + ': ' + ${data.priceRangeDtos[5].count}"></h2>
-    <h2 th:if="${data.priceRangeDtos[6] != null}" th:text="${data.priceRangeDtos[6].priceRange} + ': ' + ${data.priceRangeDtos[6].count}"></h2>
-</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const totalAmountData = [[${data.totalAmount}]];
+    const totalProductCountData = [[${data.productTotalCount}]];
+    const finishedProductCountData = [[${data.finishedProductTotalCount}]];
 
+    const priceRanges = [
+        [[${data.priceRangeDtos[0] != null ? data.priceRangeDtos[0].priceRange : 'null'}]],
+        [[${data.priceRangeDtos[1] != null ? data.priceRangeDtos[1].priceRange : 'null'}]],
+        [[${data.priceRangeDtos[2] != null ? data.priceRangeDtos[2].priceRange : 'null'}]],
+        [[${data.priceRangeDtos[3] != null ? data.priceRangeDtos[3].priceRange : 'null'}]],
+        [[${data.priceRangeDtos[4] != null ? data.priceRangeDtos[4].priceRange : 'null'}]],
+        [[${data.priceRangeDtos[5] != null ? data.priceRangeDtos[5].priceRange : 'null'}]],
+        [[${data.priceRangeDtos[6] != null ? data.priceRangeDtos[6].priceRange : 'null'}]]
+    ];
+
+    const priceRangeCounts = [
+        [[${data.priceRangeDtos[0] != null ? data.priceRangeDtos[0].count : 0}]],
+        [[${data.priceRangeDtos[1] != null ? data.priceRangeDtos[1].count : 0}]],
+        [[${data.priceRangeDtos[2] != null ? data.priceRangeDtos[2].count : 0}]],
+        [[${data.priceRangeDtos[3] != null ? data.priceRangeDtos[3].count : 0}]],
+        [[${data.priceRangeDtos[4] != null ? data.priceRangeDtos[4].count : 0}]],
+        [[${data.priceRangeDtos[5] != null ? data.priceRangeDtos[5].count : 0}]],
+        [[${data.priceRangeDtos[6] != null ? data.priceRangeDtos[6].count : 0}]]
+    ];
+    /*]]>*/
+</script>
+
+<script>
+    function ceilToThousand(value) {
+        return Math.ceil(value / 1000) * 1000;
+    }
+
+    // Total Amount Chart
+    const ctxTotalAmount = document.getElementById('totalAmountChart').getContext('2d');
+    new Chart(ctxTotalAmount, {
+        type: 'bar',
+        data: {
+            labels: ['총 모금 금액'],
+            datasets: [{
+                label: '총 모금 금액',
+                data: [totalAmountData],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: ceilToThousand(totalAmountData * 1.3)  // y축 최대치 설정
+                }
+            }
+        }
+    });
+
+    // Total Product Count Chart
+    const ctxTotalProductCount = document.getElementById('totalProductCountChart').getContext('2d');
+    new Chart(ctxTotalProductCount, {
+        type: 'bar',
+        data: {
+            labels: ['등록된 물품의 개수'],
+            datasets: [{
+                label: '등록된 물품의 개수',
+                data: [totalProductCountData],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: Math.ceil([totalProductCountData] * 1.3)  // y축 최대치 설정
+                }
+            }
+        }
+    });
+
+    // Finished Product Count Chart
+    const ctxFinishedProductCount = document.getElementById('finishedProductCountChart').getContext('2d');
+    new Chart(ctxFinishedProductCount, {
+        type: 'bar',
+        data: {
+            labels: ['모금이 완료된 물품의 개수'],
+            datasets: [{
+                label: '모금이 완료된 물품의 개수',
+                data: [finishedProductCountData],
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: Math.ceil([finishedProductCountData] * 1.3)  // y축 최대치 설정
+                }
+            }
+        }
+    });
+
+    const ctxPriceRange = document.getElementById('priceRangeChart').getContext('2d');
+    new Chart(ctxPriceRange, {
+        type: 'bar',
+        data: {
+            labels: priceRanges,
+            datasets: [{
+                label: '금액 별 등록된 물품 개수',
+                data: priceRangeCounts,
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
 </body>
 </html>
