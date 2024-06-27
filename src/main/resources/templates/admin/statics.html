@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Statistics</title>
+</head>
+<body>
+<h1>Admin Statistics</h1>
+
+<div>
+    <h2>Total Amount: [[${data.totalAmount}]]</h2>
+    <h2>Total Product Count: [[${data.productTotalCount}]]</h2>
+    <h2>Finished Product Count: [[${data.finishedProductTotalCount}]]</h2>
+</div>
+
+<div>
+    <h2 th:if="${data.priceRangeDtos[0] != null}" th:text="${data.priceRangeDtos[0].priceRange} + ': ' + ${data.priceRangeDtos[0].count}"></h2>
+    <h2 th:if="${data.priceRangeDtos[1] != null}" th:text="${data.priceRangeDtos[1].priceRange} + ': ' + ${data.priceRangeDtos[1].count}"></h2>
+    <h2 th:if="${data.priceRangeDtos[2] != null}" th:text="${data.priceRangeDtos[2].priceRange} + ': ' + ${data.priceRangeDtos[2].count}"></h2>
+    <h2 th:if="${data.priceRangeDtos[3] != null}" th:text="${data.priceRangeDtos[3].priceRange} + ': ' + ${data.priceRangeDtos[3].count}"></h2>
+    <h2 th:if="${data.priceRangeDtos[4] != null}" th:text="${data.priceRangeDtos[4].priceRange} + ': ' + ${data.priceRangeDtos[4].count}"></h2>
+    <h2 th:if="${data.priceRangeDtos[5] != null}" th:text="${data.priceRangeDtos[5].priceRange} + ': ' + ${data.priceRangeDtos[5].count}"></h2>
+    <h2 th:if="${data.priceRangeDtos[6] != null}" th:text="${data.priceRangeDtos[6].priceRange} + ': ' + ${data.priceRangeDtos[6].count}"></h2>
+</div>
+
+</body>
+</html>
