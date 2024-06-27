@@ -1,6 +1,7 @@
 package com.moadream.giftogether.wishlist.controller;
 
 
+import com.moadream.giftogether.global.exception.SessionNotFoundException;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
 import com.moadream.giftogether.wishlist.service.WishListServiceI;
@@ -14,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
 
 @Controller
 @Slf4j
@@ -25,20 +28,20 @@ public class WishListController {
 
 
     @GetMapping("/")
-    public String getMapping(Model model){
+    public String getMapping(Model model) {
         model.addAttribute("wishListForm", new WishListForm());
         return "wishlists/wishlist_form";
     }
 
     @PostMapping("/")
     public String wishListCreate(@Valid @ModelAttribute WishListForm wishListForm, HttpSession session, BindingResult bindingResult, Model model) {
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             model.addAttribute("wishListForm", wishListForm);
             return "wishlists/wishlist_form";
         }
 
         String socialId = checkSession(session);
-      
+
         wishListService.createWishList(wishListForm, socialId);
         log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
 
@@ -51,12 +54,12 @@ public class WishListController {
 
     @GetMapping("/{wishlistlink}")
     public String getModifyForm(@PathVariable("wishlistlink") String wishlistLink, @Valid @ModelAttribute WishListForm wishListForm,
-                                BindingResult bindingResult, HttpSession session, Model model){
+                                BindingResult bindingResult, HttpSession session, Model model) {
         String socialId = checkSession(session);
 
-        if(!wishListService.checkMyPage(socialId, wishlistLink)) {
+        if (!wishListService.checkMyPage(socialId, wishlistLink)) {
             model.addAttribute("message", "본인이 아닙니다.");
-            model.addAttribute("link",  "/products/" + wishlistLink);
+            model.addAttribute("link", "/products/" + wishlistLink);
             return "wishlists/wishlistalert";
         }
 
@@ -82,9 +85,9 @@ public class WishListController {
     }
 
     @DeleteMapping("/{wishlistlink}")
-    public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session){
+    public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
         String socialId = checkSession(session);
-        
+
         wishListService.deleteWishList(socialId, wishlistLink);
         log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 삭제");
 
@@ -92,7 +95,7 @@ public class WishListController {
     }
 
     @GetMapping("/my/{page}")
-    public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model){
+    public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model) {
 
         String socialId = checkSession(session);
 
@@ -102,11 +105,14 @@ public class WishListController {
         return "wishlists/wishlists";
     }
 
-    private String checkSession(HttpSession session){
+    private String checkSession(HttpSession session) {
         if (session == null)
-            log.error("세션이 없습니다.");
+            throw new SessionNotFoundException(SESSION_NOT_FOUND);
+
+        if (session.getAttribute("kakaoId") == null)
+            throw new SessionNotFoundException(SESSION_NOT_FOUND);
 
         return session.getAttribute("kakaoId").toString();
-
     }
+
 }

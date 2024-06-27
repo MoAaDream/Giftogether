@@ -48,7 +48,7 @@ public class Funding extends BaseTimeEntity {
     private String fundingUid; 
 
     
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "payment_id")
     private Payment payment;
     
