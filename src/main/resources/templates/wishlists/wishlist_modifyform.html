@@ -46,7 +46,7 @@
         <input type="text" id="description" th:field="*{description}">
 
         <input for="uploadedImage" type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="사진등록하기">
-        <img id="uploadedImage" th:src="*{uploadedImage}"  alt="Uploaded Image" style="display: none;" >
+        <img id="uploadedImage" th:src="${wishListForm.uploadedImage}" alt="Uploaded Image" style="display: block;">
         <input type="hidden" id="uploadedImageUri" th:field="*{uploadedImage}">
 
         <label for="address">주소</label>
