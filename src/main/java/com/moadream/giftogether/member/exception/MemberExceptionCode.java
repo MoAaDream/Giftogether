@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum MemberExceptionCode implements ExceptionCode {
 
-    NOT_FOUND_SOCIAL_ID(HttpStatus.BAD_REQUEST, "M-E-001", "로그인 정보를 확인하지 못했습니다. 다시 로그인해주세요", "/login");
+    NOT_FOUND_SOCIAL_ID(HttpStatus.BAD_REQUEST, "M-E-001", "로그인 정보를 확인하지 못했습니다. 다시 로그인해주세요", "/login"),
+    NO_AUTHORIZE_ADMIN(HttpStatus.UNAUTHORIZED, "M-E-002", "어드민이 아닙니다.", "/home");
 
 
     private final HttpStatus httpStatus;
