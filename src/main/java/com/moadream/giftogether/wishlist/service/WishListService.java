@@ -2,10 +2,10 @@ package com.moadream.giftogether.wishlist.service;
 
 
 import com.moadream.giftogether.Status;
-import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.member.MemberRepository;
+import com.moadream.giftogether.member.exception.MemberException;
 import com.moadream.giftogether.member.model.Member;
-import com.moadream.giftogether.product.model.Product;
+import com.moadream.giftogether.wishlist.exception.WishListException;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.*;
 
 @Service
 @Slf4j
@@ -75,16 +78,16 @@ public class WishListService implements WishListServiceI {
         return new PageImpl<>(wishlists, pageable, wishListPage.getTotalElements());
     }
 
-        @Override
-        public void updateWishListStatus() {
-            List<WishList> activeWishlist = wishListRepository.findAllByStatus(Status.A);
-            LocalDateTime now = LocalDateTime.now();
-            for (WishList wishList : activeWishlist) {
-                if(wishList.getDeadline().isBefore(now)){
-                    wishList.setStatus(Status.I);
-                }
+    @Override
+    public void updateWishListStatus() {
+        List<WishList> activeWishlist = wishListRepository.findAllByStatus(Status.A);
+        LocalDateTime now = LocalDateTime.now();
+        for (WishList wishList : activeWishlist) {
+            if (wishList.getDeadline().isBefore(now)) {
+                wishList.setStatus(Status.I);
             }
         }
+    }
 
     @Override
     public WishListForm getWishlist(String wishlistLink) {
@@ -98,26 +101,26 @@ public class WishListService implements WishListServiceI {
         Member member = findMemberBySocialId(socialId);
         WishList wishList = findWishListByLink(wishlistLink);
 
-        if(!member.getId().equals(wishList.getMember().getId()))
+        if (!member.getId().equals(wishList.getMember().getId()))
             return false;
 
         return true;
     }
 
     private void checkMyWishList(WishList wishList, Member member) {
-        if(!wishList.getMember().getId().equals(member.getId()))
-            throw new RuntimeException();
+        if (!wishList.getMember().getId().equals(member.getId()))
+            throw new WishListException(NOT_MY_WISHLIST);
     }
 
 
     private Member findMemberBySocialId(String socialId) {
         return memberRepository.findBySocialLoginId(socialId)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
     }
 
-    private WishList findWishListByLink(String wishlistLink){
+    private WishList findWishListByLink(String wishlistLink) {
         return wishListRepository.findByLink(wishlistLink)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new WishListException(NOT_FOUND_WISHLIST));
     }
 
     private static void checkFundingExist(WishList wishList) {
@@ -126,7 +129,7 @@ public class WishListService implements WishListServiceI {
                 .filter(funding -> funding.getStatus() == Status.A)
                 .findAny()
                 .ifPresent(funding -> {
-                    throw new RuntimeException();
+                    throw new WishListException(NOT_DELETE_WISHLIST_BY_FUNDING);
                 });
     }
 }
