@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,12 +60,18 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false)
     private int goalAmount;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "wishlist_id")
     private WishList wishlist;
 
     @OneToMany(mappedBy = "product")
     private List<Funding> FundingList = new ArrayList<>();
     
+    
+    @PreRemove
+    public void preRemove() {
+    	for(Funding funding : FundingList)
+    		funding.setProduct(null);
+    }
 
 }
