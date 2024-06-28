@@ -79,6 +79,7 @@
 .goal-amount-box:hover .progress {
     background-color: #FF5050; /* 호버 시 색상 변화 */
 }
+
 .btn-primary {
     text-align: center;
     display: flex;
@@ -89,7 +90,6 @@
     margin: 15px auto; /* 가운데 정렬 */
     text-decoration: none;
 }
-
 
 
 

@@ -38,23 +38,4 @@ public class MessageService {
         return messageFundDtoList;
     }
 
-    @Transactional(readOnly = true)
-    public List<MessageFundDto> getMessageFundingProduct(String productLink){
-        List<Message> allByProductLink = messageRepository.findAllByProduct_Link(productLink);
-
-        List<MessageFundDto> messageFundDtoList = new ArrayList<>();
-
-        for(Message message : allByProductLink){
-            MessageFundDto dto = new MessageFundDto();
-            dto.setMemberId(message.getFunding().getMember().getId());
-            dto.setName(message.getFunding().getMember().getNickname());
-            dto.setContent(message.getContent());
-            dto.setAmount(message.getFunding().getAmount());
-            dto.setFundingUID(message.getFunding().getFundingUid());
-
-            messageFundDtoList.add(dto);
-        }
-
-        return messageFundDtoList;
-    }
 }

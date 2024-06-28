@@ -13,6 +13,4 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message> findAllByWishlist_Link(String wishlist_link);
 
-	List<Message> findAllByProduct_Link(String productLink);
-
 }
