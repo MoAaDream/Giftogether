@@ -8,19 +8,21 @@
 </head>
 <body>
 <div class="detail">
-	<div class="detail-image">
-	        <img th:src="${wishlist.listImg}" alt="Wishlist Image">
-	</div>
-	<div class="detail-info">
-		<h1 th:text="${wishlist.name}"></h1>
-		<div class="description" th:text="${wishlist.description}"></div>
-	</div>
+    <div class="detail-image">
+        <img th:src="${product.productImg}" alt="Product Image">
+    </div>
+    <div class="detail-info">
+        <h1 th:text="${product.name}"></h1>
+        <div class="description" th:text="${product.description}"></div>
+		<a th:href="@{|/products/${product.productLink}/modify|}" class="btn-primary">수정하기</a>
+		<a th:href="@{|/products/${product.productLink}/delete|}" class="btn-primary">삭제하기</a>
+		<!--<button id="deleteButton" data-product-link="${product.productLink}" class="btn-primary">삭제하기</button>-->
+    </div>
 </div>
-
 <div class="funding-result">
 	<div th:text="${totalPeople}" class="funding-amount">
 	</div>
-	<div th:text="${totalAmount}" class="funding-total-people">
+	<div th:text="${product.currentAmount}" class="funding-total-people">
 	</div>
 </div>
 

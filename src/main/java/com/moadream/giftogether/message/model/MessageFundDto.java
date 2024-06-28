@@ -19,5 +19,4 @@ public class MessageFundDto {
 
     private String fundingUID;
 
-
 }

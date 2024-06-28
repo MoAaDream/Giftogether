@@ -101,7 +101,7 @@ public class ProductService {
         }
 	}
 	
-	private Product findProductByProductLink(String productLink) {
+	public Product findProductByProductLink(String productLink) {
 		Optional<Product> product = productRepository.findByProductLink(productLink);
 		if (product.isPresent()) {
 			return product.get();
