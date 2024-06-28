@@ -35,12 +35,13 @@ public class FundingController {
 			@RequestParam(name = "fundingUid", required = false) String id, HttpSession session, Model model) {
 
 		int[] amountOptions = fundingService.getFundingAmounts(productLink);
+		String productName = fundingService.getProductName(productLink);
 		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("messageT", messageT);
 		model.addAttribute("fundingUid", id);
+		model.addAttribute("productName", productName);
 
 
-		log.info("ㅁㅁㅁㅁsession b");
 		// 제품의 펀딩 리스트
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
 		model.addAttribute("fundingDetailP", fundingDetailP);
@@ -70,7 +71,6 @@ public class FundingController {
 		}
 
 		String socialId = checkSession(session);
-		log.info("session s");
 		Funding funding = fundingService.fund(socialId, productLink, amount, messageF);
 
 		String messageT = "주문 실패 ";

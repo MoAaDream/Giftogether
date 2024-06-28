@@ -1,11 +1,9 @@
 package com.moadream.giftogether.funding.service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.moadream.giftogether.DataNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,6 +126,11 @@ public class FundingService {
 	public FundingDetailsDTO getFundingDetailByUid(String fundingUid) {
 		Funding funding = fundingRepository.findByFundingUid(fundingUid);
 		return funding != null ? mapToDTO(funding) : null;
+	}
+
+	public String getProductName(String productLink) {
+		return  productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new DataNotFoundException("제품이 없습니다.")).getName();
 	}
 
 	private FundingDetailsDTO mapToDTO(Funding funding) {
