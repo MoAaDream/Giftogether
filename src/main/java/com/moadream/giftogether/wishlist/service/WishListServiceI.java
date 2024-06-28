@@ -22,4 +22,6 @@ public interface WishListServiceI {
 
     public boolean checkMyPage(String socialId, String wishlistLink);
 
+    public void deleteWishlistForExistFunding(String socialId, String wishlistLink);
+
 }

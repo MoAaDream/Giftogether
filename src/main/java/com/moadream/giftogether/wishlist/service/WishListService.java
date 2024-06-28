@@ -9,6 +9,8 @@ import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.moadream.giftogether.funding.service.PaymentService;
+import com.moadream.giftogether.product.Service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +39,8 @@ public class WishListService implements WishListServiceI {
 
     private final WishListRepository wishListRepository;
     private final MemberRepository memberRepository;
+    private final PaymentService paymentService;
+    private final ProductService productService;
 
 
     @Transactional
@@ -113,6 +117,23 @@ public class WishListService implements WishListServiceI {
             return false;
 
         return true;
+    }
+
+    @Override
+    @Transactional
+    public void deleteWishlistForExistFunding(String socialId, String wishlistLink) {
+        Member member = findMemberBySocialId(socialId);
+        WishList wishList = findWishListByLink(wishlistLink);
+
+        checkMyWishList(wishList, member);
+
+        wishList.getProductList().stream()
+                        .forEach(product -> {
+                            paymentService.productCancel(product.getProductLink(), socialId);
+                            productService.delete(product.getProductLink(), socialId);
+                        });
+
+        wishListRepository.deleteById(wishList.getId());
     }
 
     private void checkMyWishList(WishList wishList, Member member) {
