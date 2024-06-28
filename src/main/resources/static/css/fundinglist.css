@@ -1,0 +1,137 @@
+/* section01 */
+#section01 > .list-container{
+  /*position: relative;*/
+  /*padding: 70px 24px 48px;*/
+}
+.search-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  margin-bottom: 48px;
+}
+
+#input-search {
+  width: 100%;
+  margin-right: 0.625rem;
+  border: 1px solid var(--gray4);
+  border-radius: 4px;
+  padding: 8px 16px;
+}
+
+#input-search::placeholder {
+  color: var(--gray5);
+  font-size: 1rem;
+}
+
+#btn-search {
+  width: fit-content;
+  height: 48px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  color: var(--gray1);
+  background-color: var(--primary);
+  border-radius: 4px;
+}
+
+.funding-list-container {
+  width: 94%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto;
+}
+
+.funding-list-box {
+  width: 48%;
+  margin-bottom: 1.25rem;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
+.funding-list {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.funding-info-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.funding-info-container > p {
+  color: var(--gray1);
+}
+
+.achieved-percent {
+  height: 20px;
+}
+
+.funding-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.funding-image > img {
+  all: inherit;
+}
+
+.btn-funding {
+  display: block;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  background-color: var(--primary);
+  color: var(--gray1);
+}
+
+#btn-more {
+  margin-top: 3rem;
+}
+/* 위시리스트 카드에 .event-wish일때 스타일 */
+.event-wish{
+  position: relative;
+  box-sizing: content-box;
+  border: 2.5px solid transparent !important;
+  background-image: linear-gradient(#fff, #fff),
+  linear-gradient(to bottom right, #8C35FA 0%,  #32E9EC 100%);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+.event-wish:after{
+  content: '이벤트 위시';
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 0 0 0.375rem 0;
+  display: block;
+  width: 80px;
+  height: 20px;
+  background: #8C35FA;
+}
+.participate-funding-amount{
+  background: rgba(0, 0, 0, 0.80);
+}
+.participate-funding-amount > span{
+  background: linear-gradient(90deg, #7AFFE6 2.79%, #8C35FA 99.42%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

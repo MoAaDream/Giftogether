@@ -10,8 +10,12 @@ public class Controller {
         return "hello";
     }
     
-    @GetMapping("")
+    @GetMapping("/")
     public String getLayout(){
         return "layout";
+    }
+    @GetMapping("/ex")
+    public String getEx(){
+        return "example";
     }
 }

@@ -37,10 +37,9 @@ public class FundingController {
 		int[] amountOptions = fundingService.getFundingAmounts(productLink);
 		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("messageT", messageT);
-		model.addAttribute("fundingUid", id);
-
-
-		log.info("ㅁㅁㅁㅁsession b");
+		model.addAttribute("fundingUid", id); 
+		
+		
 		// 제품의 펀딩 리스트
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
 		model.addAttribute("fundingDetailP", fundingDetailP);
@@ -69,8 +68,7 @@ public class FundingController {
 			return "redirect:/fundings/" + productLink;
 		}
 
-		String socialId = checkSession(session);
-		log.info("session s");
+		String socialId = checkSession(session); 
 		Funding funding = fundingService.fund(socialId, productLink, amount, messageF);
 
 		String messageT = "주문 실패 ";

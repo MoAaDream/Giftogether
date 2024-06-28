@@ -1,0 +1,469 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+   <section id="public_wish" class="wish-list-container m-auto text-center bg-white" style="min-height: 75vh;">
+            <!-- #종료된 위시# -->
+            <div class="wish-list-content">
+                <!-- 검색창 -->
+                <form id="funding_list_search" action="/funding_list" method="get" class="">
+                    <div class="relative">
+                        <input type="text" id="search_name" class="w-[100%] rounded py-2 pl-4 focus:outline-none placeholder:text-gray-200 focus:border-primary-300 transition max-[355px]:placeholder:text-sm" placeholder="친구이름이나 닉네임을 검색해보세요." name="search_name" value="">
+                        <div class="h-[1px] bg-gray-200"></div>
+                        <button type="button" onclick="searchFunding();" class="absolute right-1 top-0 w-8 h-[44px]">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="#8C35FA" class="w-5 h-5">
+                                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- toggle button -->
+                    <div class="text-center mt-3 mx-auto text-sm">
+                        <div class="w-[55%] max-[380px]:w-[80%] bg-[#f7f0ff] h-[40px] rounded-[100px] mx-auto font-semibold relative z-[1] shadow-[1px_1px_2px_rgba(0,0,0,0.25)]">
+                            <input type="checkbox" id="toggle" hidden="" name="only_public" value="1">
+                            <div id="toggleButton" class="bg-[#8c35fa] w-1/2 h-full rounded-[100px] absolute z-[2] duration-200"></div>
+                            <label for="toggle" class="flex w-full h-[40px] justify-evenly align-center gap-[10px] absolute z-[2] cursor-pointer">
+                                <span id="allWish" class="w-1/2 leading-[40px] duration-200">전체 위시 보기</span>
+                                <span id="openWish" class="w-1/2 leading-[40px] duration-200">공개 위시만 보기</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- info message -->
+                <div class="flex gap-1 items-start text-primary-300 bg-primary-50 p-2 mx-3 mt-3 mb-1.5 rounded-md">
+                    <div class="w-3.5 h-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="#8C35FA" class="w-3.5 h-3.5">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <p class="text-xs">
+                        프라이빗 위시는 친구의 이름을 검색해서 찾을 수 있어요!
+                    </p>
+                </div>
+                <div class="list-container">
+                    <!-- 위시 리스트 -->
+                    <ul id="funding_list_ul" class="mx-auto flex flex-wrap mb-2 px-1 pc:px-2.5 max-[355px]:flex-col">
+                        <!-- 유저 위시 카드 -->
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" event-wish  overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="story/wish-20240618-Nb0xYX2R.html">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="assets/images/default_user_profile_img.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/funding_id_588_img_02024_06_18_11_17_53.jpg');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 위시즈팀🌟 </p>
+                                                            <input type="hidden" id="user_name_588" name="user_name" value=" 위시즈팀🌟 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             하나뿐인 선풍기를 엄마에게 양보하는 마음이                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:   100%  ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="story/wish-20240623-yfx8JKTL.html">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="../static/upload/user_image_24_06_23_19_25_57.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/funding_id_711_img_02024_06_23_20_17_52.png');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 단호한마루 </p>
+                                                            <input type="hidden" id="user_name_711" name="user_name" value=" 단호한마루 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             아픈 우리 엄마를 위한 선물                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:   0%  ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="funding_list.html# ">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="../static/upload/user_image_24_06_23_11_35_14.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/funding_id_17_img_2023_10_29_22_06_30.png');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2" style="filter: blur(5px)">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 김*명 </p>
+                                                            <input type="hidden" id="user_name_707" name="user_name" value=" 김*명 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             프라이빗 위시 입니다.                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:  100% ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                                    <button class="absolute block w-3/4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1 rounded-lg bg-white border border-primary-300 text-xs z-[1] text-primary-300" type="button" onclick="privatePopUp(707);">프라이빗 위시 확인하기</button>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="funding_list.html# ">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="../static/upload/user_image_24_06_22_22_34_15.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/funding_id_17_img_2023_10_29_22_06_30.png');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2" style="filter: blur(5px)">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 김*진 </p>
+                                                            <input type="hidden" id="user_name_699" name="user_name" value=" 김*진 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             프라이빗 위시 입니다.                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:  100% ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                                    <button class="absolute block w-3/4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1 rounded-lg bg-white border border-primary-300 text-xs z-[1] text-primary-300" type="button" onclick="privatePopUp(699);">프라이빗 위시 확인하기</button>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="funding_list.html# ">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="../static/upload/user_image_24_06_22_22_15_11.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/funding_id_17_img_2023_10_29_22_06_30.png');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2" style="filter: blur(5px)">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 김*수 </p>
+                                                            <input type="hidden" id="user_name_697" name="user_name" value=" 김*수 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             프라이빗 위시 입니다.                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:  100% ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                                    <button class="absolute block w-3/4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1 rounded-lg bg-white border border-primary-300 text-xs z-[1] text-primary-300" type="button" onclick="privatePopUp(697);">프라이빗 위시 확인하기</button>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="funding_list.html# ">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="../static/upload/user_image_24_06_22_22_14_22.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/product_1ynSWIk6Up_2023_11_25_01_18_47.png');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2" style="filter: blur(5px)">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 김*지 </p>
+                                                            <input type="hidden" id="user_name_696" name="user_name" value=" 김*지 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             프라이빗 위시 입니다.                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:  100% ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                                    <button class="absolute block w-3/4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1 rounded-lg bg-white border border-primary-300 text-xs z-[1] text-primary-300" type="button" onclick="privatePopUp(696);">프라이빗 위시 확인하기</button>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="funding_list.html# ">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="../static/upload/user_image_24_06_22_22_09_12.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/funding_id_17_img_2023_10_29_22_06_30.png');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2" style="filter: blur(5px)">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 김*재 </p>
+                                                            <input type="hidden" id="user_name_692" name="user_name" value=" 김*재 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             프라이빗 위시 입니다.                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:  100% ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                                    <button class="absolute block w-3/4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1 rounded-lg bg-white border border-primary-300 text-xs z-[1] text-primary-300" type="button" onclick="privatePopUp(692);">프라이빗 위시 확인하기</button>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                                    <li class="my-1.5 px-1.5 w-2/4 max-[355px]:w-full">
+                                <article class=" overflow-hidden shadow-sm rounded-md border-[0.8px] border-primary-300 border-opacity-25">
+                                    <a href="funding_list.html# ">
+
+                                        <div class="relative">
+                                            <!-- 프로필 이미지 -->
+                                            <div class="absolute top-2 right-2 z-20 w-[46px] h-[46px] rounded-[100%] overflow-hidden bg-white border border-gray-100">
+                                                <img src="../static/upload/user_image_24_06_22_22_08_16.jpg" alt="" class="w-full h-full">
+                                            </div>
+                                            <!-- 상품 사진 -->
+                                            <div class="relative card-user-img w-full h-[38vw] bg-cover bg-center" style="background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2)), url('../static/upload/product_Jh8OQV3GIU_2023_11_24_13_24_37.png');">
+                                            </div>
+
+                                            <!-- 유저정보 -->
+                                            <div class="relative">
+                                                <div class="w-full bottom-0 text-left text-gray-400 p-2" style="filter: blur(5px)">
+                                                    <!-- 유저 생일, 이름, 진행도 -->
+                                                    <div class="mb-1">
+                                                        <div class="flex justify-between mb-0.5">
+                                                            <p class="text-primary-300 text-xs font-medium mb-[2px]"></p>
+                                                            <div class="flex gap-1">
+                                                                <!--진행중 위시 배지-->
+                                                                <p class="text-[10px] border border-primary-300 rounded-full text-primary-300 px-1 h-[17px] font-medium">
+                                                                    <span class="leading-tight"> 진행중 </span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <p class="text-sm font-bold"> 김*현 </p>
+                                                            <input type="hidden" id="user_name_691" name="user_name" value=" 김*현 ">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- 위시 대제목 -->
+                                                    <div class="bg-primary-50 rounded-sm h-[40px] overflow-hidden p-1.5 mb-1.5">
+                                                        <p class="text-[11px] line-clamp-2 font-medium">
+                                                             프라이빗 위시 입니다.                                                         </p>
+                                                    </div>
+
+                                                    <!-- 위시 진행률 UI-->
+                                                    <div class="achieved-percent h-[15px]">
+                                                        <div class="based-bar range rounded-full drop-shadow"></div>
+                                                        <div class="active-bar range rounded-full" style="width:  100% ;"></div>
+                                                    </div>
+                                                </div>
+                                                                                                    <button class="absolute block w-3/4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-1 rounded-lg bg-white border border-primary-300 text-xs z-[1] text-primary-300" type="button" onclick="privatePopUp(691);">프라이빗 위시 확인하기</button>
+                                                                                            </div>
+                                        </div>
+                                    </a>
+                                </article>
+                            </li>
+                                            </ul>
+                                         <button id="morePageButton" onclick="nextPage();" class="block w-2/3 border border-primary-300 text-primary-300 py-[5px] mx-auto my-5 rounded-lg font-semibold" type="button">더보기</button>
+                                    </div>
+            </div>
+        </section>
+     
+
+</div>
+<script layout:fragment="script" type='text/javascript'></script>
+</html>
