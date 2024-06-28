@@ -4,13 +4,18 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/CardLayout.css">
+<link rel="stylesheet" href="/css/Detail.css">
 </head>
 <body>
-<div class= "header">
-	<h2>가은이의 Wish List</h2>
-	<p>임시 위리 리스트 입니다</p>
+<div class="detail">
+	<div class="detail-image">
+	        <img th:src="${wishlist.listImg}" alt="Wishlist Image">
+	    </div>
+	<div class="detail-info">
+		<h1 th:text="${wishlist.name}"></h1>
+		<div class="description" th:text="${wishlist.description}"></div>
+	</div>
 </div>
-
 
 <div class="container">
 	<div class="card-list" th:if="${productList != null}">

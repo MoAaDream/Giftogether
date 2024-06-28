@@ -4,41 +4,6 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/messageForm.css">
-<script th:inline="javascript">
-    function uploadFile(event) {
-        var file = event.target.files[0];
-        var formData = new FormData();
-        formData.append('file', file);
-        formData.append('imageUri', document.getElementById('uploadedImage').src);
-
-        fetch("/files/image/products", {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                } else {
-                    throw new Error('파일 업로드 실패');
-                }
-            })
-            .then(imageUri => {
-                document.getElementById('uploadedImage').style.display = 'block';
-                document.getElementById('uploadedImage').src = imageUri;
-                document.getElementById('uploadedImageUri').value = imageUri;
-            })
-            .catch(error => {
-                const errorMessageElement = document.getElementById('errorMessage');
-                if (errorMessageElement) {
-                    errorMessageElement.textContent = error.message;
-                    errorMessageElement.style.display = 'block';
-                } else {
-                    console.error('errorMessage 요소를 찾을 수 없습니다.');
-                    // 다른 오류 처리 로직 추가
-                }
-            });
-    }
-  </script>
 </head>
 <body>
 <h2>위시리스트에 물건 추가하기</h2>
@@ -64,10 +29,62 @@
         <input type="text" id="optionDetail" th:field="*{optionDetail}">
 
         <label for="goalAmount">제품 금액 :</label>
-        <input type="text" id="goalAmount" th:field="*{goalAmount}">
+		<input type="text" id="goalAmount" th:field="*{goalAmount}" onblur="checkGoalAmount()">
+		<span id="goalAmountError" style="color: red;"></span>
 
         <input type="submit" value="추가하기">
     </form>
     
 </body>
+
+<script>
+
+function uploadFile(event) {
+    var file = event.target.files[0];
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('imageUri', document.getElementById('uploadedImage').src);
+
+    fetch("/files/image/products", {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('파일 업로드 실패');
+            }
+        })
+        .then(imageUri => {
+            document.getElementById('uploadedImage').style.display = 'block';
+            document.getElementById('uploadedImage').src = imageUri;
+            document.getElementById('uploadedImageUri').value = imageUri;
+        })
+        .catch(error => {
+            const errorMessageElement = document.getElementById('errorMessage');
+            if (errorMessageElement) {
+                errorMessageElement.textContent = error.message;
+                errorMessageElement.style.display = 'block';
+            } else {
+                console.error('errorMessage 요소를 찾을 수 없습니다.');
+                // 다른 오류 처리 로직 추가
+            }
+        });
+}
+
+
+    function checkGoalAmount() {
+        var goalAmountInput = document.getElementById('goalAmount');
+        var goalAmount = parseInt(goalAmountInput.value);
+
+        if (goalAmount < 50000 || goalAmount > 5000000) {
+            document.getElementById('goalAmountError').textContent = '금액은 50,000원에서 5,000,000원 사이여야 합니다.';
+            goalAmountInput.value = ''; // 잘못된 값 제거
+            goalAmountInput.focus(); // 다시 입력 필드로 포커스
+        } else {
+            document.getElementById('goalAmountError').textContent = '';
+        }
+    }
+</script>
 </html>

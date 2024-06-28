@@ -7,11 +7,11 @@
 <link rel="stylesheet" href="/css/messageForm.css">
 </head>
 <body>
-<div class="product-detail">
-    <div class="product-image">
+<div class="detail">
+    <div class="detail-image">
         <img th:src="${product.productImg}" alt="Product Image">
     </div>
-    <div class="product-info">
+    <div class="detail-info">
         <h1 th:text="${product.name}"></h1>
         <div class="description" th:text="${product.description}"></div>
 		<a th:href="@{|/products/${product.productLink}/modify|}" class="btn-primary">수정하기</a>
@@ -29,7 +29,7 @@
 </div>
 
 
-<a th:href="@{|/funding/${product.productLink}|}" class="btn-primary">선물 펀딩 하기</a>
+<a th:href="@{|/fundings/${product.productLink}|}" class="btn-primary">선물 펀딩 하기</a>
 
 </body>
 

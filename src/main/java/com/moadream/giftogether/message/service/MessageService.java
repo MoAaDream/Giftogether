@@ -1,18 +1,16 @@
 package com.moadream.giftogether.message.service;
 
-import com.moadream.giftogether.member.model.Member;
-import com.moadream.giftogether.message.model.Message;
-import com.moadream.giftogether.message.model.MessageFundDto;
-import com.moadream.giftogether.message.repository.MessageRepository;
-import com.moadream.giftogether.wishlist.model.WishList;
-import com.moadream.giftogether.wishlist.repository.WishListRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.moadream.giftogether.message.model.Message;
+import com.moadream.giftogether.message.model.MessageFundDto;
+import com.moadream.giftogether.message.repository.MessageRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -39,4 +37,5 @@ public class MessageService {
 
         return messageFundDtoList;
     }
+
 }
