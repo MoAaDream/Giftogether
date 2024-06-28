@@ -35,8 +35,8 @@ a:hover {
 }
 </style>
 <body>
-<h1>ttest(productlink)에서 온 모금 생성하는 페이지</h1>
-		
+	<h1>ttest(productlink)에서 온 모금 생성하는 페이지</h1>
+
 	<form method="post">
 		<div>
 			<input type="submit" value="모금액 결정">
@@ -158,5 +158,22 @@ a:hover {
 				</table>
 			</div>
 			<br> <br> <br> <br>
+			<div th:if="${errorMessage}" th:text="${errorMessage}"
+				id="errorMessage" style="display: none;"></div>
+			<div th:if="${successMessage}" th:text="${successMessage}"
+				id="successMessage" style="display: none;"></div>
+			<script>
+				window.onload = function() {
+					var errorMessage = document.getElementById('errorMessage');
+					if (errorMessage && errorMessage.innerText) {
+						alert(errorMessage.innerText);
+					}
+					var successMessage = document
+							.getElementById('successMessage');
+					if (successMessage && successMessage.innerText) {
+						alert(successMessage.innerText);
+					}
+				};
+			</script>
 </body>
 </html>

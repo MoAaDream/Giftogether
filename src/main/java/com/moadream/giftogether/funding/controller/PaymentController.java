@@ -28,56 +28,54 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService paymentService;
+	private final PaymentService paymentService;
 
-    @GetMapping("/payment/{fundinguid}") // fundingUid (UUid)
-    public String paymentPage(@PathVariable(name = "fundinguid") String fundingUid,
-                              Model model) {
+	@GetMapping("/payment/{fundinguid}") // fundingUid (UUid)
+	public String paymentPage(@PathVariable(name = "fundinguid") String fundingUid, Model model) {
 
-        RequestPayDto requestDto = paymentService.findRequestDto(fundingUid);
-        model.addAttribute("requestDto", requestDto);
-        return "funding/payment";
-    }
+		RequestPayDto requestDto = paymentService.findRequestDto(fundingUid);
+		model.addAttribute("requestDto", requestDto);
+		return "funding/payment";
+	}
 
-    @ResponseBody
-    @PostMapping("/payment")
-    public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody PaymentCallbackRequest request) {
-        IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(request);
+	@ResponseBody
+	@PostMapping("/payment")
+	public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody PaymentCallbackRequest request) {
+		IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(request);
 
-        log.info("결제 응답={}", iamportResponse.getResponse().toString());
+		log.info("결제 응답={}", iamportResponse.getResponse().toString());
 
-        return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
-    }
+		return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
+	}
 
-    @GetMapping("/success-payment")
-    public String successPaymentPage() {
-        return "funding/success-payment";
-    }
+	@GetMapping("/success-payment")
+	public String successPaymentPage() {
+		return "funding/success-payment";
+	}
 
-    @GetMapping("/fail-payment")
-    public String failPaymentPage() {
-        return "funding/fail-payment";
-    }
-    
-    
-    @PostMapping("/cancel-payment/{id}")
-    public String cancelPayment(@PathVariable("id") String fundingUid,HttpSession session, RedirectAttributes redirectAttributes) {
-        try {
-        	
+	@GetMapping("/fail-payment")
+	public String failPaymentPage() {
+		return "funding/fail-payment";
+	}
 
-    	String socialId = checkSession(session);
-          boolean result = paymentService.cancelPayment(fundingUid,socialId);
-            if (result) {
-                redirectAttributes.addFlashAttribute("successMessage", "결제가 성공적으로 취소되었습니다.");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "이미 취소됬습니다."); 
-            }
-        } catch (Exception e) {
-            log.error("결제 취소 오류", e);
-            redirectAttributes.addFlashAttribute("errorMessage", "시스템 오류로 인한 결제 취소 실패.");
-        }
-        return "redirect:/fundings/detail/" + fundingUid ;  
-    }
+	@PostMapping("/cancel-payment/{id}")
+	public String cancelPayment(@PathVariable("id") String fundingUid, HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		try {
+
+			String socialId = checkSession(session);
+			boolean result = paymentService.cancelPayment(fundingUid, socialId);
+			if (result) {
+				redirectAttributes.addFlashAttribute("successMessage", "결제가 성공적으로 취소되었습니다.");
+			} else {
+				redirectAttributes.addFlashAttribute("errorMessage", "이미 취소됬습니다.");
+			}
+		} catch (Exception e) {
+			log.error("결제 취소 오류", e);
+			redirectAttributes.addFlashAttribute("errorMessage", "시스템 오류로 인한 결제 취소 실패.");
+		}
+		return "redirect:/fundings/detail/" + fundingUid;
+	}
 
 	private String checkSession(HttpSession session) {
 		if (session == null)
