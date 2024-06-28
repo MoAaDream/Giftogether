@@ -63,20 +63,5 @@ public class Funding extends BaseTimeEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    
-//    public static Funding cr(Integer amount, Member member, Product product) {
-//    	Funding fd = new Funding();
-//    	fd.amount = amount;
-//    	fd.status = Status.I;
-//    	fd.fundingUid = UUID.randomUUID().toString();
-//    	fd.member = member;
-//    	fd.product = product;
-//    	
-//    	
-//    	return fd;
-//    }
-//    
-//    public void updatePayment(Payment payment) {
-//    	this.payment = payment;
-//    }
+     
 }

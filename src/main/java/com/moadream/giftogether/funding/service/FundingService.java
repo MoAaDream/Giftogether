@@ -80,8 +80,7 @@ public class FundingService {
 	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
 
 		Member member = findMemberBySocialId(socialId);
-
-		log.info("session a");
+ 
 		
 		// 임시 결제내역 생성
 		Payment payment = Payment.builder().amount(amount) // 검증 할 값
@@ -102,18 +101,8 @@ public class FundingService {
 
 		fundingRepository.save(funding);
 		
-		
-//		Funding funding = Funding.cr(amount, member, product);
-
-
-//		funding.updatePayment(payment);
-//		log.error("ididid = " + funding.getPayment().getId());
-//		fundingRepository.saveAndFlush(funding);
-		// Funding 객체에 Payment 설정 및 저장
-//		funding.setPayment(payment); 
-//		fundingRepository.save(funding);
-
-		log.error("hello");
+		 
+ 
 		Message message = Message.builder().content(messageF).status(Status.I).funding(funding)
 				.wishlist(product.getWishlist()).build();
 
