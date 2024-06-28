@@ -132,12 +132,7 @@ public class ProductService {
         }
 	}
 
-	private Product findByLink(String productLink) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
+
 
 
 }
