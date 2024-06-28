@@ -12,8 +12,6 @@ import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.message.model.Message;
 import com.moadream.giftogether.message.model.MessageFundDto;
 import com.moadream.giftogether.message.repository.MessageRepository;
-import com.moadream.giftogether.product.Repository.ProductRepository;
-import com.moadream.giftogether.product.Service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageService {
 
     private final MessageRepository messageRepository;
-    private final ProductRepository productRepository;
-    private final ProductService productService;
     private final FundingRepository fundingRepository;
 
     @Transactional(readOnly = true)

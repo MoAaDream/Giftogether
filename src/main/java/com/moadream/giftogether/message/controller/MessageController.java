@@ -33,11 +33,10 @@ public class MessageController {
 		String socialId = checkSession(session);
 		List<MessageFundDto> messageList = this.messageService.getMessageFunding(wishlistLink);
 		int totalAmount = 0;
-		int totalPeople = 0;
+		int totalPeople = messageList.size();
 
 		for (MessageFundDto message : messageList) {
 			totalAmount += message.getAmount();
-			totalPeople += 1;
 		}
 		
 		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
@@ -66,18 +65,12 @@ public class MessageController {
 		String socialId = checkSession(session);
 		List<MessageFundDto> messageList = this.messageService.getMessageFundingProduct(productLink);
 		Product product = this.productRepository.findByProductLink(productLink).get();
-		int totalAmount = 0;
-		int totalPeople = 0;
+		int totalPeople = messageList.size();
 
-		for (MessageFundDto message : messageList) {
-			totalAmount += message.getAmount();
-			totalPeople += 1;
-		}
 		
         model.addAttribute("messageList", messageList);
         model.addAttribute("productLink",productLink);
         model.addAttribute("product", product); 
-        model.addAttribute("totalAmount", totalAmount);
         model.addAttribute("totalPeople", totalPeople);
 		
 		if (product.getWishlist().getMember().getSocialLoginId().equals(socialId)){
