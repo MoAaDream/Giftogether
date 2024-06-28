@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String socialId) throws UsernameNotFoundException {
 		log.info("=======userDetails ====   loadUserByUsername 실행 ");
-		// 사용자를 데이터배이스에서 조회하고 
+		// 사용자를 데이터베이스에서 조회하고 
 		Member member = memberRepository.findBySocialLoginId(socialId)
 				.orElseThrow(()-> new UsernameNotFoundException("존재하지 않는 회원입니다."));
 		
