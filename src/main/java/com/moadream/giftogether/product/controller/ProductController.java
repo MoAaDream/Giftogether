@@ -39,12 +39,12 @@ public class ProductController {
 	
 	@GetMapping("/{wishlist_link}/products")
     public String list(Model model,  @PathVariable("wishlist_link") String wishlistLink, HttpSession session) {
+		String socialId = checkSession(session);
 		List<Product> productList = this.productService.getProductList(wishlistLink);
 		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
         model.addAttribute("productList", productList);
         model.addAttribute("wishlistLink",wishlistLink);
         model.addAttribute("wishlist", wishlist); 
-		String socialId = checkSession(session);
 		
 		if (wishlist.getMember().getSocialLoginId().equals(socialId)){
 			return "product_mylist";
