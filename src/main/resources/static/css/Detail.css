@@ -1,4 +1,4 @@
-.product-detail {
+.detail {
     display: flex;
     align-items: center; /* 수직 정렬 */
     max-width: 800px; /* 최대 너비 설정 */
@@ -14,7 +14,7 @@
     transform: translateY(-5px); /* 호버 시 약간 위로 이동 */
 }
 
-.product-image {
+.detail-image {
     /*flex: 0 0 auto; /* 이미지 크기 유지 */
     max-width: 450px;
     width: auto;
@@ -22,17 +22,17 @@
     margin-right: 20px; /* 이미지 오른쪽 간격 */
 }
 
-.product-image img {
+.detail-image img {
     max-width: 100%;
     height: auto;
     border-radius: 8px; /* 이미지에 둥근 모서리 적용 */
 }
 
-.product-info {
+.detail-info {
     flex: 1; /* 남은 공간을 차지하도록 설정 */
 }
 
-.product-info h1 {
+.detail-info h1 {
     font-size: 24px;
     margin-bottom: 10px;
     color: #333; /* 제목색 */

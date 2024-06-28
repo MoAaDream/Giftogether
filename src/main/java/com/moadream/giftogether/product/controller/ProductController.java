@@ -43,6 +43,7 @@ public class ProductController {
 		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
         model.addAttribute("productList", productList);
         model.addAttribute("wishlistLink",wishlistLink);
+        model.addAttribute("wishlist", wishlist); 
 		String socialId = checkSession(session);
 		
 		if (wishlist.getMember().getSocialLoginId().equals(socialId)){
