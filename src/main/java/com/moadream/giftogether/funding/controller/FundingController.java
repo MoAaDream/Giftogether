@@ -46,10 +46,6 @@ public class FundingController {
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
 		model.addAttribute("fundingDetailP", fundingDetailP);
 
-		// 나의 펀딩 리스트
-		String socialId = checkSession(session);
-		List<FundingDetailsDTO> fundingDetailM = fundingService.findFundingsBySocialId(socialId);
-		model.addAttribute("fundingDetailM", fundingDetailM);
 
 		return "funding/order";
 	}
@@ -99,6 +95,18 @@ public class FundingController {
 
 		return "funding/detail";
 	}
+
+	@GetMapping("/my")
+	public String getMyPayments(HttpSession session, Model model){
+		// 나의 펀딩 리스트
+		String socialId = checkSession(session);
+		List<FundingDetailsDTO> fundingDetailM = fundingService.findFundingsBySocialId(socialId);
+		model.addAttribute("fundingDetailM", fundingDetailM);
+
+
+		return "member/pay_statics";
+	}
+
 
 	private String checkSession(HttpSession session) {
 		if (session == null)

@@ -1,5 +1,6 @@
 package com.moadream.giftogether.funding.controller;
 
+import com.moadream.giftogether.global.exception.SessionNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,8 @@ import com.siot.IamportRestClient.response.Payment;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
 @Slf4j
 @Controller
@@ -69,7 +72,11 @@ public class PaymentController {
 
 	private String checkSession(HttpSession session) {
 		if (session == null)
-			log.error("세션이 없습니다.");
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
+
+		if (session.getAttribute("kakaoId") == null)
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
+
 		return session.getAttribute("kakaoId").toString();
 	}
 }
