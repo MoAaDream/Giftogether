@@ -2,7 +2,14 @@ package com.moadream.giftogether.funding.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
+import com.moadream.giftogether.DataNotFoundException;
+import com.moadream.giftogether.product.Repository.ProductRepository;
+import com.moadream.giftogether.product.model.Product;
+import com.moadream.giftogether.wishlist.exception.WishListException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +28,8 @@ import com.siot.IamportRestClient.response.Payment;
 
 import lombok.RequiredArgsConstructor;
 
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DEADLINE_AFTER;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,6 +37,7 @@ public class PaymentService {
 
 	private final FundingRepository fundingRepository;
 	private final PaymentRepository paymentRepository;
+	private final ProductRepository productRepository;
 	private final IamportClient iamportClient;
 
 	public RequestPayDto findRequestDto(String fundingUid) {
@@ -152,6 +162,22 @@ public class PaymentService {
 		}
 
 		return false;
+	}
+
+	@Transactional
+	public void productCancel(String productLink, String socialId) {
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new DataNotFoundException("데이터가 없습니다."));
+
+		if(product.getWishlist().getDeadline().toLocalDate().isBefore(LocalDate.now()))
+			throw new WishListException(NOT_DEADLINE_AFTER);
+
+		product.getFundingList().stream()
+				.filter(funding -> funding.getStatus() == Status.A)
+				.forEach(funding -> {
+					String uid = funding.getFundingUid();
+					cancelPayment(uid, socialId);
+				});
 	}
 
 }
