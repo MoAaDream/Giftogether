@@ -34,7 +34,6 @@ public class ProductController {
 
 	
 	private final ProductService productService;
-	//private final WishListService wishlistService;
 	private final WishListRepository wishListRepository;
 	
 	@GetMapping("/{wishlist_link}/products")
@@ -47,16 +46,16 @@ public class ProductController {
         model.addAttribute("wishlist", wishlist); 
 		
 		if (wishlist.getMember().getSocialLoginId().equals(socialId)){
-			return "product_mylist";
+			return "products/product_mylist";
 		}
-		return "product_list";
+		return "products/product_list";
     }
 	
 	@GetMapping("/products/{product_link}")
 	public String detail(Model model, @PathVariable("product_link") String productLink) {
 	    Product product = this.productService.getProduct(productLink);
 	    model.addAttribute("product", product);
-	    return "product_detail";
+	    return "products/product_detail";
 	}
 	
 	@GetMapping("/{wishlist_link}/create")
@@ -68,7 +67,7 @@ public class ProductController {
 		if (!wishlist.getMember().getSocialLoginId().equals(socialId)){
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "생성 권한이 없습니다.");
 		}
-		return "product_form";
+		return "products/product_form";
 	}
 
 	
@@ -87,7 +86,7 @@ public class ProductController {
 		
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("productForm", productForm);
-			return "product_form";
+			return "products/product_form";
 		}
 		
 		log.info("Creating product link: " + productForm.getUploadedImage());
@@ -114,7 +113,7 @@ public class ProductController {
 		productModifyForm.setOptionDetail(product.getOptionDetail());
 		model.addAttribute("productModifyForm", product);
 		
-		return "product_modify";
+		return "products/product_modify";
 	}
 	
 	
@@ -132,11 +131,10 @@ public class ProductController {
 		
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("productModifyForm", productModifyForm);
-			return "product_modify";
+			return "products/product_modify";
 		}
 		
 		System.out.println(productLink);
-		log.info("Creating product link: " + productModifyForm.getUploadedImage());
 		this.productService.modify(productModifyForm.getName(), productModifyForm.getDescription(), productModifyForm.getUploadedImage(), productModifyForm.getOptionDetail(), socialId, productLink);
 		
 		System.out.println(productLink);
