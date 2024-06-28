@@ -13,12 +13,14 @@ public class RequestPayDto {
     private Integer paymentAmount;
     private String buyerEmail;
     private String buyerAddress;
+    private String productLink;
 
     @Builder
-    public RequestPayDto(String fundingUid,  Integer paymentAmount, String buyerEmail, String buyerAddress) {
+    public RequestPayDto(String fundingUid,  Integer paymentAmount, String buyerEmail, String buyerAddress, String productLink) {
         this.fundingUid = fundingUid; 
         this.paymentAmount = paymentAmount;
         this.buyerEmail = buyerEmail;
         this.buyerAddress = buyerAddress;
+        this.productLink = productLink;
     }
 }

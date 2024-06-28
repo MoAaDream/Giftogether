@@ -48,16 +48,6 @@ public class PaymentController {
 		return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
 	}
 
-	@GetMapping("/success-payment")
-	public String successPaymentPage() {
-		return "funding/success-payment";
-	}
-
-	@GetMapping("/fail-payment")
-	public String failPaymentPage() {
-		return "funding/fail-payment";
-	}
-
 	@PostMapping("/cancel-payment/{id}")
 	public String cancelPayment(@PathVariable("id") String fundingUid, HttpSession session,
 			RedirectAttributes redirectAttributes) {
