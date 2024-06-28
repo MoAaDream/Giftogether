@@ -78,6 +78,8 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member" ) 
     private List<Bank> bankLists = new ArrayList<>();
 
+	
+
     
  
 }

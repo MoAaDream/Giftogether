@@ -77,7 +77,8 @@
         </div>
 
         <div class="profile-pic">
-            <img th:if="${member != null && member.profile != null}" th:src="${member.profile}" alt="프로필 이미지">
+          <img th:if="${member != null && member.profile != null}" th:src="${member.profile}" alt="프로필 이미지">
+           
         </div>
         <div class="header" th:text="${member != null ? member.nickname : 'Guest'} + ' 님'">사용자 이름</div>
 
@@ -101,6 +102,16 @@
             <label>생일:</label>
             <span th:text="${member.birth != null ? #dates.format(member.birth, 'yyyy-MM-dd') : '입력해 주세요'}">생일</span>
         </div>
+        
+        
+        <div style="text-align: center; margin-top: 20px;">
+    <form id="deleteForm" th:action="@{'/member/' + ${id} + '/d'}" method="POST">
+        <input type="hidden" name="_method" value="delete">
+        <a href="#" onclick="event.preventDefault(); document.getElementById('deleteForm').submit();">회원 탈퇴</a>
+    </form>
+</div>
+
+    </div>
     </div>
 </body>
 </html>

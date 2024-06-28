@@ -7,5 +7,12 @@
     <h1>Welcome</h1>
     <p th:text="'Hello, ' + ${name != null? name : 'Guest' } + '!'"></p>
     <a href="/logout">Logout</a>
+    <a th:href="@{/member/{id}(id=${id})}">마이페이지</a>
+    
+    
+    <!-- 
+     <p th:text="${currentUser}"></p>
+    <p th:text="${sessionUser}"></p>  -->
+    
 </body>
 </html>

@@ -54,7 +54,7 @@ public class MemberServiceTest {
         member.setId(memberId);
         member.setStatus(Status.A);
 
-        when(memberRepository.findMemberById(memberId)).thenReturn(member);
+        when(memberRepository.findMemberByIdAndStatus(memberId)).thenReturn(member);
 
         // when
         Member result = memberService.getMemberInfo(memberId);
