@@ -15,7 +15,7 @@
         <tr th:each="wishlist : ${paging.content}">
             <td>
                 <div class="wishlist-box">
-                    <a th:href="@{'/products/' + ${wishlist.link}}" class="wishlist-link">
+                    <a th:href="@{'/' + ${wishlist.link} + '/products'}" class="wishlist-link">
                         <img th:src="${wishlist.listImg}" class="wishlist-img" />
                         <div class="wishlist-info">
                             <h4 th:text="${wishlist.name}"></h4>
