@@ -43,8 +43,8 @@ public class Funding extends BaseTimeEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
-
-//    private String itemName;
+ 
+    
     private String fundingUid; 
 
     
@@ -63,4 +63,5 @@ public class Funding extends BaseTimeEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
+     
 }

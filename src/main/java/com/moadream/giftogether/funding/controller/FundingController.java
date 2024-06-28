@@ -1,6 +1,5 @@
 package com.moadream.giftogether.funding.controller;
 
- 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.moadream.giftogether.funding.model.Funding;
@@ -27,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @Slf4j
 @RequestMapping("/fundings")
-@SessionAttributes("confirmedAmount") // 세션에 confirmedAmount 속성을 저장
 public class FundingController {
 
 	private final FundingService fundingService;
@@ -37,14 +34,13 @@ public class FundingController {
 			@RequestParam(name = "messageT", required = false) String messageT,
 			@RequestParam(name = "fundingUid", required = false) String id, HttpSession session, Model model) {
 
-		
 		int[] amountOptions = fundingService.getFundingAmounts(productLink);
 		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("messageT", messageT);
 		model.addAttribute("fundingUid", id);
 
 
-
+		log.info("ㅁㅁㅁㅁsession b");
 		// 제품의 펀딩 리스트
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
 		model.addAttribute("fundingDetailP", fundingDetailP);
@@ -58,15 +54,24 @@ public class FundingController {
 	}
 
 	@PostMapping("/{productlink}")
-	public String setAmount(@PathVariable(name = "productlink", required = true) String productlink,
+	public String setAmount(@PathVariable(name = "productlink", required = true) String productLink,
 			@RequestParam(name = "message") String messageF, @RequestParam("amount") Integer amount,
-			HttpSession session) {
-		// 사용자가 선택한 금액을 세션에 저장
-		session.setAttribute("confirmedAmount", amount);
-		
-		String socialId = checkSession(session);
-		Funding funding = fundingService.fund(socialId, productlink, amount, messageF);
+			HttpSession session, RedirectAttributes redirectAttributes) {
 
+ 
+
+		// 결제 이전 금액 설정 단계에서 금액 제한
+		try {
+			fundingService.validateAmount(amount, productLink);  
+
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+			return "redirect:/fundings/" + productLink;
+		}
+
+		String socialId = checkSession(session);
+		log.info("session s");
+		Funding funding = fundingService.fund(socialId, productLink, amount, messageF);
 
 		String messageT = "주문 실패 ";
 		if (funding != null) {
@@ -74,22 +79,23 @@ public class FundingController {
 		}
 		String encode = URLEncoder.encode(messageT, StandardCharsets.UTF_8);
 
-		return "redirect:/fundings/" + productlink + "?messageT=" + encode + "&fundingUid=" + funding.getFundingUid();
+		return "redirect:/fundings/" + productLink + "?messageT=" + encode + "&fundingUid=" + funding.getFundingUid();
 	}
 
 	@GetMapping("/detail/{fundinguid}")
-	public String getFundingDetail(@PathVariable(name = "fundinguid", required = true) String fundingUid, Model model, RedirectAttributes redirectAttributes) {
+	public String getFundingDetail(@PathVariable(name = "fundinguid", required = true) String fundingUid, Model model,
+			RedirectAttributes redirectAttributes) {
 
 		FundingDetailsDTO fundingDetail = fundingService.getFundingDetailByUid(fundingUid);
 
 		model.addAttribute("fundingDetail", fundingDetail);
-	    // model에서 flash attribute를 확인하고 추가 처리
-	    if (model.containsAttribute("successMessage")) {
-	        model.addAttribute("message", model.getAttribute("successMessage"));
-	    }
-	    if (model.containsAttribute("errorMessage")) {
-	        model.addAttribute("message", model.getAttribute("errorMessage"));
-	    }
+		// model에서 flash attribute를 확인하고 추가 처리
+		if (model.containsAttribute("successMessage")) {
+			model.addAttribute("message", model.getAttribute("successMessage"));
+		}
+		if (model.containsAttribute("errorMessage")) {
+			model.addAttribute("message", model.getAttribute("errorMessage"));
+		}
 
 		return "funding/detail";
 	}

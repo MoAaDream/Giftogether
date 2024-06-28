@@ -9,4 +9,9 @@ public class Controller {
     public String getMember(){
         return "hello";
     }
+    
+    @GetMapping("")
+    public String getLayout(){
+        return "layout";
+    }
 }

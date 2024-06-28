@@ -36,44 +36,57 @@ public class FundingService {
 	private final ProductRepository productRepository;
 	private final MemberRepository memberRepository;
 	private final MessageRepository messageRepository;
-	
+
 	public int[] getFundingAmounts(String productLink) {
-	    // 제품을 찾아 없으면 예외 발생
-	    Product product = productRepository.findByProductLink(productLink)
-	            .orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
+		// 제품을 찾아 없으면 예외 발생
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
 
-	    // 남은 모금 필요 금액 계산
-	    int remainingAmount = product.getGoalAmount() - product.getCurrentAmount();
+		// 남은 모금 필요 금액 계산
+		int remainingAmount = product.getGoalAmount() - product.getCurrentAmount();
 
-	    // 기본 펀딩 옵션 설정
-	    int[] defaultOptions = {5000, 10000, 20000, 30000, 40000, 50000};
+		// 기본 펀딩 옵션 설정
+		int[] defaultOptions = { 5000, 10000, 20000, 30000, 40000, 50000 };
 
-	    // 남은 모금 필요 금액보다 작은 펀딩 옵션만 필터링
-	    List<Integer> filteredOptions = Arrays.stream(defaultOptions)
-	            .filter(amount -> amount <= remainingAmount)
-	            .boxed()
-	            .collect(Collectors.toList());
+		// 남은 모금 필요 금액보다 작은 펀딩 옵션만 필터링
+		List<Integer> filteredOptions = Arrays.stream(defaultOptions).filter(amount -> amount <= remainingAmount)
+				.boxed().collect(Collectors.toList());
 
-	    // 남은 모금 필요 금액을 목록의 맨 끝에 추가
-	    filteredOptions.add(remainingAmount);
+		// 남은 모금 필요 금액을 목록의 맨 끝에 추가 (길이가 6 미만일 경우에만)
+		if (filteredOptions.size() < 6) {
+			filteredOptions.add(remainingAmount);
+		}
 
-	    // 결과를 int 배열로 변환하여 반환
-	    return filteredOptions.stream().mapToInt(i -> i).toArray();
+		// 결과를 int 배열로 변환하여 반환
+		return filteredOptions.stream().mapToInt(i -> i).toArray();
 	}
 
-	
-	
-	@Transactional 
+	// 금액 선택 검증
+	public void validateAmount(Integer amount, String productLink) throws IllegalArgumentException {
+
+		// 제품을 찾아 없으면 예외 발생
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
+
+		// 남은 모금 필요 금액 계산
+		int remainingAmount = product.getGoalAmount() - product.getCurrentAmount();
+
+		if (amount > remainingAmount) {
+			throw new IllegalArgumentException("금액이 허용 금액을 초과하여 설정 되었습니다.");
+		}
+	}
+
+	@Transactional
 	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
 
 		Member member = findMemberBySocialId(socialId);
-
+ 
+		
 		// 임시 결제내역 생성
 		Payment payment = Payment.builder().amount(amount) // 검증 할 값
 				.status(PaymentStatus.R).build();
-
 		paymentRepository.save(payment);
-
+		
 //        log.info("member id = " + member.getId());
 //        List<Product> list = productRepository.findAll();
 //        for(Product p : list)
@@ -82,22 +95,22 @@ public class FundingService {
 		Product product = productRepository.findByProductLink(productLink)
 				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
 
-		// 주문 생성
+//		 주문 생성
 		Funding funding = Funding.builder().amount(amount).status(Status.I).fundingUid(UUID.randomUUID().toString())
 				.payment(payment).member(member).product(product).build();
 
 		fundingRepository.save(funding);
 		
-	 
-		Message message = Message.builder().content(messageF).status(Status.I)
-				.funding(funding).wishlist(product.getWishlist()).build();
-		
+		 
+ 
+		Message message = Message.builder().content(messageF).status(Status.I).funding(funding)
+				.wishlist(product.getWishlist()).build();
+
 		messageRepository.save(message);
-		
+
 		return funding;
 	}
-	
-	
+
 	public List<FundingDetailsDTO> findFundingsByProductLink(String productLink) {
 		return productRepository.findByProductLink(productLink)
 				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))
@@ -112,13 +125,11 @@ public class FundingService {
 				.collect(Collectors.toList());
 	}
 
-	public FundingDetailsDTO getFundingDetailByUid(String fundingUid) { 
-	    Funding funding = fundingRepository.findByFundingUid(fundingUid); 
-	    return funding != null ? mapToDTO(funding) : null;
+	public FundingDetailsDTO getFundingDetailByUid(String fundingUid) {
+		Funding funding = fundingRepository.findByFundingUid(fundingUid);
+		return funding != null ? mapToDTO(funding) : null;
 	}
 
-	
-	
 	private FundingDetailsDTO mapToDTO(Funding funding) {
 		FundingDetailsDTO dto = new FundingDetailsDTO();
 		dto.setAmount(funding.getAmount());
