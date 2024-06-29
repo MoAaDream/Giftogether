@@ -91,4 +91,13 @@ public class WishList extends BaseTimeEntity {
 		this.phoneNumber = wishListForm.getPhoneNumber();
 	}
 
+	@PreRemove
+	public void deleteProduct(){
+		for(Product product : productList)
+			product.setWishlist(null);
+
+		for(Message message : messageList)
+			message.setWishlist(null);
+	}
+
 }

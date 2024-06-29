@@ -94,6 +94,16 @@ public class WishListController {
         return "redirect:/wishlists";
     }
 
+    @DeleteMapping("/{wishlistlink}/funding")
+    public String wishlistDeleteForExistFunding(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
+        String socialId = checkSession(session);
+
+        wishListService.deleteWishlistForExistFunding(socialId, wishlistLink);
+        log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 하위 다 삭제");
+
+        return "redirect:/wishlists";
+    }
+
     @GetMapping("/my/{page}")
     public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model) {
 
