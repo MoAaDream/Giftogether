@@ -37,7 +37,7 @@ public class AdminService {
      */
 
 
-    public void CheckAdmin(String socialId) {
+    public void checkAdmin(String socialId) {
         Member member = memberRepository.findBySocialLoginId(socialId)
                 .orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
 
@@ -81,6 +81,10 @@ public class AdminService {
         staticsDto.setPriceRangeDtos(priceRangeDtos);
 
         return staticsDto;
+    }
+
+    public List<Member> getBlackListMember(){
+        return memberRepository.findAllByMisbehaviorCountGreaterThanEqual(5);
     }
 
     //총 모금량 찾기
