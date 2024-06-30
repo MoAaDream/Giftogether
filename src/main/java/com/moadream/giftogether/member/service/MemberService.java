@@ -1,7 +1,9 @@
 package com.moadream.giftogether.member.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.moadream.giftogether.member.exception.MemberException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,9 @@ import com.moadream.giftogether.wishlist.repository.WishListRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.CHECK_BLACKLIST;
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
+
 @Service
 @Slf4j
 public class MemberService {
@@ -29,6 +34,8 @@ public class MemberService {
 	
 	@Autowired
 	private WishListRepository wishListRepository;
+
+	private final int BEHAVIOR_CHECK_COUNT = 5;
 
 
 	
@@ -114,7 +121,14 @@ public class MemberService {
 		member.setStatus(Status.D);
 		memberRepository.save(member);
 	}
-	
-	
+
+	//일정 횟수 이상 했는지 확인
+	public void checkBlackList(String socialId){
+		Member member = memberRepository.findBySocialLoginId(socialId)
+				.orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
+
+		if(member.getMisbehaviorCount() >= BEHAVIOR_CHECK_COUNT)
+			throw new MemberException(CHECK_BLACKLIST);
+	}
 
 }	
