@@ -11,7 +11,8 @@ public enum MemberExceptionCode implements ExceptionCode {
 
     NOT_FOUND_SOCIAL_ID(HttpStatus.BAD_REQUEST, "M-E-001", "로그인 정보를 확인하지 못했습니다. 다시 로그인해주세요", "/login"),
     NO_AUTHORIZE_ADMIN(HttpStatus.UNAUTHORIZED, "M-E-002", "어드민이 아닙니다.", "/home"),
-    CHECK_BLACKLIST(HttpStatus.BAD_REQUEST, "M-E-003", "부적절한 사용자입니다. 사용할 수 없습니다.", "/home");
+    CHECK_BLACKLIST(HttpStatus.BAD_REQUEST, "M-E-003", "부적절한 사용자입니다. 사용할 수 없습니다.", "/home"),
+    NOT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "M-E-004", "사용자를 찾을 수 없습니다.", "/home");
 
 
 

@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -38,6 +40,7 @@ public class AdminController {
     }
 
 
+    @GetMapping("/blacklist")
     public String getBlackListPage(HttpSession session, Model model){
         String socialId = checkSession(session);
 
@@ -48,6 +51,16 @@ public class AdminController {
         model.addAttribute("data", memberList);
 
         return "admin/blacklist";
+    }
+
+    @PostMapping("/blacklist/{member_id}")
+    public String getBlackListPage(HttpSession session, @PathVariable("member_id") String memberId){
+        String socialId = checkSession(session);
+        adminService.checkAdmin(socialId);
+        adminService.removeBlackList(Integer.parseInt(memberId));
+        log.info("Member blacklist removed");
+
+        return "redirect:/admin/blacklist";
     }
 
     private String checkSession(HttpSession session) {
