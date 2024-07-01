@@ -3,6 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <title>File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        div {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        input[type="file"],
+        input[type="hidden"],
+        button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #007bff;
+        }
+
+        #uploadedImage {
+            max-width: 100%;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #errorMessage {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
     <script th:inline="javascript">
         function uploadFile(event) {
             var file = event.target.files[0];
@@ -35,7 +105,6 @@
 </head>
 <body>
 
-
 <div>
     <h2>위시 리스트 생성</h2>
     <form th:action="@{/wishlists/}" th:object="${wishListForm}" method="post">
@@ -48,7 +117,8 @@
         <label for="deadLine">기한 날짜</label>
         <input type="datetime-local" id="deadLine" th:field="*{deadLine}">
 
-        <input for="uploadedImage" type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="사진등록하기">
+        <label for="file">사진 등록하기</label>
+        <input for="uploadedImage" type="file" id="file" name="file" onchange="uploadFile(event)">
         <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
         <input type="hidden" id="uploadedImageUri" th:field="*{uploadedImage}">
 
@@ -60,6 +130,7 @@
 
         <button type="submit">위시 리스트 생성</button>
     </form>
+    <div id="errorMessage"></div>
 </div>
 
 </body>
