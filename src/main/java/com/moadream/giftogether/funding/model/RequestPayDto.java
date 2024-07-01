@@ -9,16 +9,21 @@ import lombok.Data;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RequestPayDto {
-    private String fundingUid; 
-    private Integer paymentAmount;
-    private String buyerEmail;
-    private String buyerAddress;
+	private String fundingUid;
+	private Integer paymentAmount;
+	private String buyerAddress;
+	private String itemName;
+	private String buyerName;
+	private String buyerTel;
 
-    @Builder
-    public RequestPayDto(String fundingUid,  Integer paymentAmount, String buyerEmail, String buyerAddress) {
-        this.fundingUid = fundingUid; 
-        this.paymentAmount = paymentAmount;
-        this.buyerEmail = buyerEmail;
-        this.buyerAddress = buyerAddress;
-    }
+	@Builder
+	public RequestPayDto(String fundingUid, Integer paymentAmount, String itemName, String buyerTel, String buyerName,
+			String buyerAddress) {
+		this.fundingUid = fundingUid;
+		this.paymentAmount = paymentAmount;
+		this.buyerAddress = buyerAddress;
+		this.buyerAddress = itemName;
+		this.buyerAddress = buyerName;
+		this.buyerAddress = buyerTel;
+	}
 }

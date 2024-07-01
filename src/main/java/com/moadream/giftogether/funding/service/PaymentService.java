@@ -35,7 +35,11 @@ public class PaymentService {
 		Funding fund = fundingRepository.findFundingAndPaymentAndMember(fundingUid)
 				.orElseThrow(() -> new IllegalArgumentException("주문이 없습니다."));
 
-		return RequestPayDto.builder().buyerAddress(fund.getMember().getAddress())
+		// 
+		return RequestPayDto.builder()
+				.buyerName(fund.getMember().getNickname()).itemName(fund.getProduct().getName())
+				.buyerTel(fund.getProduct().getWishlist().getPhoneNumber())
+				.buyerAddress(fund.getProduct().getWishlist().getAddress())
 				.paymentAmount(fund.getPayment().getAmount()).fundingUid(fund.getFundingUid()).build();
 	}
 

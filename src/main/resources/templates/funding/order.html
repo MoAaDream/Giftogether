@@ -38,25 +38,36 @@ a:hover {
 	<h1>ttest(productlink)에서 온 모금 생성하는 페이지</h1>
 
 	<form method="post">
-		<div>
-			<input type="submit" value="모금액 결정">
-		</div>
-		<label for="amount">결제 금액 선택:</label> <select id="amount"
-			name="amount">
-			<option th:each="amount : ${amountOptions}" th:value="${amount}"
-				th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + '원'"></option>
-		</select>
-
-		<div style="margin-top: 20px">
-			<label for="message">메시지:</label>
-			<textarea id="message" name="message" placeholder="여기에 메시지 입력"
-				maxlength="100" rows="5" style="width: 80%;"></textarea>
+		<div
+			th:if="${amountOptions.size() == 1 and amountOptions.get(0) == 0}"
+			style="margin-top: 20px">
+			<p>100% 모금이 완료되어 더 이상 모금을 할 수 없습니다.</p>
+			<a th:href="@{/products/{productLink} (productLink=${productLink})}">제품
+				페이지로 돌아가기</a>
 		</div>
 
-		<div style="margin-top: 20px">
-			<a
-				th:href="@{/fundings/payment/{fundingUid} (fundingUid=${fundingUid})}">결제
-				페이지로 이동</a>
+		<div
+			th:unless="${amountOptions.size() == 1 and amountOptions.get(0) == 0}">
+			<div>
+				<input type="submit" value="모금액 결정">
+			</div>
+			<label for="amount">결제 금액 선택:</label> <select id="amount"
+				name="amount">
+				<option th:each="amount : ${amountOptions}" th:value="${amount}"
+					th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + '원'"></option>
+			</select>
+
+			<div style="margin-top: 20px">
+				<label for="message">메시지:</label>
+				<textarea id="message" name="message" placeholder="여기에 메시지 입력"
+					maxlength="100" rows="5" style="width: 80%;"></textarea>
+			</div>
+
+			<div style="margin-top: 20px">
+				<a
+					th:href="@{/fundings/payment/{fundingUid} (fundingUid=${fundingUid})}">결제
+					페이지로 이동</a>
+			</div>
 		</div>
 	</form>
 	<!-- HTML 태그를 이스케이프 처리하지 않고 출력 -->

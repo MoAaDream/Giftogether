@@ -38,7 +38,10 @@ public class FundingController {
 		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("messageT", messageT);
 		model.addAttribute("fundingUid", id); 
+		model.addAttribute("productLink", productLink); 
 		
+        //push 전에 제거 테스트용
+        session.setAttribute("kakaoId","3051424432");
 		
 		// 제품의 펀딩 리스트
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
@@ -57,7 +60,6 @@ public class FundingController {
 			@RequestParam(name = "message") String messageF, @RequestParam("amount") Integer amount,
 			HttpSession session, RedirectAttributes redirectAttributes) {
 
- 
 
 		// 결제 이전 금액 설정 단계에서 금액 제한
 		try {
