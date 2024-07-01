@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Blacklist</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        width: 80%;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .profile-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+</style>
+<body>
+<div class="container">
+    <h1>Blacklist</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Nickname</th>
+            <th>Profile</th>
+            <th>Birth</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+            <th>Misbehavior Count</th>
+            <th>Restriction End Time</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member : ${data}">
+            <td th:text="${member.nickname}"></td>
+            <td>
+                <img th:src="${member.profile}" alt="Profile Image" class="profile-img">
+            </td>
+            <td th:text="${#dates.format(member.birth, 'yyyy-MM-dd')}"></td>
+            <td th:text="${member.phoneNumber}"></td>
+            <td th:text="${member.address}"></td>
+            <td th:text="${member.misbehaviorCount}"></td>
+            <td th:text="${#dates.format(member.restrictionEndTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td>
+                <form th:action="@{/admin/blacklist/{memberId}(memberId=${member.id})}" method="post">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit">Remove from Blacklist</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

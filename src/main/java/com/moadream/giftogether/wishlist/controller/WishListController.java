@@ -2,6 +2,7 @@ package com.moadream.giftogether.wishlist.controller;
 
 
 import com.moadream.giftogether.global.exception.SessionNotFoundException;
+import com.moadream.giftogether.member.service.MemberService;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
 import com.moadream.giftogether.wishlist.service.WishListServiceI;
@@ -25,10 +26,13 @@ import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESS
 public class WishListController {
 
     private final WishListServiceI wishListService;
+    private final MemberService memberService;
 
 
     @GetMapping("/")
-    public String getMapping(Model model) {
+    public String getMapping(HttpSession session, Model model) {
+        String socialId = checkSession(session);
+        memberService.checkBlackList(socialId);
         model.addAttribute("wishListForm", new WishListForm());
         return "wishlists/wishlist_form";
     }
@@ -41,7 +45,7 @@ public class WishListController {
         }
 
         String socialId = checkSession(session);
-
+        memberService.checkBlackList(socialId);
         wishListService.createWishList(wishListForm, socialId);
         log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
 
@@ -87,7 +91,7 @@ public class WishListController {
     @DeleteMapping("/{wishlistlink}")
     public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
         String socialId = checkSession(session);
-
+        memberService.checkBlackList(socialId);
         wishListService.deleteWishList(socialId, wishlistLink);
         log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 삭제");
 
@@ -97,7 +101,7 @@ public class WishListController {
     @DeleteMapping("/{wishlistlink}/funding")
     public String wishlistDeleteForExistFunding(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
         String socialId = checkSession(session);
-
+        memberService.checkBlackList(socialId);
         wishListService.deleteWishlistForExistFunding(socialId, wishlistLink);
         log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 하위 다 삭제");
 

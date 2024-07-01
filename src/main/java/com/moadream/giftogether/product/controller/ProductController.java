@@ -4,6 +4,7 @@ package com.moadream.giftogether.product.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.moadream.giftogether.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +35,7 @@ public class ProductController {
 
 	
 	private final ProductService productService;
+	private final MemberService memberService;
 	private final WishListRepository wishListRepository;
 	
 	@GetMapping("/{wishlist_link}/products")
@@ -60,8 +62,9 @@ public class ProductController {
 	
 	@GetMapping("/{wishlist_link}/create")
 	public String createProduct(Model model, @PathVariable("wishlist_link") String wishlistLink,  HttpSession session) {
-		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
 		String socialId = checkSession(session);
+		memberService.checkBlackList(socialId);
+		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
 		model.addAttribute("productForm",new ProductForm());
 		model.addAttribute("wishlistLink",wishlistLink);
 		if (!wishlist.getMember().getSocialLoginId().equals(socialId)){
@@ -74,9 +77,9 @@ public class ProductController {
 	@PostMapping("/{wishlist_link}/create")
 	public String createProduct(Model model, @PathVariable("wishlist_link") String wishlistLink,
 			@Valid @ModelAttribute ProductForm productForm, BindingResult bindingResult,  HttpSession session) {
-		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
 		String socialId = checkSession(session);
-		
+		memberService.checkBlackList(socialId);
+		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
 		String productLink = UUID.randomUUID().toString().replace("-", "");
 		model.addAttribute("wishlistLink",wishlistLink);
 		

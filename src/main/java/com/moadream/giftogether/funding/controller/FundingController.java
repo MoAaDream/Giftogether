@@ -4,6 +4,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import com.moadream.giftogether.global.exception.SessionNotFoundException;
+import com.moadream.giftogether.member.service.MemberService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
 @RequiredArgsConstructor
 @Controller
 @Slf4j
@@ -28,11 +32,14 @@ import lombok.extern.slf4j.Slf4j;
 public class FundingController {
 
 	private final FundingService fundingService;
+	private final MemberService memberService;
 
 	@GetMapping("/{productlink}")
 	public String fund(@PathVariable(name = "productlink", required = true) String productLink,
 			@RequestParam(name = "messageT", required = false) String messageT,
 			@RequestParam(name = "fundingUid", required = false) String id, HttpSession session, Model model) {
+		String socialId = checkSession(session);
+		memberService.checkBlackList(socialId);
 
 		int[] amountOptions = fundingService.getFundingAmounts(productLink);
 		String productName = fundingService.getProductName(productLink);
@@ -110,7 +117,11 @@ public class FundingController {
 
 	private String checkSession(HttpSession session) {
 		if (session == null)
-			log.error("세션이 없습니다.");
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
+
+		if (session.getAttribute("kakaoId") == null)
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
+
 		return session.getAttribute("kakaoId").toString();
 	}
 }
