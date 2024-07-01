@@ -98,7 +98,7 @@
         <form th:action="@{'/member/' + ${id}}" th:object="${member}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <div class="profile-pic">
-                    <img id="profileImage" src="${member.profile != null ? member.profile : 'default_profile.png'}" alt="프로필 이미지">
+                    <img id="profileImage" th:if="${member != null && member.profile != null}" th:src="${member.profile}" alt="프로필 이미지">
                     <input type="file" id="profileImageInput" name="profileImage" accept="image/*" onchange="previewProfileImage(event)">
                     <label for="profileImageInput">이미지 선택</label>
                 </div>

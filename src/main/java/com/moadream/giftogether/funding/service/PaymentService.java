@@ -1,11 +1,15 @@
 package com.moadream.giftogether.funding.service;
 
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DEADLINE_AFTER;
+
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.moadream.giftogether.DataNotFoundException;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.PaymentCallbackRequest;
@@ -13,6 +17,9 @@ import com.moadream.giftogether.funding.model.PaymentStatus;
 import com.moadream.giftogether.funding.model.RequestPayDto;
 import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.funding.repository.PaymentRepository;
+import com.moadream.giftogether.product.Repository.ProductRepository;
+import com.moadream.giftogether.product.model.Product;
+import com.moadream.giftogether.wishlist.exception.WishListException;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -28,19 +35,22 @@ public class PaymentService {
 
 	private final FundingRepository fundingRepository;
 	private final PaymentRepository paymentRepository;
+	private final ProductRepository productRepository;
 	private final IamportClient iamportClient;
 
 	public RequestPayDto findRequestDto(String fundingUid) {
 
 		Funding fund = fundingRepository.findFundingAndPaymentAndMember(fundingUid)
 				.orElseThrow(() -> new IllegalArgumentException("주문이 없습니다."));
-
-		// 
+ 
+		
 		return RequestPayDto.builder()
 				.buyerName(fund.getMember().getNickname()).itemName(fund.getProduct().getName())
 				.buyerTel(fund.getProduct().getWishlist().getPhoneNumber())
 				.buyerAddress(fund.getProduct().getWishlist().getAddress())
-				.paymentAmount(fund.getPayment().getAmount()).fundingUid(fund.getFundingUid()).build();
+				.paymentAmount(fund.getPayment().getAmount()).fundingUid(fund.getFundingUid())
+				.productLink(fund.getProduct().getProductLink()).build();
+ 
 	}
 
 	public IamportResponse<Payment> paymentByCallback(PaymentCallbackRequest request) {
@@ -156,6 +166,22 @@ public class PaymentService {
 		}
 
 		return false;
+	}
+
+	@Transactional
+	public void productCancel(String productLink, String socialId) {
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new DataNotFoundException("데이터가 없습니다."));
+
+		if(product.getWishlist().getDeadline().toLocalDate().isBefore(LocalDate.now()))
+			throw new WishListException(NOT_DEADLINE_AFTER);
+
+		product.getFundingList().stream()
+				.filter(funding -> funding.getStatus() == Status.A)
+				.forEach(funding -> {
+					String uid = funding.getFundingUid();
+					cancelPayment(uid, socialId);
+				});
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
 
 @Repository
@@ -37,5 +38,10 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
     Funding findByFundingUid(String fundingUid);
 
     List<Funding> findAllByMember_Id(Long memberId);
+    
+    List<Funding> findAllByProductId(Long productId);
+    
+    List<Funding> findAllByProduct_ProductLinkAndStatus(String productLink, Status status);
+
 
 }
