@@ -60,6 +60,10 @@ public class Member extends BaseTimeEntity {
     @Column(unique = true, length = 50)
     private String phoneNumber;
 
+    @Column(nullable = false)
+    private String email;
+    
+    
     private String address;
 
     @Column(nullable = false)

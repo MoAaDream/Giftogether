@@ -93,12 +93,24 @@ public class MemberController {
 		// properties 객체에서 nickname과 profile_image 추출
 		String nickname = properties.get("nickname").toString();
 		String profileImage = properties.get("profile_image").toString();
+		
+		
+		//사용자 정보에서 kakao_acount 객체 추출
+		Map<String, Object> kakaoAccount = (Map<String, Object>) kakaoUserInfo.get("kakao_account");
+		
+		String email = kakaoAccount.get("email").toString();
 
+		
+		
 		// 5. 사용자 정보를 세션에 저장
 		session.setAttribute("kakaoId", kakaoId);
 		session.setAttribute("nickname", nickname);
 		session.setAttribute("profileImage", profileImage);
 		session.setAttribute("accessToken", accessToken);
+		session.setAttribute("email", email); 
+		
+		log.info(email);
+		
 		
 		// 6. 세션 유지 시간 설정 
 		session.setMaxInactiveInterval(60 * 30); // 30분
@@ -115,6 +127,7 @@ public class MemberController {
 			newMember.setSocialProvider("Kakao");
 			newMember.setNickname(nickname);
 			newMember.setProfile(profileImage);
+			newMember.setEmail(email);
 			newMember.setStatus(Status.A);
 			newMember.setRole(Role.MEMBER);
 			newMember.setMisbehaviorCount(0);
@@ -253,12 +266,12 @@ public class MemberController {
 	 /**
 	  * 초대 메세지 보내기
 	  */
-
-	 
-	 /**
-	  * 푸시 알림
-	  */
-	
+/*
+	 @GetMapping("/member/message")
+	 public ResponseEntity<String> getFriends(HttpSession session){
+		 
+	 }
+	*/
 	 
 	 
 	 
