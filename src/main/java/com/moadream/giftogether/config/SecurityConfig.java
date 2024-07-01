@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,11 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
+ // 세션 만료 시 리다이렉션 설정
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
     
     
     // 특정 HTTP 요청에 대한 웹 기반 보안 구성
@@ -45,7 +51,14 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login/**", "/home", "/current-user").permitAll()
                         .requestMatchers("/member/**").authenticated() // /member/** 경로는 인증된 사용자에게만 접근 허용
                         .anyRequest().permitAll())
-                ;
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout-success")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"))
+                .sessionManagement(session -> session
+                        .sessionFixation().none() // 세션 고정 방지
+                        .invalidSessionUrl("/login")); // 세션이 유효하지 않을 때 리다이렉션할 URL;
 
         return http.build();
     }

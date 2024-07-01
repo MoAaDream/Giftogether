@@ -99,7 +99,11 @@ public class MemberController {
 		session.setAttribute("nickname", nickname);
 		session.setAttribute("profileImage", profileImage);
 		session.setAttribute("accessToken", accessToken);
-
+		
+		// 6. 세션 유지 시간 설정 
+		session.setMaxInactiveInterval(60 * 30); // 30분
+		
+		
 		CustomUserDetails userDetails;
 
 		// 회원가입 여부 확인 및 처리
@@ -123,6 +127,8 @@ public class MemberController {
 			userDetails = (CustomUserDetails) customUserService.loadUserByUsername(kakaoId);
 		}
 		
+		
+		
 		log.info("==========카카오 로그인 ========= " + userDetails);
 		// 로그인 처리
 		customUserService.loadUserDirectly(userDetails, session);
@@ -131,15 +137,6 @@ public class MemberController {
 
 	}
 
-	@GetMapping("/login-again")
-	public String showLoginPage(HttpSession session, Model model) {
-		// 세션에 저장된 kakaoId 제거 (예: 실제로는 세션에서 사용자 관련 정보를 모두 제거)
-		session.removeAttribute("kakaoId");
-
-		// 로그인 페이지로 리다이렉트하고 메시지 전달
-		model.addAttribute("message", "세션이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.");
-		return "redirect:/login"; // 실제 프로젝트에서는 로그인 페이지의 URL로 수정해야 합니다.
-	}
 
 	@GetMapping("/current-user")
 	public String getCurrentUser(Model model, HttpSession session) {
@@ -222,7 +219,7 @@ public class MemberController {
 		session.invalidate(); // 세션 무효화
 		log.info("logout 경로 도착");
 
-		return "login";
+		  return "redirect:/login?logout";
 	}
 
 	
