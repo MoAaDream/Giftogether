@@ -1,5 +1,6 @@
 package com.moadream.giftogether.member.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,6 +70,10 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private Integer misbehaviorCount;
+
+    private LocalDateTime restrictionEndTime;
+
     @OneToMany(mappedBy = "member" )
     private List<Funding> fundingLists = new ArrayList<>();
 
@@ -78,7 +83,23 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member" ) 
     private List<Bank> bankLists = new ArrayList<>();
 
-	
+
+    public void addBlackList(){
+        this.restrictionEndTime = LocalDateTime.now().plusDays(30);
+    }
+
+
+    public void removeBlackList(){
+        this.misbehaviorCount = 0;
+        this.restrictionEndTime = null;
+    }
+
+    public void addMisBehaviorCount(){
+        this.misbehaviorCount++;
+        if(this.misbehaviorCount >= 5){
+            addBlackList();
+        }
+    }
 
     
  

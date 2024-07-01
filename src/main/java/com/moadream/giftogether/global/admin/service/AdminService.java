@@ -16,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
-import static com.moadream.giftogether.member.exception.MemberExceptionCode.NO_AUTHORIZE_ADMIN;
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.*;
 
 @Service
 @Slf4j
@@ -37,7 +36,7 @@ public class AdminService {
      */
 
 
-    public void CheckAdmin(String socialId) {
+    public void checkAdmin(String socialId) {
         Member member = memberRepository.findBySocialLoginId(socialId)
                 .orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
 
@@ -81,6 +80,19 @@ public class AdminService {
         staticsDto.setPriceRangeDtos(priceRangeDtos);
 
         return staticsDto;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Member> getBlackListMember(){
+        return memberRepository.findAllByMisbehaviorCountGreaterThanEqual(5);
+    }
+
+    @Transactional
+    public void removeBlackList(long memberId){
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
+
+        member.removeBlackList();
     }
 
     //총 모금량 찾기

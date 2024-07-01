@@ -113,6 +113,7 @@ public class MemberController {
 			newMember.setProfile(profileImage);
 			newMember.setStatus(Status.A);
 			newMember.setRole(Role.MEMBER);
+			newMember.setMisbehaviorCount(0);
 
 			// MemberRepository를 사용하여 저장
 			memberService.createMember(newMember);
