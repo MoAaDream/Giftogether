@@ -1,78 +1,159 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<link rel="stylesheet" href="/css/messageForm.css">
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="/css/messageForm.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .alert {
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        img#uploadedImage {
+            max-width: 100%;
+            margin-top: 10px;
+            display: block;
+        }
+
+        span#errorMessage {
+            display: block;
+            color: red;
+            margin-top: 10px;
+        }
+
+        #goalAmountError {
+            color: red;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
+
 <h2>위시리스트에 물건 추가하기</h2>
-	<form th:action="@{|/${wishlistLink}/create|}"th:object="${productForm}" method="post">
-		<div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-			<div th:each="err : ${#fields.allErrors()}" th:text="${err}" /> 
-		</div>
-        <label for="name">제품 명:</label>
-        <input type="text" id="name" th:field="*{name}">
+<form th:action="@{|/${wishlistLink}/create|}" th:object="${productForm}" method="post">
+    <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+        <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
+    </div>
+    <label for="name">제품 명:</label>
+    <input type="text" id="name" th:field="*{name}">
 
-        <label for="description">제품 설명:</label><br>
-        <input type="text" id="description" th:field="*{description}">
+    <label for="description">제품 설명:</label>
+    <input type="text" id="description" th:field="*{description}">
 
-        <label for="externalLink">제품 구매 링크:</label>
-        <input type="text" id="externalLink" th:field="*{externalLink}">
-        
-        <label >제품 사진:</label>
-        <input type="file" id="file" name="file" onchange="uploadFile(event)"placeholder="사진등록하기">
-        <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
-        <input type="hidden" id="uploadedImageUri" name="uploadedImage">
-			
-		<label for="optionDetail">제품 옵션:</label>
-        <input type="text" id="optionDetail" th:field="*{optionDetail}">
+    <label for="externalLink">제품 구매 링크:</label>
+    <input type="text" id="externalLink" th:field="*{externalLink}">
 
-        <label for="goalAmount">제품 금액 :</label>
-		<input type="text" id="goalAmount" th:field="*{goalAmount}" onblur="checkGoalAmount()">
-		<span id="goalAmountError" style="color: red;"></span>
+    <label>제품 사진:</label>
+    <input type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="사진등록하기">
+    <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
+    <input type="hidden" id="uploadedImageUri" name="uploadedImage">
 
-        <input type="submit" value="추가하기">
-    </form>
-    
-</body>
+    <label for="optionDetail">제품 옵션:</label>
+    <input type="text" id="optionDetail" th:field="*{optionDetail}">
+
+    <label for="goalAmount">제품 금액 :</label>
+    <input type="text" id="goalAmount" th:field="*{goalAmount}" onblur="checkGoalAmount()">
+    <span id="goalAmountError"></span>
+
+    <input type="submit" value="추가하기">
+</form>
 
 <script>
+    function uploadFile(event) {
+        var file = event.target.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('imageUri', document.getElementById('uploadedImage').src);
 
-function uploadFile(event) {
-    var file = event.target.files[0];
-    var formData = new FormData();
-    formData.append('file', file);
-    formData.append('imageUri', document.getElementById('uploadedImage').src);
-
-    fetch("/files/image/products", {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.text();
-            } else {
-                throw new Error('파일 업로드 실패');
-            }
+        fetch("/files/image/products", {
+            method: 'POST',
+            body: formData
         })
-        .then(imageUri => {
-            document.getElementById('uploadedImage').style.display = 'block';
-            document.getElementById('uploadedImage').src = imageUri;
-            document.getElementById('uploadedImageUri').value = imageUri;
-        })
-        .catch(error => {
-            const errorMessageElement = document.getElementById('errorMessage');
-            if (errorMessageElement) {
-                errorMessageElement.textContent = error.message;
-                errorMessageElement.style.display = 'block';
-            } else {
-                console.error('errorMessage 요소를 찾을 수 없습니다.');
-                // 다른 오류 처리 로직 추가
-            }
-        });
-}
-
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('파일 업로드 실패');
+                }
+            })
+            .then(imageUri => {
+                document.getElementById('uploadedImage').style.display = 'block';
+                document.getElementById('uploadedImage').src = imageUri;
+                document.getElementById('uploadedImageUri').value = imageUri;
+            })
+            .catch(error => {
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = error.message;
+                    errorMessageElement.style.display = 'block';
+                } else {
+                    console.error('errorMessage 요소를 찾을 수 없습니다.');
+                }
+            });
+    }
 
     function checkGoalAmount() {
         var goalAmountInput = document.getElementById('goalAmount');
@@ -80,11 +161,12 @@ function uploadFile(event) {
 
         if (goalAmount < 50000 || goalAmount > 5000000) {
             document.getElementById('goalAmountError').textContent = '금액은 50,000원에서 5,000,000원 사이여야 합니다.';
-            goalAmountInput.value = ''; // 잘못된 값 제거
-            goalAmountInput.focus(); // 다시 입력 필드로 포커스
+            goalAmountInput.value = '';
+            goalAmountInput.focus();
         } else {
             document.getElementById('goalAmountError').textContent = '';
         }
     }
 </script>
+</body>
 </html>

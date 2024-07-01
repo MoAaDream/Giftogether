@@ -33,9 +33,22 @@ public class Bank extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer deposit;
 
+    @Column(nullable = false)
+    private String productLink;
+    
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
 
+    public static Bank createBank(BankForm bankForm, Member member, int currentAmount, String productLink){
+    	Bank bank = new Bank();
+    	bank.bankName = bankForm.getBankName();// 은행 이름
+    	bank.account = bankForm.getAccount(); // 계좌 번호
+    	bank.deposit = currentAmount;
+    	bank.productLink = productLink;
+    	bank.member = member;
+ 
+		return bank;
+	}
 }
