@@ -5,6 +5,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.Status;
@@ -207,7 +212,7 @@ public class MemberController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) throws JsonProcessingException {
 		String accessToken = (String) session.getAttribute("accessToken");
-
+		log.info("============ 로그아웃 ===========");
 		if (accessToken != null && !accessToken.isEmpty()) {
 			log.info("Access token found : " + accessToken);
 			kakaoService.logoutFromKakao(accessToken);
@@ -217,9 +222,49 @@ public class MemberController {
 		session.invalidate(); // 세션 무효화
 		log.info("logout 경로 도착");
 
-		return "redirect:/home";
+		return "login";
 	}
 
+	
+
+	/**
+	 * 친구 불러오기 
+	 * 
+	 * */
+	 @GetMapping("/member/friends")
+	    public ResponseEntity<String> getFriends(HttpSession session) {
+	        String accessToken = (String) session.getAttribute("accessToken");
+	        
+	        if (accessToken == null) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
+	        }
+
+	        String url = "https://kapi.kakao.com/v1/api/talk/friends";
+	        RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setBearerAuth(accessToken);
+	        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+	        ResponseEntity<String> response = restTemplate.exchange(
+	            url, HttpMethod.GET, entity, String.class);
+
+	        return response;
+	    }
+	
+	 
+	 
+	 /**
+	  * 초대 메세지 보내기
+	  */
+
+	 
+	 /**
+	  * 푸시 알림
+	  */
+	
+	 
+	 
+	 
 	/**
 	 * 마이페이지
 	 * 
@@ -240,6 +285,7 @@ public class MemberController {
 		}
 
 		Member member = memberService.getMemberInfo(id);
+
 		if (member == null) {
 			log.error("해당 ID의 회원 정보를 찾을 수 없습니다. ID: {}", id);
 			throw new Exception("유효하지 않은 접근입니다");
@@ -353,5 +399,8 @@ public class MemberController {
 			return ResponseEntity.status(500).body("탈퇴 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
+	
+	
+	
 
 }

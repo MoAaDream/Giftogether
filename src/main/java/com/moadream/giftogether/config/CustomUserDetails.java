@@ -25,18 +25,16 @@ public class CustomUserDetails implements UserDetails {
 		this.member = member;
 	}
 	private GrantedAuthority getAuthority(Role role) {
-        return new SimpleGrantedAuthority("ROLE_" + role.name());
+        return new SimpleGrantedAuthority(role.name());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorityList = new ArrayList<>();
 
-        switch (member.getRole()) {
-            case ADMIN : authorityList.add(getAuthority(Role.ADMIN));
-            break;
-            case MEMBER : authorityList.add(getAuthority(Role.MEMBER));
-            break;
+        String[] roles = member.getRole().getRoleName().split(", ");
+        for (String role : roles) {
+            authorityList.add(new SimpleGrantedAuthority(role));
         }
 
         return authorityList;
