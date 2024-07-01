@@ -7,9 +7,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.moadream.giftogether.DataNotFoundException;
+import com.moadream.giftogether.global.email.EmailService;
 import com.moadream.giftogether.product.Repository.ProductRepository;
 import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.wishlist.exception.WishListException;
+import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,7 @@ public class PaymentService {
 	private final PaymentRepository paymentRepository;
 	private final ProductRepository productRepository;
 	private final IamportClient iamportClient;
+	private final EmailService emailService;
 
 	public RequestPayDto findRequestDto(String fundingUid) {
 
@@ -69,13 +72,25 @@ public class PaymentService {
 			// 모금 성공 -> 금액 증가
 			Integer sumAmount = fund.getPayment().getAmount() + fund.getProduct().getCurrentAmount();
 			fund.getProduct().setCurrentAmount(sumAmount);
+			if(fund.getProduct().getGoalAmount() <= sumAmount){
+				String email = fund.getProduct().getWishlist().getMember().getEmail();
+				Product product = fund.getProduct();
+				String subjectText = "<h1>"+ product.getName() + "의 모금이 완료되었습니다." + "</h1><br>";
+				String imageText = "<img src='" + product.getProductImg() +"'><br>";
+				String linkText = "<a href=" + "http://localhost:8080/products/" + product.getProductLink() +">" + "모금 확인하러 가기</a>" ;
+
+				emailService.sendEmail(email, product.getName() + "의 모금이 완료되었습니다.", subjectText + imageText + linkText);
+			}
+
 
 			return iamportResponse;
 
 		} catch (IamportResponseException | IOException e) {
 			throw new RuntimeException(e);
-		}
-	}
+		} catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private void validatePayment(IamportResponse<Payment> iamportResponse, Funding fund)
 			throws IOException, IamportResponseException {
