@@ -1,5 +1,15 @@
 package com.moadream.giftogether.global.admin.service;
 
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_MEMBER;
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NO_AUTHORIZE_ADMIN;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.moadream.giftogether.funding.repository.PaymentRepository;
 import com.moadream.giftogether.global.admin.dto.PriceRangeDto;
 import com.moadream.giftogether.global.admin.dto.StaticsDto;
@@ -8,15 +18,9 @@ import com.moadream.giftogether.member.exception.MemberException;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.model.Role;
 import com.moadream.giftogether.product.Repository.ProductRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.moadream.giftogether.member.exception.MemberExceptionCode.*;
 
 @Service
 @Slf4j
@@ -87,14 +91,15 @@ public class AdminService {
         return memberRepository.findAllByMisbehaviorCountGreaterThanEqual(5);
     }
 
+
     @Transactional
     public void removeBlackList(long memberId){
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(NOT_FOUND_MEMBER));
-
-        member.removeBlackList();
+		member.setMisbehaviorCount(0); 
+		member.setRestrictionEndTime(null);
     }
-
+    
     //총 모금량 찾기
     private int getTotalAmount() {
 

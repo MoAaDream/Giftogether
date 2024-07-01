@@ -1,0 +1,98 @@
+
+<div th:fragment="headerFragment" id="mobileHeader"
+	class="fixed top-[54px] z-40 w-full max-w-[500px] overflow-hidden">
+	<!-- header -->
+	<header id="header"
+		class="flex items-center justify-between text-secondary border-b border-[#ebebeb] bg-white w-full h-[54px] px-[20px] fixed top-0 z-40 max-w-[500px]"
+		style="box-shadow: 0px 4px 10px 0px rgba(204, 204, 204, 0.15);">
+		<h1 class="flex">
+			<a href="index.htm"
+				th:style="'background-image: url(' + @{/svg/header_logo.svg} + ');'"
+				class="w-[84px] h-[33px] inline-block bg-no-repeat indent-[-999em] overflow-hidden">
+				위시즈 </a>
+		</h1>
+		<div class="flex items-center gap-4">
+			<!-- 검색 버튼 -->
+			<div id="open-sidebar" onclick="toggleSearchBar()">
+				<svg class="w-5 h-5" aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 20 20">
+                                <path stroke="currentColor"
+						stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1"
+						d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+                            </svg>
+			</div>
+			<!-- 알림 버튼 -->
+			<div id="alimIcon" class="relative" onclick="toggleSideMenu()">
+				<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"
+					fill="currentColor" class="w-6 h-6">
+                                <path fill-rule="evenodd"
+						d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+						clip-rule="evenodd"></path>
+                            </svg>
+				<!-- 새로운 알림 표시 -->
+
+			</div>
+		</div>
+
+	</header>
+
+
+	<!-- 알림창 -->
+	<aside id="sideMenu"
+		class="hidden absolute left-0 top-0 bottom-0 right-0 w-full z-50 bg-white p-4 flex flex-col space-y-5 text-gray-400 duration-300">
+		<div id="newAlimListHead"
+			class="flex justify-between items-center hidden">
+			<h3 class="font-bold text-left text-gray-400 text-lg">새로운 알림 1건</h3>
+			<a href="javascript:void(0)" class="text-4xl"
+				onclick="toggleSideMenu()"> <svg
+					xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
+					stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round"
+						stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+			</a>
+		</div>
+
+		<ul id="newAlimList" class="hidden">
+
+
+		</ul>
+
+		<h3 class="font-bold text-left text-gray-400 text-lg">지난 알림</h3>
+		<ul id="alimList" class="flex flex-col gap-3">
+
+
+		</ul>
+	</aside>
+
+	<!-- 검색창 -->
+	<div id="searchWrapper" class="hidden relative h-screen">
+		<!-- overlay -->
+		<div onclick="toggleSearchBar()"
+			class="absolute top-0 right-0 bottom-0 left-0 bg-black/20"></div>
+		<!-- contents -->
+		<div
+			class="flex items-center absolute w-full bg-white h-[72px] border-b border-[#ebebeb] rounded-b-lg">
+			<form id="searchFundingHeaderForm" action="/funding_list"
+				method="get" class="w-full relative px-4">
+				<input type="text" id="search_funding"
+					class="w-full rounded py-1.5 px-1 focus:outline-none placeholder:text-gray-200"
+					placeholder="친구이름이나 닉네임을 검색해보세요!" name="search_name" value=""
+					onkeypress="if( event.keyCode==13 ){searchFundingHeader();}">
+				<div class="h-[1.5px] bg-[#ebebeb]"></div>
+				<button type="button" onclick="searchFundingHeader();"
+					class="absolute right-[30px] top-0 h-full text-secondary">
+					<svg class="w-5 h-5" aria-hidden="true"
+						xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 20 20">
+                                    <path stroke="currentColor"
+							stroke-linecap="round" stroke-linejoin="round" stroke-width="2.1"
+							d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"></path>
+                                </svg>
+				</button>
+			</form>
+
+		</div>
+	</div>
+
+</div>
+
