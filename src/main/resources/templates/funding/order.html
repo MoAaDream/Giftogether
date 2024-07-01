@@ -10,21 +10,6 @@ body {
 	margin: 20px;
 }
 
-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-th, td {
-	padding: 8px;
-	text-align: left;
-	border-bottom: 1px solid #ddd;
-}
-
-th {
-	background-color: #f2f2f2;
-}
-
 a {
 	color: blue;
 	text-decoration: none;
@@ -36,18 +21,18 @@ a:hover {
 </style>
 <body>
 	<h1 th:text="${productName} + '에 대한 모금'"></h1>
-
-	<form method="post">
+	
+	<div th:if="${amountOptions.length == 1 and amountOptions[0] == 0}"
+		style="margin-top: 20px">
+		<p>100% 모금이 완료되어 더 이상 모금을 할 수 없습니다.</p>
+		<a th:href="@{/products/{productLink} (productLink=${productLink})}">제품
+			페이지로 돌아가기</a>
+	</div>
+	
+	<form method="post"
+		th:action="@{/fundings/{productLink} (productLink=${productLink})}">
 		<div
-			th:if="${amountOptions.size() == 1 and amountOptions.get(0) == 0}"
-			style="margin-top: 20px">
-			<p>100% 모금이 완료되어 더 이상 모금을 할 수 없습니다.</p>
-			<a th:href="@{/products/{productLink} (productLink=${productLink})}">제품
-				페이지로 돌아가기</a>
-		</div>
-
-		<div
-			th:unless="${amountOptions.size() == 1 and amountOptions.get(0) == 0}">
+			th:unless="${amountOptions.length == 1 and amountOptions[0] == 0}">
 			<div>
 				<input type="submit" value="모금액 결정">
 			</div>
@@ -62,7 +47,7 @@ a:hover {
 				<textarea id="message" name="message" placeholder="여기에 메시지 입력"
 					maxlength="100" rows="5" style="width: 80%;"></textarea>
 			</div>
-
+			<!-- 필요없 -->
 			<div style="margin-top: 20px">
 				<a
 					th:href="@{/fundings/payment/{fundingUid} (fundingUid=${fundingUid})}">결제
@@ -75,70 +60,25 @@ a:hover {
 	<hr>
 	<br>
 	<br>
-	<h2>ttest(productlink)의 결제 리스트</h2>
-	<div style="margin-top: 30px">
-		<div>
-			<table>
-				<thead>
-					<tr>
-						<th>Product Name</th>
-						<th>Amount</th>
-						<th>Status</th>
-						<th>Message</th>
-						<th>Giver</th>
-						<th>Receiver</th>
-						<th>Funding UID</th>
-						<th>Created At</th>
-						<th>Deadline</th>
-						<th>Details</th>
-					</tr>
-				</thead>
-				<!-- th:with를 사용하면 각 속성값을 로컬 변수로 저장 -->
-				<tbody>
-					<tr th:each="funding : ${fundingDetailP}"
-						th:with="productName=${funding.productName},
-                 amount=${funding.amount},
-                 status=${funding.status},
-                 messageContent=${funding.messageContent},
-                 giverNickname=${funding.giverNickname},
-                 receiverNickname=${funding.receiverNickname},
-
-                 createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
-						<td th:text="${productName}">Product Name</td>
-						<td th:text="${amount}">Amount</td>
-						<td th:text="${status}">Status</td>
-						<td th:text="${messageContent}">Message</td>
-						<td th:text="${giverNickname}">Giver</td>
-						<td th:text="${receiverNickname}">Receiver</td>
-						<td th:text="${createdAtFormatted}">createdAt</td>
-						<td th:text="${deadlineFormatted}">Deadline</td>
-						<td><a th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
-							th:text="'View Details'">View Details</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-
-
-			<br> <br> <br> <br>
-			<div th:if="${errorMessage}" th:text="${errorMessage}"
-				id="errorMessage" style="display: none;"></div>
-			<div th:if="${successMessage}" th:text="${successMessage}"
-				id="successMessage" style="display: none;"></div>
-			<script>
-				window.onload = function() {
-					var errorMessage = document.getElementById('errorMessage');
-					if (errorMessage && errorMessage.innerText) {
-						alert(errorMessage.innerText);
-					}
-					var successMessage = document
-							.getElementById('successMessage');
-					if (successMessage && successMessage.innerText) {
-						alert(successMessage.innerText);
-					}
-				};
-			</script>
+	<br>
+	<br>
+	<br>
+	<br>
+	<div th:if="${errorMessage}" th:text="${errorMessage}"
+		id="errorMessage" style="display: none;"></div>
+	<div th:if="${successMessage}" th:text="${successMessage}"
+		id="successMessage" style="display: none;"></div>
+	<script>
+		window.onload = function() {
+			var errorMessage = document.getElementById('errorMessage');
+			if (errorMessage && errorMessage.innerText) {
+				alert(errorMessage.innerText);
+			}
+			var successMessage = document.getElementById('successMessage');
+			if (successMessage && successMessage.innerText) {
+				alert(successMessage.innerText);
+			}
+		};
+	</script>
 </body>
 </html>

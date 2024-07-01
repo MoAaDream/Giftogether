@@ -4,7 +4,6 @@ import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESS
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,32 +36,28 @@ public class FundingController {
 	@GetMapping("/{productlink}")
 	public String fund(@PathVariable(name = "productlink", required = true) String productLink,
 			@RequestParam(name = "messageT", required = false) String messageT,
-			@RequestParam(name = "fundingUid", required = false) String id, HttpSession session, Model model) {
+			@RequestParam(name = "fundingUid", required = false) String fundingUid, HttpSession session, Model model) {
 
 		int[] amountOptions = fundingService.getFundingAmounts(productLink);
 		
 		String productName = fundingService.getProductName(productLink);
 		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("messageT", messageT);
-		model.addAttribute("fundingUid", id); 
+		model.addAttribute("fundingUid", fundingUid); 
 		model.addAttribute("productLink", productLink); 
 		model.addAttribute("productName", productName);
 		
-        //push 전에 제거 테스트용
-        session.setAttribute("kakaoId","3051424432");
 		
-		// 제품의 펀딩 리스트
-		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
-		model.addAttribute("fundingDetailP", fundingDetailP);
+
  
 		return "funding/order";
 	}
 
+	
 	@PostMapping("/{productlink}")
 	public String setAmount(@PathVariable(name = "productlink", required = true) String productLink,
 			@RequestParam(name = "message") String messageF, @RequestParam("amount") Integer amount,
 			HttpSession session, RedirectAttributes redirectAttributes) {
-
 
 		// 결제 이전 금액 설정 단계에서 금액 제한
 		try {
@@ -82,7 +77,7 @@ public class FundingController {
 		}
 		String encode = URLEncoder.encode(messageT, StandardCharsets.UTF_8);
 
-		return "redirect:/fundings/" + productLink + "?messageT=" + encode + "&fundingUid=" + funding.getFundingUid();
+		return "redirect:/fundings/payment/" + funding.getFundingUid();
 	}
 
 	@GetMapping("/detail/{fundinguid}")

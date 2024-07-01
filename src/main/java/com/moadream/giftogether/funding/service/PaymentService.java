@@ -1,10 +1,12 @@
 package com.moadream.giftogether.funding.service;
 
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
 import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DEADLINE_AFTER;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,9 @@ import com.moadream.giftogether.funding.model.PaymentStatus;
 import com.moadream.giftogether.funding.model.RequestPayDto;
 import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.funding.repository.PaymentRepository;
+import com.moadream.giftogether.member.MemberRepository;
+import com.moadream.giftogether.member.exception.MemberException;
+import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.product.Repository.ProductRepository;
 import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.wishlist.exception.WishListException;
@@ -36,6 +41,7 @@ public class PaymentService {
 	private final FundingRepository fundingRepository;
 	private final PaymentRepository paymentRepository;
 	private final ProductRepository productRepository;
+	private final MemberRepository memberRepository;
 	private final IamportClient iamportClient;
 
 	public RequestPayDto findRequestDto(String fundingUid) {
@@ -137,6 +143,12 @@ public class PaymentService {
 			return false; // 이미 취소된 상태면 false 반환
 		}
 
+		// 모금 끝났는데 환불하면 블랙리스트 카운트 증가
+		if (funding.getProduct().getGoalAmount()==funding.getProduct().getCurrentAmount()) {
+			addMisBehaviorCount(socialId);
+		}
+		
+		
 		// IAMPORT 결제 취소 API 호출
 		try {
 			IamportResponse<Payment> iamportResponse = iamportClient
@@ -184,4 +196,22 @@ public class PaymentService {
 				});
 	}
 
+    
+    public void addMisBehaviorCount(String socialId){
+		Member member = memberRepository.findBySocialLoginId(socialId)
+				.orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
+		
+		member.setMisbehaviorCount(member.getMisbehaviorCount()+1); 
+        if(member.getMisbehaviorCount() >= 5){
+            addBlackList(socialId);
+        }
+    }
+    public void addBlackList(String socialId){
+		Member member = memberRepository.findBySocialLoginId(socialId)
+				.orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
+		
+		member.setRestrictionEndTime(LocalDateTime.now().plusDays(30));
+    }
+    
+    
 }

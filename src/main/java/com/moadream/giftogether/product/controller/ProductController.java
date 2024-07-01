@@ -4,7 +4,6 @@ package com.moadream.giftogether.product.controller;
 import java.util.List;
 import java.util.UUID;
 
-import com.moadream.giftogether.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.moadream.giftogether.bank.model.BankForm;
+import com.moadream.giftogether.funding.model.FundingDetailsDTO;
+import com.moadream.giftogether.funding.service.FundingService;
+import com.moadream.giftogether.member.service.MemberService;
 import com.moadream.giftogether.product.Service.ProductService;
 import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.product.model.ProductForm;
@@ -33,7 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 //@RequestMapping("/products")
 public class ProductController {
 
-	
+
+	private final FundingService fundingService;
 	private final ProductService productService;
 	private final MemberService memberService;
 	private final WishListRepository wishListRepository;
@@ -57,6 +61,16 @@ public class ProductController {
 	public String detail(Model model, @PathVariable("product_link") String productLink) {
 	    Product product = this.productService.getProduct(productLink);
 	    model.addAttribute("product", product);
+	    
+		model.addAttribute("bankForm", new BankForm());
+		
+		int insufficientAmount = fundingService.getInsufficientAmount(productLink);
+		model.addAttribute("insufficientAmount", insufficientAmount);
+		// 제품의 펀딩 리스트
+		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
+		model.addAttribute("fundingDetailP", fundingDetailP);
+		
+		
 	    return "products/product_detail";
 	}
 	

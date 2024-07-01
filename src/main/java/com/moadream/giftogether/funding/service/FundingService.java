@@ -1,12 +1,15 @@
 package com.moadream.giftogether.funding.service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.moadream.giftogether.DataNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.moadream.giftogether.DataNotFoundException;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
@@ -59,6 +62,15 @@ public class FundingService {
 		return filteredOptions.stream().mapToInt(i -> i).toArray();
 	}
 
+	public int getInsufficientAmount(String productLink) {
+		// 제품을 찾아 없으면 예외 발생
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
+
+		// 남은 모금 필요 금액 계산
+		return product.getGoalAmount() - product.getCurrentAmount();
+	}
+	
 	// 금액 선택 검증
 	public void validateAmount(Integer amount, String productLink) throws IllegalArgumentException {
 

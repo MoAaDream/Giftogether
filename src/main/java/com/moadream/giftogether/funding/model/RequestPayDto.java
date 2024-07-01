@@ -25,9 +25,9 @@ public class RequestPayDto {
 		this.fundingUid = fundingUid;
 		this.paymentAmount = paymentAmount;
 		this.buyerAddress = buyerAddress;
-		this.buyerAddress = itemName;
-		this.buyerAddress = buyerName;
-		this.buyerAddress = buyerTel;
+		this.itemName = itemName;
+		this.buyerName = buyerName;
+		this.buyerTel = buyerTel;
         this.productLink = productLink;
 	}
  
