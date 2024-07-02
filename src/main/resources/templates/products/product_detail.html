@@ -5,6 +5,7 @@
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/Detail.css">
 <link rel="stylesheet" href="/css/messageForm.css">
+<link rel="stylesheet" href="/css/ttt.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -74,8 +75,12 @@ a:hover {
 	<br>
 	<br>
 	<br>
-	
-	<!--펀딩 미완료 (자신만 볼수있어야함)-->
+	<!-- 여기밑으로 -->
+
+	<!-- 데드라인 지남 && 펀딩 미완료 && 자기자신   -->
+	<div th:if="${isDeadFundingComplete and isUserProduct}"></div>
+
+	<!-- 밑에 from 2개 css 확인후 위에 div로 -->
 	<p th:text="'부족한 금액은 ' + ${insufficientAmount} + '입니다. 결제하시겠습니까?'"></p>
 	<form method="post"
 		th:action="@{/fundings/{productLink} (productLink=${product.productLink})}">
@@ -90,7 +95,6 @@ a:hover {
 	<br>
 	<br>
 
-	<!-- if 데드라인 지남 && 펀딩 미완료 (자신만 볼수있어야함)-->
 	<form id="refundForm" th:object="${bankForm}"
 		th:action="@{|/bank/${product.productLink}|}" method="post">
 		<input type="text" id="bankName" th:field="*{bankName}"
@@ -98,6 +102,8 @@ a:hover {
 			id="account" th:field="*{account}" placeholder="은행 계좌 입력" required>
 		<button type="submit" class="btn btn-primary">펀딩 금액 계좌로 받기</button>
 	</form>
+
+
 
 	<h2>제품의 결제 리스트</h2>
 	<div>
@@ -110,7 +116,6 @@ a:hover {
 					<th>Message</th>
 					<th>Giver</th>
 					<th>Receiver</th>
-					<th>Funding UID</th>
 					<th>Created At</th>
 					<th>Deadline</th>
 					<th>Details</th>

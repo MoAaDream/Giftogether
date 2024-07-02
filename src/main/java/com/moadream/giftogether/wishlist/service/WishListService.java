@@ -7,10 +7,9 @@ import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.
 import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_MY_WISHLIST;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.moadream.giftogether.funding.service.PaymentService;
-import com.moadream.giftogether.product.Service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.moadream.giftogether.Status;
+import com.moadream.giftogether.funding.service.PaymentService;
 import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.exception.MemberException;
 import com.moadream.giftogether.member.model.Member;
+import com.moadream.giftogether.product.Repository.ProductRepository;
+import com.moadream.giftogether.product.Service.ProductService;
+import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.wishlist.exception.WishListException;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
@@ -41,6 +44,7 @@ public class WishListService implements WishListServiceI {
     private final MemberRepository memberRepository;
     private final PaymentService paymentService;
     private final ProductService productService;
+    private final ProductRepository productRepository;
 
 
     @Transactional
@@ -94,10 +98,24 @@ public class WishListService implements WishListServiceI {
     public void updateWishListStatus() {
         List<WishList> activeWishlist = wishListRepository.findAllByStatus(Status.A);
         LocalDateTime now = LocalDateTime.now();
+        boolean changesMade = false;
+        List<Product> productsToUpdate = new ArrayList<>();
+        
         for (WishList wishList : activeWishlist) {
             if (wishList.getDeadline().isBefore(now)) {
-                wishList.setStatus(Status.I);
+                wishList.setStatus(Status.I);    // 위시리스트의 상태를 업데이트
+                // 이 위시리스트에 연관된 모든 제품의 상태를 업데이트
+                for (Product product : wishList.getProductList()) {
+                    product.setStatus(Status.I);
+                    productsToUpdate.add(product);
+                }
+                changesMade = true;
             }
+        }
+        // 변경 사항이 있으면 모든 위시리스트와 제품을 저장
+        if (changesMade) {
+            wishListRepository.saveAll(activeWishlist);
+            productRepository.saveAll(productsToUpdate);   
         }
     }
 

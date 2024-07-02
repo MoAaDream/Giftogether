@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import com.moadream.giftogether.DataNotFoundException;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
+import com.moadream.giftogether.funding.model.FundingRequest;
 import com.moadream.giftogether.funding.model.Payment;
 import com.moadream.giftogether.funding.model.PaymentStatus;
 import com.moadream.giftogether.funding.repository.FundingRepository;
@@ -38,6 +40,13 @@ public class FundingService {
 	private final MemberRepository memberRepository;
 	private final MessageRepository messageRepository;
 
+	@Autowired
+	private FundingQueueManager fundingQueueManager; // FundingQueueManager 주입
+
+	public void enqueueFundingRequest(FundingRequest request) {
+	    fundingQueueManager.addFundingRequest(request);
+	}
+	
 	public int[] getFundingAmounts(String productLink) {
 		// 제품을 찾아 없으면 예외 발생
 		Product product = productRepository.findByProductLink(productLink)
@@ -85,10 +94,15 @@ public class FundingService {
 			throw new IllegalArgumentException("금액이 허용 금액을 초과하여 설정 되었습니다.");
 		}
 	}
-
-	@Transactional
-	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
-
+	
+//	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
+	public void processFundingRequest(FundingRequest request) {
+		String socialId = request.getSocialId();
+		String productLink = request.getProductLink();
+		Integer amount = request.getAmount();
+		String messageF = request.getMessage();
+		
+		
 		Member member = findMemberBySocialId(socialId);
  
 		
@@ -105,22 +119,28 @@ public class FundingService {
 		Product product = productRepository.findByProductLink(productLink)
 				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
 
+		log.info("ㅁㅁㅁㅁ주문");
 //		 주문 생성
 		Funding funding = Funding.builder().amount(amount).status(Status.I).fundingUid(UUID.randomUUID().toString())
 				.payment(payment).member(member).product(product).build();
-
 		fundingRepository.save(funding);
-		
+		log.info("ㅁㅁㅁㅁ저장1" + funding.getFundingUid());
+		request.setFundingUid(funding.getFundingUid());
+		log.info("ㅁㅁㅁㅁ저장2");
 		 
+		
+		
  
 		Message message = Message.builder().content(messageF).status(Status.I).funding(funding)
 				.wishlist(product.getWishlist()).build();
 
 		messageRepository.save(message);
 
-		return funding;
+//		return funding;
 	}
-
+ 
+    
+    
 	public List<FundingDetailsDTO> findFundingsByProductLink(String productLink) {
 		return productRepository.findByProductLink(productLink)
 				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))
