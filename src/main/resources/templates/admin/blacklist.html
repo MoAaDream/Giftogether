@@ -81,7 +81,6 @@
             <th>Phone Number</th>
             <th>Address</th>
             <th>Misbehavior Count</th>
-            <th>Restriction End Time</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -95,7 +94,6 @@
             <td th:text="${member.phoneNumber}"></td>
             <td th:text="${member.address}"></td>
             <td th:text="${member.misbehaviorCount}"></td>
-            <td th:text="${#dates.format(member.restrictionEndTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
             <td>
                 <form th:action="@{/admin/blacklist/{memberId}(memberId=${member.id})}" method="post">
                     <input type="hidden" name="_method" value="delete"/>

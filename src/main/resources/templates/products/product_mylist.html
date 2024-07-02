@@ -14,6 +14,8 @@
 	<div class="detail-info">
 		<h1 th:text="${wishlist.name}"></h1>
 		<div class="description" th:text="${wishlist.description}"></div>
+		<a th:href="@{|/wishlists/${wishlist.link}}" class="btn-primary">수정하기</a>
+		<a th:href="@{|/wishlists/${wishlist.link}}" class="btn-primary" methods="delete">삭제하기</a>
 	</div>
 </div>
 
@@ -30,7 +32,6 @@
 		</a>
 	</div>
 		
-</div>
 </div>
 
 

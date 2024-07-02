@@ -60,6 +60,10 @@ public class Member extends BaseTimeEntity {
     @Column(unique = true, length = 50)
     private String phoneNumber;
 
+    @Column(nullable = false)
+    private String email;
+    
+    
     private String address;
 
     @Column(nullable = false)
@@ -83,23 +87,7 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member" ) 
     private List<Bank> bankLists = new ArrayList<>();
 
-
-    public void addBlackList(){
-        this.restrictionEndTime = LocalDateTime.now().plusDays(30);
-    }
-
-
-    public void removeBlackList(){
-        this.misbehaviorCount = 0;
-        this.restrictionEndTime = null;
-    }
-
-    public void addMisBehaviorCount(){
-        this.misbehaviorCount++;
-        if(this.misbehaviorCount >= 5){
-            addBlackList();
-        }
-    }
+ 
 
     
  

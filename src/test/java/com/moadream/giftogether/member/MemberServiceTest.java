@@ -45,7 +45,8 @@ public class MemberServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
+
+	@Test
     @DisplayName("회원 정보 가져오기 ")
     public void getMemberInfoSuccess() {
         // given
@@ -54,7 +55,7 @@ public class MemberServiceTest {
         member.setId(memberId);
         member.setStatus(Status.A);
 
-        when(memberRepository.getById(memberId);
+        when(memberRepository.findMemberByIdAndStatus(memberId,Status.A));
 
         // when
         Member result = memberService.getMemberInfo(memberId);

@@ -1,9 +1,10 @@
 package com.moadream.giftogether.member.service;
 
-import java.util.List;
-import java.util.Optional;
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.CHECK_BLACKLIST;
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
 
-import com.moadream.giftogether.member.exception.MemberException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,15 +13,13 @@ import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.member.MemberRepository;
+import com.moadream.giftogether.member.exception.MemberException;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.model.UpdateMemberReq;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.repository.WishListRepository;
 
 import lombok.extern.slf4j.Slf4j;
-
-import static com.moadream.giftogether.member.exception.MemberExceptionCode.CHECK_BLACKLIST;
-import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
 
 @Service
 @Slf4j
@@ -130,5 +129,8 @@ public class MemberService {
 		if(member.getMisbehaviorCount() >= BEHAVIOR_CHECK_COUNT)
 			throw new MemberException(CHECK_BLACKLIST);
 	}
+	
+	
+
 
 }	

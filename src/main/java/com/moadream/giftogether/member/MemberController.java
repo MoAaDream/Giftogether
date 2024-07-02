@@ -5,6 +5,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.Status;
@@ -88,13 +93,29 @@ public class MemberController {
 		// properties 객체에서 nickname과 profile_image 추출
 		String nickname = properties.get("nickname").toString();
 		String profileImage = properties.get("profile_image").toString();
+		
+		
+		//사용자 정보에서 kakao_acount 객체 추출
+		Map<String, Object> kakaoAccount = (Map<String, Object>) kakaoUserInfo.get("kakao_account");
+		
+		String email = kakaoAccount.get("email").toString();
 
+		
+		
 		// 5. 사용자 정보를 세션에 저장
 		session.setAttribute("kakaoId", kakaoId);
 		session.setAttribute("nickname", nickname);
 		session.setAttribute("profileImage", profileImage);
 		session.setAttribute("accessToken", accessToken);
-
+		session.setAttribute("email", email); 
+		
+		log.info(email);
+		
+		
+		// 6. 세션 유지 시간 설정 
+		session.setMaxInactiveInterval(60 * 30); // 30분
+		
+		
 		CustomUserDetails userDetails;
 
 		// 회원가입 여부 확인 및 처리
@@ -106,6 +127,7 @@ public class MemberController {
 			newMember.setSocialProvider("Kakao");
 			newMember.setNickname(nickname);
 			newMember.setProfile(profileImage);
+			newMember.setEmail(email);
 			newMember.setStatus(Status.A);
 			newMember.setRole(Role.MEMBER);
 			newMember.setMisbehaviorCount(0);
@@ -118,6 +140,8 @@ public class MemberController {
 			userDetails = (CustomUserDetails) customUserService.loadUserByUsername(kakaoId);
 		}
 		
+		
+		
 		log.info("==========카카오 로그인 ========= " + userDetails);
 		// 로그인 처리
 		customUserService.loadUserDirectly(userDetails, session);
@@ -126,15 +150,6 @@ public class MemberController {
 
 	}
 
-	@GetMapping("/login-again")
-	public String showLoginPage(HttpSession session, Model model) {
-		// 세션에 저장된 kakaoId 제거 (예: 실제로는 세션에서 사용자 관련 정보를 모두 제거)
-		session.removeAttribute("kakaoId");
-
-		// 로그인 페이지로 리다이렉트하고 메시지 전달
-		model.addAttribute("message", "세션이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.");
-		return "redirect:/login"; // 실제 프로젝트에서는 로그인 페이지의 URL로 수정해야 합니다.
-	}
 
 	@GetMapping("/current-user")
 	public String getCurrentUser(Model model, HttpSession session) {
@@ -207,7 +222,7 @@ public class MemberController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) throws JsonProcessingException {
 		String accessToken = (String) session.getAttribute("accessToken");
-
+		log.info("============ 로그아웃 ===========");
 		if (accessToken != null && !accessToken.isEmpty()) {
 			log.info("Access token found : " + accessToken);
 			kakaoService.logoutFromKakao(accessToken);
@@ -217,9 +232,49 @@ public class MemberController {
 		session.invalidate(); // 세션 무효화
 		log.info("logout 경로 도착");
 
-		return "redirect:/home";
+		  return "redirect:/login?logout";
 	}
 
+	
+
+	/**
+	 * 친구 불러오기 
+	 * 
+	 * */
+	 @GetMapping("/member/friends")
+	    public ResponseEntity<String> getFriends(HttpSession session) {
+	        String accessToken = (String) session.getAttribute("accessToken");
+	        
+	        if (accessToken == null) {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
+	        }
+
+	        String url = "https://kapi.kakao.com/v1/api/talk/friends";
+	        RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setBearerAuth(accessToken);
+	        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+	        ResponseEntity<String> response = restTemplate.exchange(
+	            url, HttpMethod.GET, entity, String.class);
+
+	        return response;
+	    }
+	
+	 
+	 
+	 /**
+	  * 초대 메세지 보내기
+	  */
+/*
+	 @GetMapping("/member/message")
+	 public ResponseEntity<String> getFriends(HttpSession session){
+		 
+	 }
+	*/
+	 
+	 
+	 
 	/**
 	 * 마이페이지
 	 * 
@@ -240,6 +295,7 @@ public class MemberController {
 		}
 
 		Member member = memberService.getMemberInfo(id);
+
 		if (member == null) {
 			log.error("해당 ID의 회원 정보를 찾을 수 없습니다. ID: {}", id);
 			throw new Exception("유효하지 않은 접근입니다");
@@ -353,5 +409,8 @@ public class MemberController {
 			return ResponseEntity.status(500).body("탈퇴 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
+	
+	
+	
 
 }

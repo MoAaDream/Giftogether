@@ -1,18 +1,25 @@
 package com.moadream.giftogether.funding.service;
 
+import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DEADLINE_AFTER;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
+
 
 import com.moadream.giftogether.DataNotFoundException;
+import com.moadream.giftogether.global.email.EmailService;
 import com.moadream.giftogether.product.Repository.ProductRepository;
 import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.wishlist.exception.WishListException;
+import jakarta.mail.MessagingException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.moadream.giftogether.DataNotFoundException;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.PaymentCallbackRequest;
@@ -20,6 +27,12 @@ import com.moadream.giftogether.funding.model.PaymentStatus;
 import com.moadream.giftogether.funding.model.RequestPayDto;
 import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.funding.repository.PaymentRepository;
+import com.moadream.giftogether.member.MemberRepository;
+import com.moadream.giftogether.member.exception.MemberException;
+import com.moadream.giftogether.member.model.Member;
+import com.moadream.giftogether.product.Repository.ProductRepository;
+import com.moadream.giftogether.product.model.Product;
+import com.moadream.giftogether.wishlist.exception.WishListException;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -27,8 +40,6 @@ import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
 import lombok.RequiredArgsConstructor;
-
-import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DEADLINE_AFTER;
 
 @Service
 @Transactional
@@ -38,15 +49,23 @@ public class PaymentService {
 	private final FundingRepository fundingRepository;
 	private final PaymentRepository paymentRepository;
 	private final ProductRepository productRepository;
+	private final MemberRepository memberRepository;
 	private final IamportClient iamportClient;
+	private final EmailService emailService;
 
 	public RequestPayDto findRequestDto(String fundingUid) {
 
 		Funding fund = fundingRepository.findFundingAndPaymentAndMember(fundingUid)
 				.orElseThrow(() -> new IllegalArgumentException("주문이 없습니다."));
-
-		return RequestPayDto.builder().buyerAddress(fund.getMember().getAddress())
-				.paymentAmount(fund.getPayment().getAmount()).fundingUid(fund.getFundingUid()).productLink(fund.getProduct().getProductLink()).build();
+ 
+		
+		return RequestPayDto.builder()
+				.buyerName(fund.getMember().getNickname()).itemName(fund.getProduct().getName())
+				.buyerTel(fund.getProduct().getWishlist().getPhoneNumber())
+				.buyerAddress(fund.getProduct().getWishlist().getAddress())
+				.paymentAmount(fund.getPayment().getAmount()).fundingUid(fund.getFundingUid())
+				.productLink(fund.getProduct().getProductLink()).build();
+ 
 	}
 
 	public IamportResponse<Payment> paymentByCallback(PaymentCallbackRequest request) {
@@ -69,13 +88,25 @@ public class PaymentService {
 			// 모금 성공 -> 금액 증가
 			Integer sumAmount = fund.getPayment().getAmount() + fund.getProduct().getCurrentAmount();
 			fund.getProduct().setCurrentAmount(sumAmount);
+			if(fund.getProduct().getGoalAmount() <= sumAmount){
+				String email = fund.getProduct().getWishlist().getMember().getEmail();
+				Product product = fund.getProduct();
+				String subjectText = "<h1>"+ product.getName() + "의 모금이 완료되었습니다." + "</h1><br>";
+				String imageText = "<img src='" + product.getProductImg() +"'><br>";
+				String linkText = "<a href=" + "http://localhost:8080/products/" + product.getProductLink() +">" + "모금 확인하러 가기</a>" ;
+
+				emailService.sendEmail(email, product.getName() + "의 모금이 완료되었습니다.", subjectText + imageText + linkText);
+			}
+
 
 			return iamportResponse;
 
 		} catch (IamportResponseException | IOException e) {
 			throw new RuntimeException(e);
-		}
-	}
+		} catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private void validatePayment(IamportResponse<Payment> iamportResponse, Funding fund)
 			throws IOException, IamportResponseException {
@@ -133,6 +164,12 @@ public class PaymentService {
 			return false; // 이미 취소된 상태면 false 반환
 		}
 
+		// 모금 끝났는데 환불하면 블랙리스트 카운트 증가
+		if (funding.getProduct().getGoalAmount()==funding.getProduct().getCurrentAmount()) {
+			addMisBehaviorCount(socialId);
+		}
+		
+		
 		// IAMPORT 결제 취소 API 호출
 		try {
 			IamportResponse<Payment> iamportResponse = iamportClient
@@ -180,4 +217,22 @@ public class PaymentService {
 				});
 	}
 
+    
+    public void addMisBehaviorCount(String socialId){
+		Member member = memberRepository.findBySocialLoginId(socialId)
+				.orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
+		
+		member.setMisbehaviorCount(member.getMisbehaviorCount()+1); 
+        if(member.getMisbehaviorCount() >= 5){
+            addBlackList(socialId);
+        }
+    }
+    public void addBlackList(String socialId){
+		Member member = memberRepository.findBySocialLoginId(socialId)
+				.orElseThrow(() -> new MemberException(NOT_FOUND_SOCIAL_ID));
+		
+		member.setRestrictionEndTime(LocalDateTime.now().plusDays(30));
+    }
+    
+    
 }
