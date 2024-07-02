@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.Status;
@@ -36,6 +37,7 @@ import com.moadream.giftogether.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+
 
 @Controller
 @Slf4j
@@ -61,6 +63,14 @@ public class MemberController {
 	@Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
 	private String redirect_uri;
 
+	
+	@GetMapping("/main")
+	public String mainPage() {
+		return "index";
+	}
+	
+	
+	
 	// 로그인 요청
 	@GetMapping("/login")
 	public String loginPage(Model model) {
@@ -79,7 +89,8 @@ public class MemberController {
 
 		// 2. 인가코드를 기반으로 Access Token 발급
 		String accessToken = kakaoService.getAccessTokenFromKakao(code);
-
+		
+		
 		// 3. 사용자 정보 받기
 		// return ResponseEntity.ok(memberService.getKakaoUserInfo(accessToken));
 		HashMap<String, Object> kakaoUserInfo = kakaoService.getKakaoUserInfo(accessToken);
@@ -109,11 +120,9 @@ public class MemberController {
 		session.setAttribute("accessToken", accessToken);
 		session.setAttribute("email", email); 
 		
-		log.info(email);
-		
 		
 		// 6. 세션 유지 시간 설정 
-		session.setMaxInactiveInterval(60 * 30); // 30분
+		session.setMaxInactiveInterval(60 * 30); //60초  * 30 ->  30분
 		
 		
 		CustomUserDetails userDetails;
@@ -219,8 +228,9 @@ public class MemberController {
 	 * @return
 	 * @throws JsonProcessingException
 	 */
-	@GetMapping("/logout")
+	 @PostMapping("/logout")
 	public String logout(HttpSession session) throws JsonProcessingException {
+		log.info("로그아웃 세션 정보 : " + session.getCreationTime());
 		String accessToken = (String) session.getAttribute("accessToken");
 		log.info("============ 로그아웃 ===========");
 		if (accessToken != null && !accessToken.isEmpty()) {
@@ -241,7 +251,8 @@ public class MemberController {
 	 * 친구 불러오기 
 	 * 
 	 * */
-	 @GetMapping("/member/friends")
+	 
+	 @GetMapping("/friends")
 	    public ResponseEntity<String> getFriends(HttpSession session) {
 	        String accessToken = (String) session.getAttribute("accessToken");
 	        
@@ -249,29 +260,47 @@ public class MemberController {
 	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
 	        }
 
-	        String url = "https://kapi.kakao.com/v1/api/talk/friends";
+	        String friendsListUri = "https://kapi.kakao.com/v1/api/talk/friends";
 	        RestTemplate restTemplate = new RestTemplate();
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.setBearerAuth(accessToken);
 	        HttpEntity<String> entity = new HttpEntity<>(headers);
 
 	        ResponseEntity<String> response = restTemplate.exchange(
-	            url, HttpMethod.GET, entity, String.class);
+	        		friendsListUri, HttpMethod.GET, entity, String.class);
 
 	        return response;
 	    }
-	
+
+	 /* 카카오 동의항목 조회 */
+	 @GetMapping("/consent")
+	    public ResponseEntity<String> getConsentInfo(HttpSession session) {
+		 String scopeInfoUri="https://kapi.kakao.com/v2/user/scopes";	
+		 
+		 String accessToken = (String) session.getAttribute("accessToken");
+	    	 RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setBearerAuth(accessToken);
+
+	        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+	        ResponseEntity<String> response = restTemplate.exchange(scopeInfoUri, HttpMethod.GET, entity, String.class);
+
+	        return response;
+	    }
+	 
+	 
 	 
 	 
 	 /**
 	  * 초대 메세지 보내기
 	  */
-/*
-	 @GetMapping("/member/message")
-	 public ResponseEntity<String> getFriends(HttpSession session){
+
+	 /*@GetMapping("/member/message")
+	 public ResponseEntity<String> getMessage(HttpSession session){
 		 
-	 }
-	*/
+	 }*/
+	
 	 
 	 
 	 
@@ -411,6 +440,15 @@ public class MemberController {
 	}
 	
 	
+	
+	  
+    @GetMapping("/request/friends-consent")
+    public RedirectView requestFriendsConsent() {
+        String consentUri = String.format("%s?client_id=%s&redirect_uri=%s&response_type=code&scope=friends",
+        		"https://kauth.kakao.com/oauth/authorize", client_id, redirect_uri);
+        return new RedirectView(consentUri);
+    }
+
 	
 
 }
