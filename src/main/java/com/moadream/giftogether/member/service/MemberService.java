@@ -99,6 +99,8 @@ public class MemberService {
 	    if (updateMemberReq.getPhoneNumber() != null) {
 	    	member.setPhoneNumber(updateMemberReq.getPhoneNumber());
 	    }
+	    
+	    
 	    memberRepository.save(member);
 
 	}

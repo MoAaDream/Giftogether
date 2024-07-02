@@ -5,10 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.Status;
@@ -67,6 +62,7 @@ public class MemberController {
 		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + client_id
 				+ "&redirect_uri=" + redirect_uri;
 		model.addAttribute("location", location);
+
 		return "login";
 	}
 
@@ -109,7 +105,6 @@ public class MemberController {
 		session.setAttribute("accessToken", accessToken);
 		session.setAttribute("email", email); 
 		
-		log.info(email);
 		
 		
 		// 6. 세션 유지 시간 설정 
@@ -146,7 +141,7 @@ public class MemberController {
 		// 로그인 처리
 		customUserService.loadUserDirectly(userDetails, session);
 		// 홈 화면으로 리다이렉트
-		return "redirect:/home";
+		return "redirect:/main";
 
 	}
 
@@ -212,6 +207,12 @@ public class MemberController {
 		 */
 		return "home";
 	}
+	
+	
+	@GetMapping("/main")
+	public String main(HttpSession session) {
+		return "main";
+	}
 
 	/**
 	 * 카카오 로그아웃
@@ -235,46 +236,7 @@ public class MemberController {
 		  return "redirect:/login?logout";
 	}
 
-	
-
-	/**
-	 * 친구 불러오기 
-	 * 
-	 * */
-	 @GetMapping("/member/friends")
-	    public ResponseEntity<String> getFriends(HttpSession session) {
-	        String accessToken = (String) session.getAttribute("accessToken");
-	        
-	        if (accessToken == null) {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
-	        }
-
-	        String url = "https://kapi.kakao.com/v1/api/talk/friends";
-	        RestTemplate restTemplate = new RestTemplate();
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setBearerAuth(accessToken);
-	        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-	        ResponseEntity<String> response = restTemplate.exchange(
-	            url, HttpMethod.GET, entity, String.class);
-
-	        return response;
-	    }
-	
-	 
-	 
-	 /**
-	  * 초대 메세지 보내기
-	  */
-/*
-	 @GetMapping("/member/message")
-	 public ResponseEntity<String> getFriends(HttpSession session){
 		 
-	 }
-	*/
-	 
-	 
-	 
 	/**
 	 * 마이페이지
 	 * 
@@ -318,7 +280,7 @@ public class MemberController {
 
 		model.addAttribute("member", getMemberRes);
 
-		return "mypage";
+		return "member/mypage";
 
 	}
 
@@ -360,7 +322,7 @@ public class MemberController {
 
 		model.addAttribute("member", updateMemberReq);
 		model.addAttribute("id", id);
-		return "edit";
+		return "member/edit";
 	}
 
 	/**

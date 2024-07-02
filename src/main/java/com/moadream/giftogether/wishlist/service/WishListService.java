@@ -9,8 +9,6 @@ import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.moadream.giftogether.funding.service.PaymentService;
-import com.moadream.giftogether.product.Service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.moadream.giftogether.Status;
+import com.moadream.giftogether.funding.service.PaymentService;
 import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.exception.MemberException;
 import com.moadream.giftogether.member.model.Member;
+import com.moadream.giftogether.product.Service.ProductService;
 import com.moadream.giftogether.wishlist.exception.WishListException;
 import com.moadream.giftogether.wishlist.model.WishList;
 import com.moadream.giftogether.wishlist.model.WishListForm;
@@ -91,6 +91,7 @@ public class WishListService implements WishListServiceI {
     }
 
     @Override
+    @Transactional
     public void updateWishListStatus() {
         List<WishList> activeWishlist = wishListRepository.findAllByStatus(Status.A);
         LocalDateTime now = LocalDateTime.now();
