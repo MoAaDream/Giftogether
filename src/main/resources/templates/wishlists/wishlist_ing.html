@@ -1,24 +1,52 @@
+<!-- src/main/resources/templates/wishlist.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>진행중인 위시리스트</title>
-<style>
-body {
-	font-family: Arial, sans-serif;
-	margin: 0;
-	background-color: #ffffff;
-	display: flex;
-	justify-content: center;
-	height: 100vh;
-}
-
-.container {
-	width: 600px;
-	padding: 20px;
-	background-color: #EBF5F3;
-	text-align: center;
-	position: relative;
-	border-radius: 10px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    <title>GiftTogether</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .header {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .gift-icon {
+            width: 100px;
+            height: auto;
+        }
+        .wishlist-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .wishlist-item {
+            width: 100px;
+            height: 150px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">진행중인 위시리스트</div>
+    <img src="/images/gift.png" alt="Gift Icon" class="gift-icon">
+    <div class="wishlist-container">
+        <div class="wishlist-item">
+            <div>나의 위시리스트1</div>
+            <div>D - 22</div>
+        </div>
+        <div class="wishlist-item">
+            <div>나의 위시리스트1</div>
+            <div>D - 22</div>
+        </div>
+    </div>
+</body>
+</html>
