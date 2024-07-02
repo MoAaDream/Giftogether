@@ -1,0 +1,82 @@
+/* 공통 버튼 스타일 */
+.btn {
+	padding: 10px 20px;
+	color: white;
+	background-color: #007bff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+}
+
+.btn:hover {
+	background-color: #0056b3;
+}
+
+/* 폼 요소 스타일 */
+form {
+	margin-top: 20px;
+	padding: 20px;
+	background: #f9f9f9;
+	border-radius: 8px;
+}
+
+input[type="text"], input[type="number"], button {
+	width: 100%;
+	padding: 10px;
+	margin-top: 10px;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+	border-color: #007bff;
+}
+
+/* 테이블 스타일 */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+}
+
+th, td {
+	padding: 12px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+th {
+	background-color: #f2f2f2;
+}
+
+td {
+	background-color: #ffffff;
+}
+
+/* 테이블 헤더 스타일 */
+thead th {
+	color: #333;
+	font-weight: bold;
+}
+
+/* 링크 스타일 */
+a {
+	color: #007bff;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+/* 컨테이너 및 마진 스타일 */
+.container, .form-container {
+	max-width: 960px;
+	margin: 20px auto;
+	padding: 20px;
+	background: #ffffff;
+	border-radius: 8px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

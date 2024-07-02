@@ -1,84 +1,60 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>모금</title>
+    <meta charset="UTF-8">
+    <title>모금</title>
+    <!-- Bootstrap CSS 추가 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<style>
-body {
-	font-family: Arial, sans-serif;
-	margin: 20px;
-}
+<body class="p-4">
+    <h1 class="mb-4" th:text="${productName} + '에 대한 모금'"></h1>
 
-a {
-	color: blue;
-	text-decoration: none;
-}
+    <div th:if="${amountOptions.length == 1 and amountOptions[0] == 0}" class="alert alert-info" role="alert">
+        <p>100% 모금이 완료되어 더 이상 모금을 할 수 없습니다.</p>
+        <a th:href="@{/products/{productLink} (productLink=${productLink})}" class="alert-link">제품 페이지로 돌아가기</a>
+    </div>
 
-a:hover {
-	text-decoration: underline;
-}
-</style>
-<body>
-	<h1 th:text="${productName} + '에 대한 모금'"></h1>
-	
-	<div th:if="${amountOptions.length == 1 and amountOptions[0] == 0}"
-		style="margin-top: 20px">
-		<p>100% 모금이 완료되어 더 이상 모금을 할 수 없습니다.</p>
-		<a th:href="@{/products/{productLink} (productLink=${productLink})}">제품
-			페이지로 돌아가기</a>
-	</div>
-	
-	<form method="post"
-		th:action="@{/fundings/{productLink} (productLink=${productLink})}">
-		<div
-			th:unless="${amountOptions.length == 1 and amountOptions[0] == 0}">
-			<div>
-				<input type="submit" value="모금액 결정">
-			</div>
-			<label for="amount">결제 금액 선택:</label> <select id="amount"
-				name="amount">
-				<option th:each="amount : ${amountOptions}" th:value="${amount}"
-					th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + '원'"></option>
-			</select>
+    <form method="post" th:action="@{/fundings/{productLink} (productLink=${productLink})}">
+        <div th:unless="${amountOptions.length == 1 and amountOptions[0] == 0}">
+            <div class="form-group">
+                <label for="amount">결제 금액 선택:</label>
+                <select id="amount" name="amount" class="form-control">
+                    <option th:each="amount : ${amountOptions}" th:value="${amount}"
+                        th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + '원'"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="message">메시지:</label>
+                <textarea id="message" name="message" placeholder="여기에 메시지 입력"
+                    maxlength="100" rows="5" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">모금 하러 가기</button>
+        </div>
+    </form>
 
-			<div style="margin-top: 20px">
-				<label for="message">메시지:</label>
-				<textarea id="message" name="message" placeholder="여기에 메시지 입력"
-					maxlength="100" rows="5" style="width: 80%;"></textarea>
-			</div>
-			<!-- 필요없 -->
-			<div style="margin-top: 20px">
-				<a
-					th:href="@{/fundings/payment/{fundingUid} (fundingUid=${fundingUid})}">결제
-					페이지로 이동</a>
-			</div>
-		</div>
-	</form>
-	<!-- HTML 태그를 이스케이프 처리하지 않고 출력 -->
-	<p th:utext="${messageT}"></p>
-	<hr>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<div th:if="${errorMessage}" th:text="${errorMessage}"
-		id="errorMessage" style="display: none;"></div>
-	<div th:if="${successMessage}" th:text="${successMessage}"
-		id="successMessage" style="display: none;"></div>
-	<script>
-		window.onload = function() {
-			var errorMessage = document.getElementById('errorMessage');
-			if (errorMessage && errorMessage.innerText) {
-				alert(errorMessage.innerText);
-			}
-			var successMessage = document.getElementById('successMessage');
-			if (successMessage && successMessage.innerText) {
-				alert(successMessage.innerText);
-			}
-		};
-	</script>
+    <!-- HTML 태그를 이스케이프 처리하지 않고 출력 -->
+    <p th:utext="${messageT}"></p>
+    <hr>
+
+    <div th:if="${errorMessage}" th:text="${errorMessage}"
+        id="errorMessage" style="display: none;"></div>
+    <div th:if="${successMessage}" th:text="${successMessage}"
+        id="successMessage" style="display: none;"></div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        window.onload = function() {
+            var errorMessage = document.getElementById('errorMessage');
+            if (errorMessage && errorMessage.innerText) {
+                alert(errorMessage.innerText);
+            }
+            var successMessage = document.getElementById('successMessage');
+            if (successMessage && successMessage.innerText) {
+                alert(successMessage.innerText);
+            }
+        };
+    </script>
 </body>
 </html>
