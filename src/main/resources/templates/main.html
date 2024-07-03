@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gift Together</title>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
         .container {
             width: 600px;
             height: auto;
@@ -14,22 +25,21 @@
             background-size: contain;
             padding-bottom: 200%;
             padding-top: 10%;
-            align-content: center;
         }
         .overlay-image {
             position: absolute;
             top: 20%; /* Adjust this to position the button beneath the gift image */
             left: 50%;
             transform: translate(-50%, -50%);
-            max-width: 150px; /* Adjust as needed */
+            width: 150px; /* Adjust as needed */
             cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a th:href="${location}">
-            <img src="/images/kakao_login_medium_narrow.png" alt="Kakao Login" class="overlay-image">
+        <a href="/wishlists/my/0">
+            <img src="/images/wishlist_button.png" alt="create wishlists" class="overlay-image">
         </a>
     </div>
 </body>

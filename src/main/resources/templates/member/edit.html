@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>사용자 정보 수정</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+}
+
+.container {
+    width: 600px;
+    padding: 20px;
+    background-color: #EBF5F3;
+    text-align: center;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-container {
+    background-color: rgba(255, 255, 255, 0.7); /* 배경 투명도 적용 */
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    margin-top: 60px; /* 컨테이너를 더 밑으로 내리기 위해 설정 */
+    z-index: 2;
+}
+
+.profile {
+    position: relative;
+    text-align: center;
+    margin-top: 100px;
+    margin-bottom: 60px; /* 프로필 사진과 라벨/입력 필드 간의 간격을 더 크게 설정 */
+    z-index: 3;
+}
+
+.gift-pic-left {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    width: 300px;
+    height: 300px;
+}
+
+.gift-pic-right {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    width: 150px;
+    height: 150px;
+    z-index: 3;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    z-index: 4;
+    cursor: pointer; /* 마우스 커서 변경 */
+}
+
+.profile-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 4;
+}
+
+.profile-details {
+    text-align: left;
+    margin-top: 20px;
+    z-index: 4;
+}
+
+.profile-details .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px; /* 세로 간격을 30px로 설정 */
+}
+
+.profile-details .form-group label {
+    width: 100px;
+    margin-right: 10px;
+    text-align: right;
+    font-weight: bold;
+    color: #606060; /* 라벨 색상 변경 */
+}
+
+.profile-details .form-group input {
+    flex: 1;
+    padding: 12px;
+    height: 20px; /* 입력칸의 높이를 설정 */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    z-index: 4;
+}
+
+.buttons button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 30px; /* 버튼 모서리 둥글게 */
+    border: 1px solid #98C1B3; /* 테두리 색상 설정 */
+    background-color: #98C1B3; /* 배경색 */
+    color: #ffffff; /* 글자 색상 설정 */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    font-weight: bold;
+}
+
+.buttons button:hover {
+    background-color: white; /* 호버 시 배경색 변경 */
+    color: #98C1B3; /* 호버 시 글자 색상 변경 */
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <img src="/images/gift_left.png" alt="Gift" class="gift-pic-left">
+        <img src="/images/gift_right.png" alt="Gift" class="gift-pic-right">
+        <div class="profile-container">
+            <div class="profile">
+                <div class="profile-pic" onclick="document.getElementById('profileImageInput').click();">
+                    <img id="profileImage" th:if="${member != null && member.profile != null}" th:src="${member.profile}" alt="프로필 이미지">
+                    <input type="file" id="profileImageInput" name="profileImage" accept="image/*" onchange="previewProfileImage(event)">
+                	<label for="profileImageInput">이미지 선택</label>
+                </div>
+                <div class="profile-name" th:text="${member != null ? member.nickname : 'Guest'} + ' 님'"></div>
+            </div>
+            <form th:action="@{'/member/' + ${id}}" th:object="${member}" method="post" enctype="multipart/form-data">
+                <div class="profile-details">
+                    <div class="form-group">
+                        <label for="nickname">닉네임</label>
+                        <input type="text" id="nickname" th:field="*{nickname}">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">전화번호</label>
+                        <input type="text" id="phoneNumber" th:field="*{phoneNumber}">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">주소</label>
+                        <input type="text" id="address" th:field="*{address}">
+                    </div>
+                    <div class="form-group">
+                        <label for="birth">생일</label>
+                        <input type="date" id="birth" th:field="*{birth}">
+                    </div>
+                    <input type="hidden" id="profile" name="profile" th:field="*{profile}">
+                </div>
+                <div class="buttons">
+                    <button type="submit">수정 완료</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function previewProfileImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('profileImage');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function uploadFile(event) {
+            var file = event.target.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+            console.log('Uploading file:', file); // 파일 업로드 시작 로그
+            fetch("/files/image/profiles", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('File upload successful'); // 파일 업로드 성공 로그
+                        return response.text();
+                    } else {
+                        throw new Error('파일 업로드 실패');
+                    }
+                })
+                .then(imageUri => {
+                    console.log('Received image URI:', imageUri); // 서버로부터 받은 이미지 URI 로그
+                    // 이미지 URL을 hidden input에 설정
+                    document.getElementById('profile').value = imageUri; // hidden input에 설정하여 member 프로필 필드에 저장
+                    // 이미지 업로드 후 프로필 이미지 미리보기 업데이트
+                    document.getElementById('profileImage').src = imageUri;
+                })
+                .catch(error => {
+                    console.error('Error:', error); // 파일 업로드 실패 로그
+                });
+        }
+
+        // 파일 선택 시 uploadFile 함수 호출
+        document.getElementById('profileImageInput').addEventListener('change', function(event) {
+        	console.log('====== preview , upload 시작 === '); // 서버로부터 받은 이미지 URI 로그
+            previewProfileImage(event);
+            uploadFile(event);
+        });
+    </script>
+</body>
+</html>

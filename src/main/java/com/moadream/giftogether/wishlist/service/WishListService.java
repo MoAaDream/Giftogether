@@ -90,12 +90,32 @@ public class WishListService implements WishListServiceI {
 		return new PageImpl<>(wishlists, pageable, wishListPage.getTotalElements());
 	}
 
-	@Override
-	public void updateWishListStatus() {
-		List<WishList> activeWishlist = wishListRepository.findAllByStatus(Status.A);
-		LocalDateTime now = LocalDateTime.now();
-		boolean changesMade = false;
-		List<Product> productsToUpdate = new ArrayList<>();
+
+    @Override
+    @Transactional
+    public void updateWishListStatus() {
+        List<WishList> activeWishlist = wishListRepository.findAllByStatus(Status.A);
+        LocalDateTime now = LocalDateTime.now();
+        boolean changesMade = false;
+        List<Product> productsToUpdate = new ArrayList<>();
+        
+        for (WishList wishList : activeWishlist) {
+            if (wishList.getDeadline().isBefore(now)) {
+                wishList.setStatus(Status.I);    // 위시리스트의 상태를 업데이트
+                // 이 위시리스트에 연관된 모든 제품의 상태를 업데이트
+                for (Product product : wishList.getProductList()) {
+                    product.setStatus(Status.I);
+                    productsToUpdate.add(product);
+                }
+                changesMade = true;
+            }
+        }
+        // 변경 사항이 있으면 모든 위시리스트와 제품을 저장
+        if (changesMade) {
+            wishListRepository.saveAll(activeWishlist);
+            productRepository.saveAll(productsToUpdate);   
+        }
+    
 
 		for (WishList wishList : activeWishlist) {
 			if (wishList.getDeadline().isBefore(now)) {
