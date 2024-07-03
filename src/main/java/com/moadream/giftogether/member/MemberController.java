@@ -1,5 +1,7 @@
 package com.moadream.giftogether.member;
 
+
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.Status;
@@ -67,6 +70,14 @@ public class MemberController {
 	@Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
 	private String redirect_uri;
 
+	
+	@GetMapping("/main")
+	public String mainPage() {
+		return "main";
+	}
+	
+	
+	
 	// 로그인 요청
 	@GetMapping("/login")
 	public String loginPage(Model model) {
@@ -86,7 +97,8 @@ public class MemberController {
 
 		// 2. 인가코드를 기반으로 Access Token 발급
 		String accessToken = kakaoService.getAccessTokenFromKakao(code);
-
+		
+		
 		// 3. 사용자 정보 받기
 		// return ResponseEntity.ok(memberService.getKakaoUserInfo(accessToken));
 		HashMap<String, Object> kakaoUserInfo = kakaoService.getKakaoUserInfo(accessToken);
@@ -112,17 +124,12 @@ public class MemberController {
 		session.setAttribute("profileImage", profileImage);
 		session.setAttribute("accessToken", accessToken);
 		session.setAttribute("email", email); 
-		
-		
-		
+
+
 		// 6. 세션 유지 시간 설정 
-		session.setAttribute("email", email);
-
-		log.info(email);
-
-		// 6. 세션 유지 시간 설정
-		session.setMaxInactiveInterval(60 * 30); // 30분
-
+		session.setMaxInactiveInterval(60 * 30); //60초  * 30 ->  30분
+		
+	
 		CustomUserDetails userDetails;
 
 		// 회원가입 여부 확인 및 처리
@@ -218,10 +225,6 @@ public class MemberController {
 	}
 	
 	
-	@GetMapping("/main")
-	public String main(HttpSession session) {
-		return "main";
-	}
 
 	/**
 	 * 카카오 로그아웃
@@ -229,22 +232,58 @@ public class MemberController {
 	 * @return
 	 * @throws JsonProcessingException
 	 */
+	/*
 	@GetMapping("/logout")
-	public String logout(HttpSession session) throws JsonProcessingException {
+	public String logout(HttpSession session ,  HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+		log.info("로그아웃 세션 정보 : " + session.getCreationTime());
 		String accessToken = (String) session.getAttribute("accessToken");
 		log.info("============ 로그아웃 ===========");
 		if (accessToken != null && !accessToken.isEmpty()) {
-			log.info("Access token found : " + accessToken);
+			
 			kakaoService.logoutFromKakao(accessToken);
 		} else {
 			log.info("No access token found in session.");
 		}
 		session.invalidate(); // 세션 무효화
+		
+		// 모든 쿠키 삭제
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setValue(null);
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
+        }
+        
+		
 		log.info("logout 경로 도착");
 
 		return "redirect:/login?logout";
-	}
+	}*/
 
+
+	@GetMapping("/logout")
+    public RedirectView logout(@RequestParam(name = "state", required = false) String state) {
+        if (state == null) {
+            state = "defaultState"; // or generate a unique state for CSRF protection
+        }
+
+        String logoutUrl = kakaoService.getKakaoLogoutUrl(state);
+        return new RedirectView(logoutUrl);
+    }
+
+    @GetMapping("/logout/redirect")
+    public String handleLogoutRedirect(@RequestParam(name = "state", required = false) String state) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            SecurityContextHolder.getContext().setAuthentication(null);
+        }
+        return "redirect:/login"; // Redirect to your home or login page after logout
+    }
+    
+    
 	/**
 	 * 친구 불러오기
 	 * 
@@ -271,14 +310,30 @@ public class MemberController {
 	/**
 	 * 초대 메세지 보내기
 	 */
-	/*
-	 * @GetMapping("/member/message") public ResponseEntity<String>
-	 * getFriends(HttpSession session){
-	 * 
-	 * }
-	 */
 
 
+
+	 /* 카카오 동의항목 조회 */
+	 @GetMapping("/consent")
+	    public ResponseEntity<String> getConsentInfo(HttpSession session) {
+		 String scopeInfoUri="https://kapi.kakao.com/v2/user/scopes";	
+		 
+		 String accessToken = (String) session.getAttribute("accessToken");
+	    	 RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setBearerAuth(accessToken);
+
+	        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+	        ResponseEntity<String> response = restTemplate.exchange(scopeInfoUri, HttpMethod.GET, entity, String.class);
+
+	        return response;
+	    }
+	 
+	 
+	 
+	 
+	 
 	/**
 	 * 마이페이지
 	 * 
@@ -413,6 +468,17 @@ public class MemberController {
 			return ResponseEntity.status(500).body("탈퇴 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
+	
+	/* 이용중 프로필  동의 구하기 */
+	
+	  
+    @GetMapping("/request/friends-consent")
+    public RedirectView requestFriendsConsent() {
+        String consentUri = String.format("%s?client_id=%s&redirect_uri=%s&response_type=code&scope=friends",
+        		"https://kauth.kakao.com/oauth/authorize", client_id, redirect_uri);
+        return new RedirectView(consentUri);
+    }
+
 
 	@GetMapping("/member/{id}/fundings")
 	public String getUserFundings(@PathVariable("id") Long id, Model model, HttpSession session) throws Exception {
@@ -442,4 +508,13 @@ public class MemberController {
 	}
 
 
+	
+    /**
+	  * 초대 메세지 보내기
+	  */
+	 /*@GetMapping("/member/message")
+	 public ResponseEntity<String> getMessage(HttpSession session){
+		 
+	 }*/
+	
 }

@@ -38,7 +38,8 @@ out/
 
 ### propeties ###
 src/main/resources/application-API-KEY.properties
-
+src/main/resources/application-main.properties
+src/main/resources/appication-test.properties
 
 ### wallet ###
 src/main/resources/wallet/**
