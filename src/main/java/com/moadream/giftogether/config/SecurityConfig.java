@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                 		.requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 경로는 ADMIN 권한을 가진 사용자만 접근 허용
                         .requestMatchers("/", "/login/**", "/home", "/current-user").permitAll()
-                        .requestMatchers("/member/**").authenticated() // /member/** 경로는 인증된 사용자에게만 접근 허용
+                        //.requestMatchers("/member/**").authenticated() // /member/** 경로는 인증된 사용자에게만 접근 허용
                         .anyRequest().permitAll())
                 
                 .sessionManagement(session -> session
