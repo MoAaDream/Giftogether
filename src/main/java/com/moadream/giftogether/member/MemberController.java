@@ -72,7 +72,7 @@ public class MemberController {
 	
 	@GetMapping("/main")
 	public String mainPage() {
-		return "index";
+		return "main";
 	}
 	
 	
@@ -224,10 +224,6 @@ public class MemberController {
 	}
 	
 	
-	@GetMapping("/main")
-	public String main(HttpSession session) {
-		return "main";
-	}
 
 	/**
 	 * 카카오 로그아웃
