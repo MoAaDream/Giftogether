@@ -111,8 +111,6 @@ public class FundingController {
 		return "funding/detail";
 	}
 
-	
-	
 	private String checkSession(HttpSession session) {
 		if (session == null)
 			throw new SessionNotFoundException(SESSION_NOT_FOUND);

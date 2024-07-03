@@ -75,7 +75,7 @@ a:hover {
 
 	<br>
 	<br>
-	<br> 
+	<br>
 
 	<!-- 데드라인 지남 && 펀딩 미완료 && 자기자신   -->
 	<div th:if="${isDeadFunding and !isGoalAmount and isUserProduct}"></div>
@@ -102,6 +102,7 @@ a:hover {
 			id="account" th:field="*{account}" placeholder="은행 계좌 입력" required>
 		<button type="submit" class="btn btn-primary">펀딩 금액 계좌로 받기</button>
 	</form>
+	<div class="mt-3" style="color: #FF4F4F; text-align: center;">주의 : 계좌로 받을시 제품도 함께 삭제됩니다.</div>
 
 
 
