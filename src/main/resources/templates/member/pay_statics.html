@@ -1,80 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<meta charset="UTF-8">
+<title>Title</title>
 </head>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-    }
+body {
+	font-family: Arial, sans-serif;
+	margin: 20px;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
 
-    th, td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
+th, td {
+	padding: 8px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
 
-    th {
-        background-color: #f2f2f2;
-    }
+th {
+	background-color: #f2f2f2;
+}
 
-    a {
-        color: blue;
-        text-decoration: none;
-    }
+a {
+	color: blue;
+	text-decoration: none;
+}
 
-    a:hover {
-        text-decoration: underline;
-    }
+a:hover {
+	text-decoration: underline;
+}
 </style>
 <body>
-<h2>나의 결제 리스트</h2>
-<div style="margin-top: 30px">
-    <div>
-        <table>
-            <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Message</th>
-                <th>Giver</th>
-                <th>Receiver</th>
-                <th>Created At</th>
-                <th>Deadline</th>
-                <th>Details</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="funding : ${fundingDetailM}"
-                th:with="productName=${funding.productName},
+	<h2>나의 결제 리스트</h2>
+	<div style="margin-top: 30px">
+		<div>
+			<table>
+				<thead>
+					<tr>
+						<th>Product Name</th>
+						<th>Amount</th>
+						<th>Status</th>
+						<th>Message</th>
+						<th>Giver</th>
+						<th>Receiver</th>
+						<th>Created At</th>
+						<th>Deadline</th>
+						<th>Details</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="funding : ${fundingDetailM}"
+						th:with="productName=${funding.productName},
                  amount=${funding.amount},
                  status=${funding.status},
                  messageContent=${funding.messageContent},
                  giverNickname=${funding.giverNickname},
                  receiverNickname=${funding.receiverNickname},
                  createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
-                <td th:text="${productName}">Product Name</td>
-                <td th:text="${amount}">Amount</td>
-                <td th:text="${status}">Status</td>
-                <td th:text="${messageContent}">Message</td>
-                <td th:text="${giverNickname}">Giver</td>
-                <td th:text="${receiverNickname}">Receiver</td>
-                <td th:text="${createdAtFormatted}">createdAt</td>
-                <td th:text="${deadlineFormatted}">Deadline</td>
-                <td><a th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
-                       th:text="'View Details'">View Details</a></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'},
+                 isCanViewDetails=${funding.canViewDetails}">
+						<td th:text="${productName}">Product Name</td>
+						<td th:text="${amount}">Amount</td>
+						<td th:text="${status}">Status</td>
+						<td th:text="${messageContent}">Message</td>
+						<td th:text="${giverNickname}">Giver</td>
+						<td th:text="${receiverNickname}">Receiver</td>
+						<td th:text="${createdAtFormatted}">createdAt</td>
+						<td th:text="${deadlineFormatted}">Deadline</td>
+						<td th:if="${isCanViewDetails}"><a
+							th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
+							th:text="'View Details'">View Details</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 </body>
 </html>

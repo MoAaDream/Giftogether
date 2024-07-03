@@ -16,8 +16,9 @@ public class FundingDetailsDTO {
     private String messageContent;
     private String giverNickname;
     private String receiverNickname; 
-    private String fundingUid;          // Funding 테이블의 고유 ID
-    private LocalDateTime createdAt;    // Funding 객체가 생성된 날짜
-    private String productName;         // 연관된 제품의 이름
-    private LocalDateTime deadline;        // 연관된 제품의 이름 
+    private String fundingUid;          
+    private LocalDateTime createdAt;   
+    private String productName;         
+    private LocalDateTime deadline;     
+    private boolean canViewDetails; // 요청한사람과 펀딩한사람 일치 => true
 }

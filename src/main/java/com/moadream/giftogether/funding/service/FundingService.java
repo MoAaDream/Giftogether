@@ -44,9 +44,9 @@ public class FundingService {
 	private FundingQueueManager fundingQueueManager; // FundingQueueManager 주입
 
 	public void enqueueFundingRequest(FundingRequest request) {
-	    fundingQueueManager.addFundingRequest(request);
+		fundingQueueManager.addFundingRequest(request);
 	}
-	
+
 	public int[] getFundingAmounts(String productLink) {
 		// 제품을 찾아 없으면 예외 발생
 		Product product = productRepository.findByProductLink(productLink)
@@ -79,7 +79,7 @@ public class FundingService {
 		// 남은 모금 필요 금액 계산
 		return product.getGoalAmount() - product.getCurrentAmount();
 	}
-	
+
 	// 금액 선택 검증
 	public void validateAmount(Integer amount, String productLink) throws IllegalArgumentException {
 
@@ -94,23 +94,21 @@ public class FundingService {
 			throw new IllegalArgumentException("금액이 허용 금액을 초과하여 설정 되었습니다.");
 		}
 	}
-	
+
 //	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
 	public void processFundingRequest(FundingRequest request) {
 		String socialId = request.getSocialId();
 		String productLink = request.getProductLink();
 		Integer amount = request.getAmount();
 		String messageF = request.getMessage();
-		
-		
+
 		Member member = findMemberBySocialId(socialId);
- 
-		
+
 		// 임시 결제내역 생성
 		Payment payment = Payment.builder().amount(amount) // 검증 할 값
 				.status(PaymentStatus.R).build();
 		paymentRepository.save(payment);
-		
+
 //        log.info("member id = " + member.getId());
 //        List<Product> list = productRepository.findAll();
 //        for(Product p : list)
@@ -119,53 +117,63 @@ public class FundingService {
 		Product product = productRepository.findByProductLink(productLink)
 				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
 
-		log.info("ㅁㅁㅁㅁ주문");
 //		 주문 생성
 		Funding funding = Funding.builder().amount(amount).status(Status.I).fundingUid(UUID.randomUUID().toString())
 				.payment(payment).member(member).product(product).build();
 		fundingRepository.save(funding);
-		log.info("ㅁㅁㅁㅁ저장1" + funding.getFundingUid());
 		request.setFundingUid(funding.getFundingUid());
-		log.info("ㅁㅁㅁㅁ저장2");
-		 
-		
-		
- 
+
 		Message message = Message.builder().content(messageF).status(Status.I).funding(funding)
 				.wishlist(product.getWishlist()).build();
 
 		messageRepository.save(message);
-
-//		return funding;
 	}
- 
-    
-    
-	public List<FundingDetailsDTO> findFundingsByProductLink(String productLink) {
+
+//    
+//	public List<FundingDetailsDTO> findFundingsByProductLink(String socialId, String productLink) {
+//		return productRepository.findByProductLink(productLink)
+//				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))
+//				.map(fundings -> fundings.stream().filter(funding -> funding.getStatus() == Status.A)
+//						.map(this::mapToDTO).collect(Collectors.toList()))
+//				.orElse(Collections.emptyList());
+//	}
+
+	public List<FundingDetailsDTO> findFundingsByProductLink(String socialId, String productLink) {
 		return productRepository.findByProductLink(productLink)
 				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))
 				.map(fundings -> fundings.stream().filter(funding -> funding.getStatus() == Status.A)
-						.map(this::mapToDTO).collect(Collectors.toList()))
+						.map(funding -> mapToDTO(funding, socialId)) // socialId를 전달
+						.collect(Collectors.toList()))
 				.orElse(Collections.emptyList());
 	}
 
 	public List<FundingDetailsDTO> findFundingsBySocialId(String socialId) {
 		List<Funding> fundings = fundingRepository.findByMemberSocialIdWithDetails(socialId);
-		return fundings.stream().filter(funding -> funding.getStatus() == Status.A).map(this::mapToDTO)
-				.collect(Collectors.toList());
+		return fundings.stream().filter(funding -> funding.getStatus() == Status.A)
+				.map(funding -> mapToDTO(funding, socialId)).collect(Collectors.toList());
 	}
 
-	public FundingDetailsDTO getFundingDetailByUid(String fundingUid) {
+	public FundingDetailsDTO getFundingDetailByUid(String fundingUid, String socialId) {
 		Funding funding = fundingRepository.findByFundingUid(fundingUid);
-		return funding != null ? mapToDTO(funding) : null;
+		return funding != null ? mapToDTO(funding, socialId) : null;
 	}
 
 	public String getProductName(String productLink) {
-		return  productRepository.findByProductLink(productLink)
+		return productRepository.findByProductLink(productLink)
 				.orElseThrow(() -> new DataNotFoundException("제품이 없습니다.")).getName();
 	}
 
-	private FundingDetailsDTO mapToDTO(Funding funding) {
+	public String getProductDescription(String productLink) {
+		return productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new DataNotFoundException("제품 설명이 없습니다.")).getDescription();
+	}
+
+	public String getProductProductImg(String productLink) {
+		return productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new DataNotFoundException("제품 설명이 없습니다.")).getProductImg();
+	}
+
+	private FundingDetailsDTO mapToDTO(Funding funding, String socialId) {
 		FundingDetailsDTO dto = new FundingDetailsDTO();
 		dto.setAmount(funding.getAmount());
 		dto.setStatus(funding.getStatus());
@@ -176,6 +184,7 @@ public class FundingService {
 		dto.setCreatedAt(funding.getCreatedAt());
 		dto.setProductName(funding.getProduct().getName());
 		dto.setDeadline(funding.getProduct().getWishlist().getDeadline());
+		dto.setCanViewDetails(funding.getMember().getSocialLoginId().equals(socialId));
 		return dto;
 	}
 
