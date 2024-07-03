@@ -1,15 +1,12 @@
 package com.moadream.giftogether.product.controller;
 
 
-<<<<<<< HEAD
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-=======
-import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
-
->>>>>>> bda5ee4fb5a3ea422b6e8bc829a5ba752f5c5231
 import java.util.List;
 import java.util.UUID;
 
