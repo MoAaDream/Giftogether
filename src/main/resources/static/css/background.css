@@ -1,0 +1,135 @@
+
+
+.detail {
+    display: flex;
+    align-items: center; /* 수직 정렬 */
+    max-width: 600px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+    padding: 50px;
+    border-radius: 8px;
+    background: linear-gradient(to bottom, white, #EBF5F3 100%); /* 그라데이션 배경 */
+}
+
+
+.detail-image {
+    max-width: 250px;
+    width: auto;
+    height:auto;
+    margin-right: 10px; /* 이미지 오른쪽 간격 */
+    background-color:#ffffff;
+    transform: rotate(5deg); 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+}
+
+.detail-image img {
+    max-width: 100%;
+    height: auto;
+    padding: 10px 10px 0 10px;
+}
+
+.detail-image p{
+	padding: 10px;
+	font-size: 13px;
+	text-align: center;
+}
+
+.detail-info {
+    flex: 1; /* 남은 공간을 차지하도록 설정 */
+}
+
+.tatle h1 {
+    font-size: 24px;
+    color: #333; /* 제목색 */
+}
+
+.edit{
+	display:flex;
+	max-width: 600px;
+    margin: 0 auto;
+    padding: 10px;
+    justify-content: center;
+    height:auto;
+	background-color: #EBF5F3
+}
+
+.tatle{
+	display:flex;
+	max-width: 600px;
+    margin: 0 auto;
+    justify-content: center;
+    height:auto;
+    padding-top: 30px;
+	background-color: #fff;
+}
+
+.description{
+	margin-bottom : 15px;
+}
+
+
+.dday {
+	display: flex; 
+	align-items: center; 
+	justify-content: left; 
+}
+
+.ddayblock {
+    width: 45px;
+    height: 60px;
+    background-color: white; /* 배경색 */
+    border: 2px solid #FF94B4; /* 테두리 */
+    border-radius: 10px; /* 둥근 모서리 */
+    text-align: center; /* 가운데 정렬 */
+    margin: 0 2px; /* 간격 조정 */
+    justify-content: center; /* 내부 텍스트를 가운데 정렬하기 위해 추가 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+}
+
+.ddayzero{
+	display: flex;
+	align-items: center; 
+}
+
+.ddayblock p {
+    line-height: 50px; /* 텍스트 세로 가운데 정렬 */
+    font-size: 35px;
+    font-weight: bold; /* 굵은 글꼴 */
+    color: #FF94B4; /* 글자색 */
+    margin: 0; /* 내부 간격 제거 */
+}
+
+.ddaybar {
+	width: 12px; /* bar 너비 */
+	height: 4px; /* bar 높이 */
+	background-color: #FF94B4; /* bar 색상 */
+	border-radius: 2px; /* 둥근 모서리 */
+	display: inline-block; /* 한 줄에 표시 */
+	margin: 0 5px; /* 간격 조정 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.ddayplus{
+	font-weight: 900;
+	color:#FF94B4;
+	font-size:30px;
+	text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.copyLink {
+	width: 150px;
+	height: 35px;
+	background-color: #ffffff;
+	border-radius: 5px;
+	text-align:center;
+	padding:5px;
+	margin: 15px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.copyLink a{
+	text-decoration-line: none;
+	color: #545454;
+	font-weight: 450;
+}
+

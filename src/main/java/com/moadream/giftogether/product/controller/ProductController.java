@@ -3,6 +3,10 @@ package com.moadream.giftogether.product.controller;
 
 import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,7 +57,17 @@ public class ProductController {
         model.addAttribute("productList", productList);
         model.addAttribute("wishlistLink",wishlistLink);
         model.addAttribute("wishlist", wishlist); 
-		
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(wishlist.getDeadline());
+        System.out.println(now);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate formattedDeadline = LocalDate.parse(wishlist.getDeadline().format(formatter), formatter);
+        LocalDate formattedNow = LocalDate.parse(now.format(formatter), formatter);
+        long daysDiff = ChronoUnit.DAYS.between(formattedNow,formattedDeadline);
+        System.out.println(daysDiff);
+        model.addAttribute("daysDiff", daysDiff);
+        
+        
 		if (wishlist.getMember().getSocialLoginId().equals(socialId)){
 			return "products/product_mylist";
 		}
@@ -166,10 +180,8 @@ public class ProductController {
 			return "products/product_modify";
 		}
 		
-		System.out.println(productLink);
 		this.productService.modify(productModifyForm.getName(), productModifyForm.getDescription(), productModifyForm.getUploadedImage(), productModifyForm.getOptionDetail(), socialId, productLink);
 		
-		System.out.println(productLink);
 	    return "redirect:/products/{product_link}"; 
 	}
 
