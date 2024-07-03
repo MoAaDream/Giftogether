@@ -51,7 +51,6 @@ public class WishListService implements WishListServiceI {
 		if(wishListForm.getDeadLine().toLocalDate().isBefore(LocalDate.now())) {
 			throw new WishListException(NOT_DEADLINE_CREATE);
 		}
-		System.out.println("time = " + LocalDate.now());
 		WishList wishList = WishList.createWishList(wishListForm, member);
 
 		wishListRepository.save(wishList);
