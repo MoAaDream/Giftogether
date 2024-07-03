@@ -12,16 +12,16 @@ import com.moadream.giftogether.wishlist.model.WishList;
 
 public interface WishListRepository extends JpaRepository<WishList, Long> {
 
-    Optional<WishList> findByMember_Id(Long memberId);
+	Optional<WishList> findByMember_Id(Long memberId);
 
-    Optional<WishList> findByLink(String wishlistLink);
-    
-    Optional<WishList> findFirstByLink(String wishlistLink);
+	Optional<WishList> findByLink(String wishlistLink);
 
-    List<WishList> findAllByMember_Id(Long memberId);
+	Optional<WishList> findFirstByLink(String wishlistLink);
 
-    Page<WishList> findAllByMember_Id(Long memberId, Pageable pageable);
+	List<WishList> findAllByMember_Id(Long memberId);
 
-    List<WishList> findAllByStatus(Status status);
+	Page<WishList> findAllByMember_Id(Long memberId, Pageable pageable);
+
+	List<WishList> findAllByStatus(Status status);
 
 }

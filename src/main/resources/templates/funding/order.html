@@ -1,60 +1,196 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>모금</title>
-    <!-- Bootstrap CSS 추가 -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<meta charset="UTF-8">
+<title>모금</title>
+<!-- Bootstrap CSS 추가 -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
 </head>
-<body class="p-4">
-    <h1 class="mb-4" th:text="${productName} + '에 대한 모금'"></h1>
+<style>
+body {
+	display: flex;
+	justify-content: center;
+	background-color: white; /* 바깥쪽 배경 흰색으로 설정 */
+	min-height: 100vh; /* 전체 화면 높이 */
+	margin: 0;
+	padding: 0;
+}
 
-    <div th:if="${amountOptions.length == 1 and amountOptions[0] == 0}" class="alert alert-info" role="alert">
-        <p>100% 모금이 완료되어 더 이상 모금을 할 수 없습니다.</p>
-        <a th:href="@{/products/{productLink} (productLink=${productLink})}" class="alert-link">제품 페이지로 돌아가기</a>
-    </div>
+.main-content {
+	background: #EBF5F3;
+	width: 600px; /* 내용의 너비를 600px로 설정 */
+	padding: 40px; /* 안쪽 여백 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	display: flex;
+	align-items: center; /* 수직 중앙 정렬 */
+	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
+}
 
-    <form method="post" th:action="@{/fundings/{productLink} (productLink=${productLink})}">
-        <div th:unless="${amountOptions.length == 1 and amountOptions[0] == 0}">
-            <div class="form-group">
-                <label for="amount">결제 금액 선택:</label>
-                <select id="amount" name="amount" class="form-control">
-                    <option th:each="amount : ${amountOptions}" th:value="${amount}"
-                        th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + '원'"></option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="message">메시지:</label>
-                <textarea id="message" name="message" placeholder="여기에 메시지 입력"
-                    maxlength="100" rows="5" class="form-control"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">모금 하러 가기</button>
-        </div>
-    </form>
+.white-box {
+	background-color: white;
+	width: 100%; /* 상자의 너비를 부모 요소에 맞춤 */
+	display: flex; /* 플렉스박스로 내부 요소를 수평 정렬 */
+	align-items: center; /* 내부 요소를 수직 중앙 정렬 */
+	margin: 15px 0px; /* 상하 마진 */
+	padding: 5px; /* 내부 패딩 */
+	border-radius: 5px; /* 하단 꼭지점만 둥글게 */
+	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
+}
 
-    <!-- HTML 태그를 이스케이프 처리하지 않고 출력 -->
-    <p th:utext="${messageT}"></p>
-    <hr>
+.small-box {
+	height: 70px;
+	padding: 15px;
+}
 
-    <div th:if="${errorMessage}" th:text="${errorMessage}"
-        id="errorMessage" style="display: none;"></div>
-    <div th:if="${successMessage}" th:text="${successMessage}"
-        id="successMessage" style="display: none;"></div>
+.large-box {
+	height: 200px;
+}
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        window.onload = function() {
-            var errorMessage = document.getElementById('errorMessage');
-            if (errorMessage && errorMessage.innerText) {
-                alert(errorMessage.innerText);
-            }
-            var successMessage = document.getElementById('successMessage');
-            if (successMessage && successMessage.innerText) {
-                alert(successMessage.innerText);
-            }
-        };
-    </script>
+.btn-primary {
+	position: fixed; /* 버튼을 고정시킴 */
+	bottom: 50px; /* 하단에서 50px 떨어진 위치에 배치 */
+	left: 50%; /* 왼쪽에서 50% 떨어진 위치에 배치 */
+	transform: translateX(-50%); /* X축으로 -50% 이동하여 중앙 정렬 */
+	background-color: #343434; /* 버튼 색상 변경 */
+	border: none; /* 테두리 제거 */
+	width: 520px; /* 상자의 너비를 부모 요소에 맞춤 */
+	padding: 12px 24px;
+	border-radius: 24px; /* 하단 꼭지점만 둥글게 */
+}
+
+.btn-primary:hover {
+	background-color: #020202; /* 마우스 오버시 버튼 색상 변경 */
+}
+
+label {
+	font-weight: bold; /* 라벨 굵게 */
+}
+
+textarea {
+	resize: none; /* 텍스트 에리어 크기 조절 불가능하게 */
+}
+
+.form-group {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.custom-select {
+	background: transparent;
+	border: none;
+	border-radius: 0; /* 둥근 모서리 제거 */
+	box-shadow: none; /* 그림자 제거 */
+	color: #666;
+}
+
+textarea.form-control {
+	border: none; /* 테두리 제거 */
+	color: #495057; /* 내용 색상 */
+}
+
+textarea.form-control::placeholder {
+	color: #6c757d; /* placeholder의 색상을 더 진하게 변경 */
+	opacity: 1; /* IE에서의 placeholder 투명도 이슈 해결 */
+}
+
+.fa-solid {
+	font-size: 24px; /* 아이콘 크기 조정 */
+}
+
+#backButton {
+	background: none; /* 배경 제거 */
+	border: none; /* 테두리 제거 */
+	color: inherit; /* 상속된 색상 사용 */
+	padding: 0; /* 패딩 제거 */
+	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
+}
+</style>
+<body>
+	<div class="main-content">
+		<div class="row align-items-center" style="width: 520px;">
+			<div class="col-1">
+				<button id="backButton">
+					<i class="fa-solid fa-angle-left"> </i>
+				</button>
+			</div>
+			<div class="col-10">
+				<h4 class="mt-4 mb-4" style="text-align: center;">선물 펀딩 하기</h4>
+			</div>
+			<div class="col-1"></div>
+		</div>
+
+
+		<div class="white-box large-box">
+			<div class="product-info">
+				<div class="product-image"></div>
+				<div class="product-details">${productProductImg}
+					${productName} ${productDescription}</div>
+			</div>
+		</div>
+
+
+		<div th:if="${amountOptions.length == 1 and amountOptions[0] == 0}"
+			style="text-align: center; width: 520px;" class="alert alert-info"
+			role="alert">
+			<p>모금이 100% 완료되어 더 모금을 할 수 없습니다.</p>
+			<a th:href="@{/products/{productLink} (productLink=${productLink})}"
+				class="alert-link">제품 페이지로 돌아가기</a>
+		</div>
+
+		<form style="width: 520px; margin-top: 0px;" method="post"
+			th:action="@{/fundings/{productLink} (productLink=${productLink})}">
+			<div
+				th:unless="${amountOptions.length == 1 and amountOptions[0] == 0}">
+
+				<div class="white-box small-box">
+					<div class="form-group">
+						<label style="width: 400px; text-align: center; padding-top: 8px;"
+							for="amount">선물 펀딩 금액 </label> <select
+							style="text-align: center;" id="amount" name="amount"
+							class="form-control custom-select">
+							<option th:each="amount : ${amountOptions}" th:value="${amount}"
+								th:text="${#numbers.formatDecimal(amount, 0, 'COMMA', 0, 'POINT')} + '원'"></option>
+						</select>
+					</div>
+				</div>
+
+				<div class="white-box large-box" style="margin-top: 30px;">
+					<div class="form-group" style="padding: 5px;">
+						<!--
+						<label for="message">메시지:</label>  -->
+						<textarea id="message" name="message"
+							placeholder="축하 메시지를 입력해 주세요" maxlength="100" rows="7"
+							class="form-control"></textarea>
+					</div>
+				</div>
+				<button type="submit" style="margin-top: 15px;"
+					class="btn btn-primary">결제하기</button>
+
+
+
+			</div>
+		</form>
+
+
+
+
+
+
+	</div>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script>
+		document.getElementById('backButton').onclick = function() {
+			window.history.back();
+		};
+	</script>
 </body>
 </html>

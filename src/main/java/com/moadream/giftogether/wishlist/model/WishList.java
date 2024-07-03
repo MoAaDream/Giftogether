@@ -1,18 +1,30 @@
 package com.moadream.giftogether.wishlist.model;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.global.audit.BaseTimeEntity;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.message.model.Message;
 import com.moadream.giftogether.product.model.Product;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -58,14 +70,13 @@ public class WishList extends BaseTimeEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-
-	public static WishList createWishList(WishListForm wishListForm, Member member){
+	public static WishList createWishList(WishListForm wishListForm, Member member) {
 		WishList wishList = new WishList();
 		wishList.link = UUID.randomUUID().toString().replace("-", "");
 		wishList.name = wishListForm.getName();
 		wishList.description = wishListForm.getDescription();
 
-		if(wishListForm.getUploadedImage() == null || wishListForm.getUploadedImage().equals(""))
+		if (wishListForm.getUploadedImage() == null || wishListForm.getUploadedImage().equals(""))
 			wishListForm.setUploadedImage("https://moadreambk.s3.ap-northeast-2.amazonaws.com/wishlists/wishlist.png");
 
 		wishList.listImg = wishListForm.getUploadedImage();
@@ -83,7 +94,7 @@ public class WishList extends BaseTimeEntity {
 		return wishList;
 	}
 
-	public void modifyWishList(WishListForm wishListForm){
+	public void modifyWishList(WishListForm wishListForm) {
 		this.name = wishListForm.getName();
 		this.description = wishListForm.getDescription();
 		this.listImg = wishListForm.getUploadedImage();
@@ -92,11 +103,11 @@ public class WishList extends BaseTimeEntity {
 	}
 
 	@PreRemove
-	public void deleteProduct(){
-		for(Product product : productList)
+	public void deleteProduct() {
+		for (Product product : productList)
 			product.setWishlist(null);
 
-		for(Message message : messageList)
+		for (Message message : messageList)
 			message.setWishlist(null);
 	}
 

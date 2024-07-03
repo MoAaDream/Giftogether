@@ -10,14 +10,12 @@ public class FundingRequest {
     private String productLink;
     private Integer amount;
     private String message;
-    private String fundingUid; 
-//    private CompletableFuture<FundingRequest> future;
+    private String fundingUid;  
     
     public FundingRequest(String socialId, String productLink, Integer amount, String message) {
         this.socialId = socialId;
         this.productLink = productLink;
         this.amount = amount;
-        this.message = message;
-//        this.future = new CompletableFuture<>();
+        this.message = message; 
     }
 }
