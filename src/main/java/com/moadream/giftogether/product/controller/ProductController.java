@@ -71,13 +71,17 @@ public class ProductController {
 		model.addAttribute("insufficientAmount", insufficientAmount);
 
 		
-		// 날짜 지난 펀딩 모금 실패시 true 반환
-	    boolean isDeadFundingComplete = productService.isDeadFundingComplete(productLink);
-	    model.addAttribute("isDeadFundingComplete", isDeadFundingComplete);
+		// 날짜지남 I => true  
+	    boolean isDeadFunding = fundingService.isDeadFunding(productLink);
+	    model.addAttribute("isDeadFunding", isDeadFunding);
+	    
+	    // 목표 금액 미달 => false
+	    boolean isGoalAmount = fundingService.isGoalAmount(productLink);
+	    model.addAttribute("isGoalAmount", isGoalAmount);
 
 	    // productLink의 유저가 지금 유저와 같으면 true
 		String socialId = checkSession(session); 		
-	    boolean isUserProduct = productService.isUserProduct(socialId, productLink);
+	    boolean isUserProduct = fundingService.isUserProduct(socialId, productLink);
 	    model.addAttribute("isUserProduct", isUserProduct);
 		// 제품의 펀딩 리스트
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(socialId, productLink);

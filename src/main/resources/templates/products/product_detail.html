@@ -68,17 +68,17 @@ a:hover {
 			th:text="${product.goalAmount}-${product.currentAmount} + '원 남았어요!'"></div>
 	</div>
 
-
+	<!-- 데드라인 안지남 && 펀딩 미완료 -->
+	<div th:if="${!isDeadFunding and !isGoalAmount}"></div>
 	<a th:href="@{|/fundings/${product.productLink}|}" class="btn-primary">선물
 		펀딩 하기</a>
 
 	<br>
 	<br>
-	<br>
-	<!-- 여기밑으로 -->
+	<br> 
 
 	<!-- 데드라인 지남 && 펀딩 미완료 && 자기자신   -->
-	<div th:if="${isDeadFundingComplete and isUserProduct}"></div>
+	<div th:if="${isDeadFunding and !isGoalAmount and isUserProduct}"></div>
 
 	<!-- 밑에 from 2개 css 확인후 위에 div로 -->
 	<p th:text="'부족한 금액은 ' + ${insufficientAmount} + '입니다. 결제하시겠습니까?'"></p>
