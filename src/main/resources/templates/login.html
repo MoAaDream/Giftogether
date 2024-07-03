@@ -1,36 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift Together</title>
-    <style>
-        .container {
-            width: 600px;
-            height: auto;
-            text-align: center;
-            position: relative;
-            background: url('/images/login_page_resized.png') no-repeat center center;
-            background-size: contain;
-            padding-bottom: 200%;
-            padding-top: 10%;
-            align-content: center;
-        }
-        .overlay-image {
-            position: absolute;
-            top: 20%; /* Adjust this to position the button beneath the gift image */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 150px; /* Adjust as needed */
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gift Together</title>
+<style>
+.container {
+	width: 600px;
+	height: 4200px;
+	position: relative;
+	background: url('/images/login_page_resized.png') no-repeat;
+	background-size: contain;
+	margin: 0 auto;
+}
+
+.bottom{
+	position: sticky;
+	align-items: center;
+	top: 750px;
+	width:600px;
+	height:300px;
+	background: linear-gradient(to top, white,  rgba(255, 255, 255, 0));
+}
+
+.loginButton {
+	background-color: #FDDC3F;
+	border: 1px solid #FDDC3F;
+	border-radius: 100px;
+	cursor: pointer;
+	position: sticky;
+	top: 850px;
+	margin: 0 20px;
+	min-width: 250px;
+	max-width: 600px;
+	text-align: center;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+	display:flex;
+	text-decoration: none;
+}
+
+#kakao{
+	width:50px;
+	height: 50px;;
+	margin-left: 150px;
+}
+
+.login {
+	font-size: 18px;
+	color: #000;
+	font-weight: bold;
+	margin: 15px 35px;
+}
+</style>
 </head>
 <body>
     <div class="container">
-        <a th:href="${location}">
-            <img src="/images/kakao_login_medium_narrow.png" alt="Kakao Login" class="overlay-image">
-        </a>
+    	<div class=bottom>
+	    	<a class=loginButton th:href="${location}" alt="Kakao Login" >
+	    		<img src="/images/kakaoLogo.png" alt="카카오로고" id=kakao>
+	    		<p class="login">카카오로그인</p>
+	    	</a>
+	        <!-- <img src="/images/kakao_login_medium_narrow.png" th:href="${location}" alt="Kakao Login" class="overlay-image">   -->    
+    	</div>
     </div>
 </body>
 </html>
