@@ -97,8 +97,9 @@ public class WishListController {
 	}
 
 
-	@DeleteMapping("/{wishlistlink}")
+	@GetMapping("/{wishlistlink}/delete")
 	public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
+		log.info(wishlistLink);
 		String socialId = checkSession(session);
 		memberService.checkBlackList(socialId);
 		wishListService.deleteWishList(socialId, wishlistLink);

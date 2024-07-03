@@ -52,11 +52,10 @@
 					<p th:text="|${#temporals.format(wishlist.deadline, 'yyyy-MM-dd')} 그날만 기다리며..☆|"></p>
 				</span>
 			</div>
-		</div>
+		</div> <!-- <a th:href="@{|/wishlists/${wishlist.link}}" class="btn-primary" methods="delete">삭제하기</a> -->
 		<div class="edit" th:if="${daysDiff > 0}" >
 			<a th:href="@{|/wishlists/${wishlist.link}}" class="btn-primary">수정하기</a>
-			<!-- <a th:href="@{|/wishlists/${wishlist.link}}" class="btn-primary" methods="delete">삭제하기</a> -->
-			<form th:action="@{|/wishlists/${wishlist.link}|}" method="post">
+			<form th:action="@{|/wishlists/${wishlist.link}/delete|}" method="delete">
 				<input type="hidden" name="_method" value="delete" />
 				<button type="submit" class="btn-primary">삭제하기</button>
 			</form>

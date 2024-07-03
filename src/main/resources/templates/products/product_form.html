@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Insert title here</title>
     <link rel="stylesheet" href="/css/messageForm.css">
+    <!-- 
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -89,6 +90,7 @@
             margin-bottom: 10px;
         }
     </style>
+    -->
 </head>
 <body>
 
@@ -97,30 +99,31 @@
     <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
         <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
     </div>
-    <label for="name">제품 명:</label>
-    <input type="text" id="name" th:field="*{name}">
+    
+    <input type="text" id="name" th:field="*{name}" placeholder="구매할 상품명을 입력하세요" value="">
 
-    <label for="description">제품 설명:</label>
-    <input type="text" id="description" th:field="*{description}">
-
-    <label for="externalLink">제품 구매 링크:</label>
-    <input type="text" id="externalLink" th:field="*{externalLink}">
-
-    <label>제품 사진:</label>
-    <input type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="사진등록하기">
+	
+    <input type="text" id="externalLink" th:field="*{externalLink}" placeholder="상품을 구매할 링크를 입력해주세요" value="">
+    
+    
+    <input type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="상품 사진 등록하기">
     <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
     <input type="hidden" id="uploadedImageUri" name="uploadedImage">
+    
+    
+    
+    <input type="text" id="description" th:field="*{description}" placeholder="상품에 대해 설명해주세요 (ex.갖고 싶은 이유)" value="">
 
-    <label for="optionDetail">제품 옵션:</label>
-    <input type="text" id="optionDetail" th:field="*{optionDetail}">
+    
+    <input type="text" id="optionDetail" th:field="*{optionDetail}" placeholder="상품에 옵션이 있다면 작성해주세요" value="">
 
-    <label for="goalAmount">제품 금액 :</label>
-    <input type="text" id="goalAmount" th:field="*{goalAmount}" onblur="checkGoalAmount()">
+   
+    <input type="text" id="goalAmount" th:field="*{goalAmount}" onblur="checkGoalAmount()" placeholder="상품 가격을 입력해주세요" value="">
     <span id="goalAmountError"></span>
 
-    <input type="submit" value="추가하기">
+    <input type="submit" value="위시리스트에 상품 추가하기">
 </form>
-
+</body>
 <script>
     function uploadFile(event) {
         var file = event.target.files[0];
@@ -168,5 +171,4 @@
         }
     }
 </script>
-</body>
 </html>
