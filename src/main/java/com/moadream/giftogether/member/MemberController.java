@@ -501,8 +501,13 @@ public class MemberController {
 			throw new Exception("유효하지 않은 접근입니다");
 		}
 
+			    
+	    
 		List<FundingDetailsDTO> fundingDetailM = fundingService.findFundingsBySocialId(kakaoId);
 		model.addAttribute("fundingDetailM", fundingDetailM);
+//		for (FundingDetailsDTO ff : fundingDetailM) {
+//			log.info("ㅁㅁㅁ" + ff.isSuccessFunding()); 
+//		}
 		return "member/pay_statics";
 
 	}

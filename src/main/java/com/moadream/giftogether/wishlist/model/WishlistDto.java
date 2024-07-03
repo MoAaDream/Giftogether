@@ -32,5 +32,6 @@ public class WishlistDto {
 
 		if (dDayValue < 0)
 			this.dDay = "모금종료";
+		
 	}
 }

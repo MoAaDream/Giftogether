@@ -1,6 +1,7 @@
 package com.moadream.giftogether.funding.controller;
 
-import com.moadream.giftogether.global.exception.SessionNotFoundException;
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,15 +16,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.moadream.giftogether.funding.model.PaymentCallbackRequest;
 import com.moadream.giftogether.funding.model.RequestPayDto;
+import com.moadream.giftogether.funding.service.FundingService;
 import com.moadream.giftogether.funding.service.PaymentService;
+import com.moadream.giftogether.global.exception.SessionNotFoundException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
 @Slf4j
 @Controller
@@ -32,6 +33,7 @@ import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESS
 public class PaymentController {
 
 	private final PaymentService paymentService;
+	private final FundingService fundingService;
 
 	@GetMapping("/payment/{fundinguid}") // fundingUid (UUid)
 	public String paymentPage(@PathVariable(name = "fundinguid") String fundingUid, Model model) {
@@ -54,6 +56,8 @@ public class PaymentController {
 	@PostMapping("/cancel-payment/{id}")
 	public String cancelPayment(@PathVariable("id") String fundingUid, HttpSession session,
 			RedirectAttributes redirectAttributes) {
+
+		String productLink = fundingService.getProductLinkByFundingUid(fundingUid);
 		try {
 
 			String socialId = checkSession(session);
@@ -67,7 +71,7 @@ public class PaymentController {
 			log.error("결제 취소 오류", e);
 			redirectAttributes.addFlashAttribute("errorMessage", "시스템 오류로 인한 결제 취소 실패.");
 		}
-		return "redirect:/fundings/detail/" + fundingUid;
+		return "redirect:/products/" + productLink;
 	}
 
 	private String checkSession(HttpSession session) {
