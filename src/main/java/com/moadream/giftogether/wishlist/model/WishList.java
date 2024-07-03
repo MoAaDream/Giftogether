@@ -70,14 +70,13 @@ public class WishList extends BaseTimeEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-
-	public static WishList createWishList(WishListForm wishListForm, Member member){
+	public static WishList createWishList(WishListForm wishListForm, Member member) {
 		WishList wishList = new WishList();
 		wishList.link = UUID.randomUUID().toString().replace("-", "");
 		wishList.name = wishListForm.getName();
 		wishList.description = wishListForm.getDescription();
 
-		if(wishListForm.getUploadedImage() == null || wishListForm.getUploadedImage().equals(""))
+		if (wishListForm.getUploadedImage() == null || wishListForm.getUploadedImage().equals(""))
 			wishListForm.setUploadedImage("https://moadreambk.s3.ap-northeast-2.amazonaws.com/wishlists/wishlist.png");
 
 		wishList.listImg = wishListForm.getUploadedImage();
@@ -95,7 +94,7 @@ public class WishList extends BaseTimeEntity {
 		return wishList;
 	}
 
-	public void modifyWishList(WishListForm wishListForm){
+	public void modifyWishList(WishListForm wishListForm) {
 		this.name = wishListForm.getName();
 		this.description = wishListForm.getDescription();
 		this.listImg = wishListForm.getUploadedImage();
@@ -104,11 +103,11 @@ public class WishList extends BaseTimeEntity {
 	}
 
 	@PreRemove
-	public void deleteProduct(){
-		for(Product product : productList)
+	public void deleteProduct() {
+		for (Product product : productList)
 			product.setWishlist(null);
 
-		for(Message message : messageList)
+		for (Message message : messageList)
 			message.setWishlist(null);
 	}
 

@@ -1,5 +1,17 @@
 package com.moadream.giftogether.wishlist.controller;
 
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
@@ -24,7 +36,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+<<<<<<< HEAD
 
+=======
+>>>>>>> bda5ee4fb5a3ea422b6e8bc829a5ba752f5c5231
 
 @Controller
 @Slf4j
@@ -32,108 +47,115 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/wishlists")
 public class WishListController {
 
-    private final WishListServiceI wishListService;
-    private final MemberService memberService;
+	private final WishListServiceI wishListService;
+	private final MemberService memberService;
 
+	@GetMapping("/")
+	public String getMapping(HttpSession session, Model model) {
+		String socialId = checkSession(session);
+		memberService.checkBlackList(socialId);
+		model.addAttribute("wishListForm", new WishListForm());
+		return "wishlists/wishlist_form";
+	}
 
-    @GetMapping("/")
-    public String getMapping(HttpSession session, Model model) {
-        String socialId = checkSession(session);
-        memberService.checkBlackList(socialId);
-        model.addAttribute("wishListForm", new WishListForm());
-        return "wishlists/wishlist_form";
-    }
+	@PostMapping("/")
+	public String wishListCreate(@Valid @ModelAttribute WishListForm wishListForm, HttpSession session,
+			BindingResult bindingResult, Model model) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("wishListForm", wishListForm);
+			return "wishlists/wishlist_form";
+		}
 
-    @PostMapping("/")
-    public String wishListCreate(@Valid @ModelAttribute WishListForm wishListForm, HttpSession session, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("wishListForm", wishListForm);
-            return "wishlists/wishlist_form";
-        }
+		String socialId = checkSession(session);
+		memberService.checkBlackList(socialId);
+		wishListService.createWishList(wishListForm, socialId);
+		log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
 
-        String socialId = checkSession(session);
-        memberService.checkBlackList(socialId);
-        wishListService.createWishList(wishListForm, socialId);
-        log.info("CONTROLLER = [" + socialId + "]" + "새 위시리스트 생성");
+		// 알림 메시지를 모델에 추가합니다.
+		model.addAttribute("message", "제출이 완료되었습니다!");
+		model.addAttribute("link", "/wishlists/my/0");
 
-        // 알림 메시지를 모델에 추가합니다.
-        model.addAttribute("message", "제출이 완료되었습니다!");
-        model.addAttribute("link", "/wishlists/my/0");
+		return "wishlists/wishlistalert";
+	}
 
-        return "wishlists/wishlistalert";
-    }
+	@GetMapping("/{wishlistlink}")
+	public String getModifyForm(@PathVariable("wishlistlink") String wishlistLink,
+			@Valid @ModelAttribute WishListForm wishListForm, BindingResult bindingResult, HttpSession session,
+			Model model) {
+		String socialId = checkSession(session);
 
-    @GetMapping("/{wishlistlink}")
-    public String getModifyForm(@PathVariable("wishlistlink") String wishlistLink, @Valid @ModelAttribute WishListForm wishListForm,
-                                BindingResult bindingResult, HttpSession session, Model model) {
-        String socialId = checkSession(session);
+		if (!wishListService.checkMyPage(socialId, wishlistLink)) {
+			model.addAttribute("message", "본인이 아닙니다.");
+			model.addAttribute("link", "/products/" + wishlistLink);
+			return "wishlists/wishlistalert";
+		}
 
-        if (!wishListService.checkMyPage(socialId, wishlistLink)) {
-            model.addAttribute("message", "본인이 아닙니다.");
-            model.addAttribute("link", "/products/" + wishlistLink);
-            return "wishlists/wishlistalert";
-        }
+		WishListForm wishlist = wishListService.getWishlist(wishlistLink);
 
-        WishListForm wishlist = wishListService.getWishlist(wishlistLink);
+		model.addAttribute("wishListForm", wishlist);
+		return "wishlists/wishlist_modifyform";
+	}
 
-        model.addAttribute("wishListForm", wishlist);
-        return "wishlists/wishlist_modifyform";
-    }
+	@PostMapping("/{wishlistlink}")
+	public String wishListModify(@PathVariable("wishlistlink") String wishlistLink,
+			@Valid @ModelAttribute WishListForm wishListForm, BindingResult bindingResult, HttpSession session,
+			Model model) {
+		String socialId = checkSession(session);
 
-    @PostMapping("/{wishlistlink}")
-    public String wishListModify(@PathVariable("wishlistlink") String wishlistLink, @Valid @ModelAttribute WishListForm wishListForm,
-                                 BindingResult bindingResult, HttpSession session, Model model) {
-        String socialId = checkSession(session);
+		wishListService.modifyWishList(wishListForm, socialId, wishlistLink);
+		log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 수정");
 
-        wishListService.modifyWishList(wishListForm, socialId, wishlistLink);
-        log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 수정");
+		model.addAttribute("message", "제출이 완료되었습니다!");
+		model.addAttribute("link", "/products/" + wishlistLink);
 
+<<<<<<< HEAD
         model.addAttribute("message", "제출이 완료되었습니다!");
         model.addAttribute("link", "/"+wishlistLink+"/products");
+=======
+		return "wishlists/wishlistalert";
+	}
+>>>>>>> bda5ee4fb5a3ea422b6e8bc829a5ba752f5c5231
 
+	@DeleteMapping("/{wishlistlink}")
+	public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
+		String socialId = checkSession(session);
+		memberService.checkBlackList(socialId);
+		wishListService.deleteWishList(socialId, wishlistLink);
+		log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 삭제");
 
-        return "wishlists/wishlistalert";
-    }
+		return "redirect:/wishlists";
+	}
 
-    @DeleteMapping("/{wishlistlink}")
-    public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
-        String socialId = checkSession(session);
-        memberService.checkBlackList(socialId);
-        wishListService.deleteWishList(socialId, wishlistLink);
-        log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 삭제");
+	@DeleteMapping("/{wishlistlink}/funding")
+	public String wishlistDeleteForExistFunding(@PathVariable("wishlistlink") String wishlistLink,
+			HttpSession session) {
+		String socialId = checkSession(session);
+		memberService.checkBlackList(socialId);
+		wishListService.deleteWishlistForExistFunding(socialId, wishlistLink);
+		log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 하위 다 삭제");
 
-        return "redirect:/wishlists";
-    }
+		return "redirect:/wishlists";
+	}
 
-    @DeleteMapping("/{wishlistlink}/funding")
-    public String wishlistDeleteForExistFunding(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
-        String socialId = checkSession(session);
-        memberService.checkBlackList(socialId);
-        wishListService.deleteWishlistForExistFunding(socialId, wishlistLink);
-        log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 하위 다 삭제");
+	@GetMapping("/my/{page}")
+	public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model) {
 
-        return "redirect:/wishlists";
-    }
+		String socialId = checkSession(session);
 
-    @GetMapping("/my/{page}")
-    public String getAllWishlist(@PathVariable("page") int page, HttpSession session, Model model) {
+		Page<WishlistDto> list = wishListService.getList(socialId, page);
+		model.addAttribute("paging", list);
 
-        String socialId = checkSession(session);
+		return "wishlists/wishlists";
+	}
 
-        Page<WishlistDto> list = wishListService.getList(socialId, page);
-        model.addAttribute("paging", list);
+	private String checkSession(HttpSession session) {
+		if (session == null)
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
 
-        return "wishlists/wishlists";
-    }
+		if (session.getAttribute("kakaoId") == null)
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
 
-    private String checkSession(HttpSession session) {
-        if (session == null)
-            throw new SessionNotFoundException(SESSION_NOT_FOUND);
-
-        if (session.getAttribute("kakaoId") == null)
-            throw new SessionNotFoundException(SESSION_NOT_FOUND);
-
-        return session.getAttribute("kakaoId").toString();
-    }
+		return session.getAttribute("kakaoId").toString();
+	}
 
 }

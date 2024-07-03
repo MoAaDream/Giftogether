@@ -1,6 +1,7 @@
 package com.moadream.giftogether.member;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.config.CustomUserDetails;
 import com.moadream.giftogether.config.CustomUserDetailsService;
+import com.moadream.giftogether.funding.model.FundingDetailsDTO;
+import com.moadream.giftogether.funding.service.FundingService;
 import com.moadream.giftogether.member.model.GetMemberRes;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.model.Role;
@@ -48,6 +51,9 @@ public class MemberController {
 	MemberService memberService;
 
 	@Autowired
+	FundingService fundingService;
+
+	@Autowired
 	CustomUserDetailsService customUserService;
 
 	/**
@@ -67,6 +73,7 @@ public class MemberController {
 		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + client_id
 				+ "&redirect_uri=" + redirect_uri;
 		model.addAttribute("location", location);
+
 		return "login";
 	}
 
@@ -93,15 +100,12 @@ public class MemberController {
 		// properties 객체에서 nickname과 profile_image 추출
 		String nickname = properties.get("nickname").toString();
 		String profileImage = properties.get("profile_image").toString();
-		
-		
-		//사용자 정보에서 kakao_acount 객체 추출
+
+		// 사용자 정보에서 kakao_acount 객체 추출
 		Map<String, Object> kakaoAccount = (Map<String, Object>) kakaoUserInfo.get("kakao_account");
-		
+
 		String email = kakaoAccount.get("email").toString();
 
-		
-		
 		// 5. 사용자 정보를 세션에 저장
 		session.setAttribute("kakaoId", kakaoId);
 		session.setAttribute("nickname", nickname);
@@ -109,13 +113,16 @@ public class MemberController {
 		session.setAttribute("accessToken", accessToken);
 		session.setAttribute("email", email); 
 		
-		log.info(email);
 		
 		
 		// 6. 세션 유지 시간 설정 
+		session.setAttribute("email", email);
+
+		log.info(email);
+
+		// 6. 세션 유지 시간 설정
 		session.setMaxInactiveInterval(60 * 30); // 30분
-		
-		
+
 		CustomUserDetails userDetails;
 
 		// 회원가입 여부 확인 및 처리
@@ -139,17 +146,14 @@ public class MemberController {
 		} else {
 			userDetails = (CustomUserDetails) customUserService.loadUserByUsername(kakaoId);
 		}
-		
-		
-		
+
 		log.info("==========카카오 로그인 ========= " + userDetails);
 		// 로그인 처리
 		customUserService.loadUserDirectly(userDetails, session);
 		// 홈 화면으로 리다이렉트
-		return "redirect:/home";
+		return "redirect:/main";
 
 	}
-
 
 	@GetMapping("/current-user")
 	public String getCurrentUser(Model model, HttpSession session) {
@@ -212,6 +216,12 @@ public class MemberController {
 		 */
 		return "home";
 	}
+	
+	
+	@GetMapping("/main")
+	public String main(HttpSession session) {
+		return "main";
+	}
 
 	/**
 	 * 카카오 로그아웃
@@ -232,49 +242,43 @@ public class MemberController {
 		session.invalidate(); // 세션 무효화
 		log.info("logout 경로 도착");
 
-		  return "redirect:/login?logout";
+		return "redirect:/login?logout";
 	}
 
-	
+	/**
+	 * 친구 불러오기
+	 * 
+	 */
+	@GetMapping("/member/friends")
+	public ResponseEntity<String> getFriends(HttpSession session) {
+		String accessToken = (String) session.getAttribute("accessToken");
+
+		if (accessToken == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
+		}
+
+		String url = "https://kapi.kakao.com/v1/api/talk/friends";
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(accessToken);
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+		return response;
+	}
 
 	/**
-	 * 친구 불러오기 
+	 * 초대 메세지 보내기
+	 */
+	/*
+	 * @GetMapping("/member/message") public ResponseEntity<String>
+	 * getFriends(HttpSession session){
 	 * 
-	 * */
-	 @GetMapping("/member/friends")
-	    public ResponseEntity<String> getFriends(HttpSession session) {
-	        String accessToken = (String) session.getAttribute("accessToken");
-	        
-	        if (accessToken == null) {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
-	        }
+	 * }
+	 */
 
-	        String url = "https://kapi.kakao.com/v1/api/talk/friends";
-	        RestTemplate restTemplate = new RestTemplate();
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setBearerAuth(accessToken);
-	        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-	        ResponseEntity<String> response = restTemplate.exchange(
-	            url, HttpMethod.GET, entity, String.class);
-
-	        return response;
-	    }
-	
-	 
-	 
-	 /**
-	  * 초대 메세지 보내기
-	  */
-/*
-	 @GetMapping("/member/message")
-	 public ResponseEntity<String> getFriends(HttpSession session){
-		 
-	 }
-	*/
-	 
-	 
-	 
 	/**
 	 * 마이페이지
 	 * 
@@ -318,7 +322,7 @@ public class MemberController {
 
 		model.addAttribute("member", getMemberRes);
 
-		return "mypage";
+		return "member/mypage";
 
 	}
 
@@ -360,7 +364,7 @@ public class MemberController {
 
 		model.addAttribute("member", updateMemberReq);
 		model.addAttribute("id", id);
-		return "edit";
+		return "member/edit";
 	}
 
 	/**
@@ -409,8 +413,33 @@ public class MemberController {
 			return ResponseEntity.status(500).body("탈퇴 중 오류가 발생했습니다: " + e.getMessage());
 		}
 	}
-	
-	
-	
+
+	@GetMapping("/member/{id}/fundings")
+	public String getUserFundings(@PathVariable("id") Long id, Model model, HttpSession session) throws Exception {
+
+		String kakaoId = (String) session.getAttribute("kakaoId");
+		if (kakaoId == null) {
+			log.error("세션에 kakaoId가 없습니다.");
+			throw new Exception("유효하지 않은 접근입니다");
+		}
+
+		Member member = memberService.getMemberInfo(id);
+
+		if (member == null) {
+			log.error("해당 ID의 회원 정보를 찾을 수 없습니다. ID: {}", id);
+			throw new Exception("유효하지 않은 접근입니다");
+		}
+
+		if (!member.getSocialLoginId().equals(kakaoId)) {
+			log.error("유효하지 않은 접근입니다. 사용자 ID: {}", id);
+			throw new Exception("유효하지 않은 접근입니다");
+		}
+
+		List<FundingDetailsDTO> fundingDetailM = fundingService.findFundingsBySocialId(kakaoId);
+		model.addAttribute("fundingDetailM", fundingDetailM);
+		return "member/pay_statics";
+
+	}
+
 
 }

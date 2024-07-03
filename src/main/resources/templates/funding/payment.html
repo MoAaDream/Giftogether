@@ -1,81 +1,178 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>1달러샵</title>
-    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    
+<meta charset="UTF-8">
+<title>구매</title>
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<style>
+body {
+	display: flex;
+	justify-content: center;
+	background-color: white; /* 바깥쪽 배경 흰색으로 설정 */
+	min-height: 100vh; /* 전체 화면 높이 */
+	margin: 0;
+	padding: 0;
+}
+
+.main-content {
+	background: #EBF5F3;
+	width: 600px; /* 내용의 너비를 600px로 설정 */
+	padding: 40px; /* 안쪽 여백 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	display: flex;
+	align-items: center; /* 수직 중앙 정렬 */
+	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
+	border-radius: 10px; /* 모서리 둥글게 */
+}
+
+.lead {
+	margin-top: 40%; /* 제목과 내용 사이 간격 */
+	font-size: 30px; /* 글자 크기 */
+	color: #242424; /* 글자 색상 */
+	margin-bottom: 20px; /* 단락과 버튼 사이 간격 */
+}
+
+button {
+	background-color: #343434; /* 버튼 배경색 */
+	color: white; /* 버튼 글자색 */
+	border: none; /* 테두리 없음 */
+	margin: 10px; /* 버튼 간 간격 */
+	cursor: pointer; /* 마우스 오버시 커서 변경 */
+	transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
+	width: 220px; /* 상자의 너비를 부모 요소에 맞춤 */
+	padding: 12px 24px;
+	border-radius: 24px; /* 하단 꼭지점만 둥글게 */
+}
+
+button:hover {
+	background-color: #020202; /* 마우스 오버시 버튼 색상 변경 */
+}
+</style>
 </head>
 <body>
-    <h1>결제 페이지</h1>
-    <button th:with="requestDto = ${requestDto}" onclick="requestPay()">
-        결제하기
-    </button>
-    
-    <script>
-        var IMP = window.IMP;
-        IMP.init("imp21002744"); //f12 확인하면 보임
+	<div class="main-content">
+		<div th:with="requestDto = ${requestDto}"></div>
+		<p th:if="${requestDto != null}" class="lead">
+			결제 금액 : <span
+				th:text="${#numbers.formatDecimal(requestDto.paymentAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></span>
+		</p>
+		<button onclick="ka_requestPay()">카카오페이 결제하기</button>
+		<button onclick="kg_requestPay()">KG이니시스 결제하기</button>
+	</div>
+	<link id="impCode"
+		th:data-contextPath="${@environment.getProperty('PORTONE_CODE')}" />
+	<script>
+		const IMP_CODE = document.querySelector("#impCode").getAttribute(
+				"data-contextPath");
 
-        function requestPay() {
+		var IMP = window.IMP;
+		IMP.init(IMP_CODE);
+		var fundingUid = '[[${requestDto.fundingUid}]]';
+		var paymentAmount = '[[${requestDto.paymentAmount}]]';
+		var buyerAddress = '[[${requestDto.buyerAddress}]]';
+		var itemName = '[[${requestDto.itemName}]]';
+		var buyerName = '[[${requestDto.buyerName}]]';
+		var buyerTel = '[[${requestDto.buyerTel}]]';
+		var productLink = '[[${requestDto.productLink}]]';
 
-        	
-            this.fundingUid = fundingUid;  
-            this.paymentAmount = paymentAmount; 
-            this.buyerAddress = buyerAddress;
-            this.itemName = itemName;
-            this.buyerName = buyerName;
-            this.buyerTel = buyerTel;
-             
+		function ka_requestPay() {
+			IMP.request_pay({
+				pg : "kakaopay.TC0ONETIME",
+				pay_method : 'card',
+				merchant_uid : fundingUid, // 주문 번호
+				name : itemName, // 상품 이름
+				amount : paymentAmount, // 상품 가격
+				buyer_email : 'buyerEmail', // 이메일 임의
+				buyer_name : buyerName, // 구매자 이름
+				buyer_tel : buyerTel, // 전화번호
+				buyer_addr : buyerAddress, // 구매자 주소
+				buyer_postcode : '123-456', // 임의의 값
+			}, function(rsp) {
+				if (rsp.success) {
+					//alert('call back!!: ' + JSON.stringify(rsp));
+					// 결제 성공 시: 결제 승인 또는 가상계좌 발급에 성공한 경우
+					// jQuery로 HTTP 요청
+					jQuery.ajax({
+						url : "/fundings/payment",
+						method : "POST",
+						headers : {
+							"Content-Type" : "application/json"
+						},
+						data : JSON.stringify({
+							"payment_uid" : rsp.imp_uid, // 결제 고유번호
+							"funding_uid" : rsp.merchant_uid
+						// 주문번호
+						})
+					}).done(
+							function(response) {
+								console.log(response);
+								// 가맹점 서버 결제 API 성공시 로직
+								//alert('Please, Check your payment result page!!' + rsp);
+								//뒤로가기 막음
+								window.history.replaceState(null, null,
+										'/products/' + productLink);
+								alert('결제 완료!');
+								window.location.replace('/products/'
+										+ productLink);  
+							})
+				} else {
+					// alert("success? "+ rsp.success+ ", 결제에 실패하였습니다. 에러 내용: " + JSON.stringify(rsp));
+					window.history.replaceState(null, null, '/products/'
+							+ productLink);  
+					alert('결제 실패!');
+					window.location.replace('/products/' + productLink);
+				}
+			});
+		}
 
-            
-            var fundingUid = '[[${requestDto.fundingUid}]]'; 
-            var paymentAmount = '[[${requestDto.paymentAmount}]]'; 
-            var buyerAddress = '[[${requestDto.buyerAddress}]]'; 
-            var itemName = '[[${requestDto.itemName}]]'; 
-            var buyerName = '[[${requestDto.buyerName}]]'; 
-            var buyerTel = '[[${requestDto.buyerTel}]]';  
-            var productLink = '[[${requestDto.productLink}]]'; 
-
-            IMP.request_pay({
-                    pg : "kakaopay.TC0ONETIME",
-                    pay_method : 'card',
-                    merchant_uid: fundingUid, // 주문 번호
-                    name : itemName, // 상품 이름
-                    amount : paymentAmount, // 상품 가격
-                    buyer_email : 'buyerEmail', // 이메일 임의
-                    buyer_name : buyerName, // 구매자 이름
-                    buyer_tel : buyerTel, // 전화번호
-                    buyer_addr : buyerAddress, // 구매자 주소
-                    buyer_postcode : '123-456', // 임의의 값
-                },
-                function(rsp) {
-                    if (rsp.success) {
-                        alert('call back!!: ' + JSON.stringify(rsp));
-                        // 결제 성공 시: 결제 승인 또는 가상계좌 발급에 성공한 경우
-                        // jQuery로 HTTP 요청
-                        jQuery.ajax({
-                            url: "/fundings/payment",
-                            method: "POST",
-                            headers: {"Content-Type": "application/json"},
-                            data: JSON.stringify({
-                                "payment_uid": rsp.imp_uid,      // 결제 고유번호
-                                "funding_uid": rsp.merchant_uid   // 주문번호
-                            })
-                        }).done(function (response) {
-                            console.log(response);
-                            // 가맹점 서버 결제 API 성공시 로직
-                            //alert('Please, Check your payment result page!!' + rsp);
-                            alert('결제 완료!' + rsp);
-                            window.location.href = '/products/' + productLink;
-                        })
-                    } else {
-                        // alert("success? "+ rsp.success+ ", 결제에 실패하였습니다. 에러 내용: " + JSON.stringify(rsp));
-                        alert('결제 실패!' + rsp);
-                        window.location.href = '/products/' + productLink;
-                    }
-                });
-        }
-    </script>
+		function kg_requestPay() {
+			IMP.request_pay({
+				pg : "html5_inicis.INIpayTest",
+				pay_method : 'card',
+				merchant_uid : fundingUid, // 주문 번호
+				name : itemName, // 상품 이름
+				amount : paymentAmount, // 상품 가격
+				buyer_email : 'buyerEmail', // 이메일 임의
+				buyer_name : buyerName, // 구매자 이름
+				buyer_tel : buyerTel, // 전화번호
+				buyer_addr : buyerAddress, // 구매자 주소
+				buyer_postcode : '123-456', // 임의의 값
+			}, function(rsp) {
+				if (rsp.success) {
+					//alert('call back!!: ' + JSON.stringify(rsp));
+					// 결제 성공 시: 결제 승인 또는 가상계좌 발급에 성공한 경우
+					// jQuery로 HTTP 요청
+					jQuery.ajax({
+						url : "/fundings/payment",
+						method : "POST",
+						headers : {
+							"Content-Type" : "application/json"
+						},
+						data : JSON.stringify({
+							"payment_uid" : rsp.imp_uid, // 결제 고유번호
+							"funding_uid" : rsp.merchant_uid
+						// 주문번호
+						})
+					}).done(function(response) {
+						console.log(response);
+						// 가맹점 서버 결제 API 성공시 로직
+						//alert('Please, Check your payment result page!!' + rsp);
+						window.history.replaceState(null, null, '/products/'
+								+ productLink);  
+						alert('결제 완료!');
+						window.location.replace('/products/' + productLink);
+					})
+				} else {
+					// alert("success? "+ rsp.success+ ", 결제에 실패하였습니다. 에러 내용: " + JSON.stringify(rsp));
+					window.history.replaceState(null, null, '/products/'
+							+ productLink);  
+					alert('결제 실패!');
+					window.location.replace('/products/' + productLink);
+				}
+			});
+		}
+	</script>
 </body>
 </html>

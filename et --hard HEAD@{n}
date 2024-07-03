@@ -1,0 +1,31 @@
+[33m830f72f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32m112-style-wishlists-product-list-디자인[m[33m, [m[1;31morigin/develop[m[33m, [m[1;31morigin/112-style-wishlists-product-list-디자인[m[33m)[m HEAD@{0}: checkout: moving from feat/#78 to 112-style-wishlists-product-list-디자인
+[33me603c79[m[33m ([m[1;32mfeat/#78[m[33m)[m HEAD@{1}: commit: style: wishlsits, proudct list 디자인
+[33mba5c7fd[m HEAD@{2}: pull origin develop: Merge made by the 'ort' strategy.
+[33md130127[m HEAD@{3}: pull origin develop: Merge made by the 'ort' strategy.
+[33m828a1c7[m[33m ([m[1;31morigin/feat/#78[m[33m)[m HEAD@{4}: commit: feat. 메세지 반환 및 삭제 오류 수정
+[33mff14362[m HEAD@{5}: commit: feat. 메세지 반환 및 삭제 오류 수정
+[33mb61b1d3[m HEAD@{6}: pull origin develop: Fast-forward
+[33m102fd4f[m HEAD@{7}: checkout: moving from 72-feat-productlist에-wishlist정보-추가 to feat/#78
+[33m5ddb7f5[m[33m ([m[1;31morigin/72-feat-productlist에-wishlist정보-추가[m[33m, [m[1;32m72-feat-productlist에-wishlist정보-추가[m[33m)[m HEAD@{8}: commit: feat. productList에 wishlist 정보 추가
+[33m8c683f7[m HEAD@{9}: commit: feat. productList에 wishlist 정보 추가
+[33me081117[m HEAD@{10}: commit: feat. productList에 wishlist 정보 추가
+[33m6d8e4c7[m HEAD@{11}: commit: feat. productList에 wishlist 정보 추가
+[33m6588f0d[m HEAD@{12}: checkout: moving from 67-feat-product-수정-삭제-기능 to 72-feat-productlist에-wishlist정보-추가
+[33m6bf6388[m[33m ([m[1;31morigin/67-feat-product-수정-삭제-기능[m[33m, [m[1;32m67-feat-product-수정-삭제-기능[m[33m)[m HEAD@{13}: commit: feat. 제품 수정, 삭제 기능
+[33mac21557[m HEAD@{14}: checkout: moving from feat/#48 to 67-feat-product-수정-삭제-기능
+[33m7ed2e54[m[33m ([m[1;31morigin/feat/#48[m[33m, [m[1;32mfeat/#48[m[33m)[m HEAD@{15}: commit: feat. 제품 등록 기능
+[33m0c28fbf[m[33m ([m[1;31morigin/feat/#49[m[33m)[m HEAD@{16}: checkout: moving from feat/#7 to feat/#48
+[33mb7e4510[m[33m ([m[1;32mfeat/#7[m[33m)[m HEAD@{17}: commit: feat:어노테이션 추가
+[33mc05f6d5[m HEAD@{18}: commit (merge): feat. 제품 등록 기능
+[33m5352d80[m HEAD@{19}: checkout: moving from develop to feat/#7
+[33m471ae7d[m[33m ([m[1;31morigin/fix/#45[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{20}: pull origin develop: Fast-forward
+[33m622900e[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{21}: checkout: moving from feat/#7 to develop
+[33m5352d80[m HEAD@{22}: reset: moving to HEAD@{0}
+[33m5352d80[m HEAD@{23}: commit: feat:제품 등록 기능
+[33m040556d[m HEAD@{24}: pull: Fast-forward
+[33m5b011b7[m HEAD@{25}: reset: moving to HEAD
+[33m5b011b7[m HEAD@{26}: commit: feat: 제품 리스트, 상세보기
+[33me976082[m HEAD@{27}: checkout: moving from develop to feat/#7
+[33m622900e[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{28}: reset: moving to HEAD
+[33m622900e[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{29}: reset: moving to HEAD
+[33m622900e[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{30}: clone: from https://github.com/gganddabbiya/Giftogether.git
