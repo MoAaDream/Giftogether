@@ -22,10 +22,13 @@
 
 /* Center aligning the container */
 .container {
-    max-width: 1200px;
+    max-width: 600px;
+    min-height:600px;
     margin: 0 auto;
     padding: 20px;
     justify-content: center;
+    height:auto;
+	background-color: #EBF5F3
 }
 
 /* Styling for card list */
@@ -34,12 +37,15 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center; /* 가운데 정렬 */
+    width:auto;
 }
 
 /* Styling for each card */
 .card {
-    width: calc(50% - 10px); /* Two cards per row with 20px gap */
-    max-width: 400px;
+    width: calc(50% - 10px); 
+    max-width: 300px;
+    min-width:200px;
+    height:325px;
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -51,12 +57,13 @@
 }
 
 .card#input{
-	background-color: #CCDBFD;
+	width: calc(50% - 10px); 
+	background-color: #AFE7DC;
 	color: #ffffff;
 	font-size: 80px;
 	margin: auto, 0;
 	text-align:center;
-	line-height: 450px;
+	line-height: 280px;
 }
 
 .card:hover {
@@ -65,8 +72,8 @@
 
 /* Styling for card image */
 .card-image {
-    width: 400px;
-    height: 400px;
+	width: 270px;
+    height:255px;
     object-fit: cover;
     border-bottom: 1px solid #e0e0e0;
 }
@@ -78,7 +85,7 @@
 
 /* Styling for card details */
 .card-details {
-    padding: 10px;
+    padding: 5px 10px;
 }
 
 .card-title {
@@ -90,4 +97,31 @@
 .card-progress {
     font-size: 14px;
     color: #666666;
+}
+
+
+.btn-primary {
+    display: inline-block;
+    padding: 5px 20px;
+    margin: 10px;
+    background-color: #FFB6B6;
+    color: white;
+    text-decoration: none;
+    border: 1px solid #FFB6B6;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: white;
+    color: #FF94B4;
+}
+
+.btn-primary:active {
+    background-color: #FF94B4;
+    color: white;
+    border-color: #FF94B4;
 }

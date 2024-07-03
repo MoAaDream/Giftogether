@@ -1,22 +1,29 @@
 package com.moadream.giftogether.wishlist.controller;
 
 
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.moadream.giftogether.global.exception.SessionNotFoundException;
 import com.moadream.giftogether.member.service.MemberService;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
 import com.moadream.giftogether.wishlist.service.WishListServiceI;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
 
 @Controller
@@ -82,7 +89,7 @@ public class WishListController {
         log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 수정");
 
         model.addAttribute("message", "제출이 완료되었습니다!");
-        model.addAttribute("link", "/products/" + wishlistLink);
+        model.addAttribute("link", "/"+wishlistLink+"/products");
 
 
         return "wishlists/wishlistalert";
