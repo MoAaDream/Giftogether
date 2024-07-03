@@ -141,6 +141,11 @@ public class FundingService {
 //				.orElse(Collections.emptyList());
 //	}
 
+	public String getProductLinkByFundingUid(String fundingUid) {
+		Funding funding = fundingRepository.findByFundingUid(fundingUid);
+		return funding.getProduct().getProductLink();
+	}
+
 	public List<FundingDetailsDTO> findFundingsByProductLink(String socialId, String productLink) {
 		return productRepository.findByProductLink(productLink)
 				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))
@@ -187,26 +192,27 @@ public class FundingService {
 		dto.setCreatedAt(funding.getCreatedAt());
 		dto.setProductName(funding.getProduct().getName());
 		dto.setDeadline(funding.getProduct().getWishlist().getDeadline());
-		dto.setCanViewDetails(funding.getMember().getSocialLoginId().equals(socialId)); 
+		dto.setCanViewDetails(funding.getMember().getSocialLoginId().equals(socialId));
 		dto.setSuccessFunding(isSuccessFunding(funding)); // 날짜 지났고 모금액 도달 => true
 		LocalDate deadlineDate = funding.getProduct().getWishlist().getDeadline().toLocalDate();
 		long dDayValue = ChronoUnit.DAYS.between(LocalDate.now(), deadlineDate);
-		dto.setDDay("D - " + dDayValue); 
-		if (dDayValue == 0) dto.setDDay("D - day"); 
-		else dto.setDDay("D + " + Math.abs(dDayValue)); 
+		dto.setDDay("D - " + dDayValue);
+		if (dDayValue == 0)
+			dto.setDDay("D - day");
+		else
+			dto.setDDay("D + " + Math.abs(dDayValue));
 		return dto;
 	}
-	
+
 	// 날짜 지났고 모금액 도달 => true
 	public boolean isSuccessFunding(Funding funding) {
 		String productLink = funding.getProduct().getProductLink();
 		if (isDeadFunding(productLink) && isGoalAmount(productLink)) {
 			return true;
-		}		
+		}
 		return false;
 	}
-	
-	
+
 	public boolean isDeadFunding(String productLink) {
 		Product product = productRepository.findByProductLink(productLink)
 				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
@@ -216,7 +222,7 @@ public class FundingService {
 		}
 		return false;
 	}
-	
+
 	public boolean isGoalAmount(String productLink) {
 		Product product = productRepository.findByProductLink(productLink)
 				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
@@ -238,7 +244,6 @@ public class FundingService {
 		// 회원 정보가 없거나, ID가 일치하지 않으면 false 반환
 		return false;
 	}
-	
 
 	private Member findMemberBySocialId(String socialId) {
 		return memberRepository.findBySocialLoginId(socialId)

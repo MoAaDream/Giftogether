@@ -21,52 +21,63 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MessageService {
 
-    private final MessageRepository messageRepository;
-    private final FundingRepository fundingRepository;
+	private final MessageRepository messageRepository;
+	private final FundingRepository fundingRepository;
 
-    @Transactional(readOnly = true)
-    public List<MessageFundDto> getMessageFunding(String wishlistLink){
-        List<Message> allByWishlistLink = messageRepository.findAllByWishlist_LinkAndStatus(wishlistLink, Status.A);
-        List<MessageFundDto> messageFundDtoList = new ArrayList<>();
-        
-        for(Message message : allByWishlistLink){
-            MessageFundDto dto = new MessageFundDto();
-            dto.setMemberId(message.getFunding().getMember().getId());
-            dto.setName(message.getFunding().getMember().getNickname());
-            dto.setContent(message.getContent());
-            dto.setAmount(message.getFunding().getAmount());
-            dto.setFundingUID(message.getFunding().getFundingUid());
+	// 메시지 수정
+	public void modifyMessage(String fundingUid, String message) {
+		Funding funding = fundingRepository.findByFundingUid(fundingUid);
+		if (funding != null && funding.getMessage() != null) {
+			funding.getMessage().setContent(message);
+			fundingRepository.save(funding);  
+		} else { 
+			throw new IllegalStateException("Funding or Message not found for given UID.");
+		}
 
-            messageFundDtoList.add(dto);
-        }
+	}
 
-        return messageFundDtoList;
-    }
-    
-    
-    @Transactional(readOnly = true)
-    public List<MessageFundDto> getMessageFundingProduct(String productLink){
-    	List<Funding> fundingList = fundingRepository.findAllByProduct_ProductLinkAndStatus(productLink, Status.A);
+	@Transactional(readOnly = true)
+	public List<MessageFundDto> getMessageFunding(String wishlistLink) {
+		List<Message> allByWishlistLink = messageRepository.findAllByWishlist_LinkAndStatus(wishlistLink, Status.A);
+		List<MessageFundDto> messageFundDtoList = new ArrayList<>();
 
-        List<MessageFundDto> messageFundDtoList = new ArrayList<>();
+		for (Message message : allByWishlistLink) {
+			MessageFundDto dto = new MessageFundDto();
+			dto.setMemberId(message.getFunding().getMember().getId());
+			dto.setName(message.getFunding().getMember().getNickname());
+			dto.setContent(message.getContent());
+			dto.setAmount(message.getFunding().getAmount());
+			dto.setFundingUID(message.getFunding().getFundingUid());
 
-        for(Funding funding : fundingList){
-            MessageFundDto dto = new MessageFundDto();
-            Message message = funding.getMessage();
-           
-            log.info("message = " +message.getId());
-            
-            dto.setMemberId(message.getFunding().getMember().getId());
-            dto.setName(message.getFunding().getMember().getNickname());
-            dto.setContent(message.getContent());
-            dto.setAmount(message.getFunding().getAmount());
-            dto.setFundingUID(message.getFunding().getFundingUid());
-     
-            messageFundDtoList.add(dto);
-        }
+			messageFundDtoList.add(dto);
+		}
 
-        return messageFundDtoList;
- 
-    }
-    
+		return messageFundDtoList;
+	}
+
+	@Transactional(readOnly = true)
+	public List<MessageFundDto> getMessageFundingProduct(String productLink) {
+		List<Funding> fundingList = fundingRepository.findAllByProduct_ProductLinkAndStatus(productLink, Status.A);
+
+		List<MessageFundDto> messageFundDtoList = new ArrayList<>();
+
+		for (Funding funding : fundingList) {
+			MessageFundDto dto = new MessageFundDto();
+			Message message = funding.getMessage();
+
+			log.info("message = " + message.getId());
+
+			dto.setMemberId(message.getFunding().getMember().getId());
+			dto.setName(message.getFunding().getMember().getNickname());
+			dto.setContent(message.getContent());
+			dto.setAmount(message.getFunding().getAmount());
+			dto.setFundingUID(message.getFunding().getFundingUid());
+
+			messageFundDtoList.add(dto);
+		}
+
+		return messageFundDtoList;
+
+	}
+
 }

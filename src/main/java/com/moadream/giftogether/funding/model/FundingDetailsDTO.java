@@ -21,8 +21,6 @@ public class FundingDetailsDTO {
     private String productName;         
     private LocalDateTime deadline;     
     private boolean canViewDetails; // 요청한사람과 펀딩한사람 일치 => true
-    private boolean successFunding;
+    private boolean successFunding; 
 	private String dDay;
-	
-    
 }

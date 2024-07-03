@@ -28,9 +28,10 @@ public class WishlistDto {
 
 		LocalDate deadlineDate = wishList.getDeadline().toLocalDate();
 		long dDayValue = ChronoUnit.DAYS.between(LocalDate.now(), deadlineDate);
-		this.dDay = "D - " + dDayValue;
-		if (dDayValue == 0) this.dDay = "D - day"; 
-		else this.dDay = "D + " + Math.abs(dDayValue);
+		this.dDay = "D-" + dDayValue;
+
+		if (dDayValue < 0)
+			this.dDay = "모금종료";
 		
 	}
 }

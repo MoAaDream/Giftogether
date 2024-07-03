@@ -40,9 +40,10 @@ body {
 	color: inherit; /* 상속된 색상 사용 */
 	padding: 0; /* 패딩 제거 */
 	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
+	outline: none; /* 누를 때 테두리 제거 */
 }
 
-.funding-item {
+.funding-items {
 	position: relative; /* 포지셔닝 컨텍스트 설정 */
 	background: #FFFFFF;
 	border-radius: 10px;
@@ -53,7 +54,7 @@ body {
 	transition: background-color 0.3s; /* 배경색 변경 애니메이션 */
 }
 
-.funding-item a {
+.funding-items a {
 	display: block; /* 링크가 전체 영역을 차지하도록 설정 */
 	text-decoration: none; /* 기본 링크 밑줄 제거 */
 	color: inherit; /* 텍스트 색상을 상속 받음 */
@@ -61,7 +62,7 @@ body {
 	transition: background-color 0.3s; /* 배경색 변경 애니메이션 */
 }
 
-.funding-item a:hover {
+.funding-items a:hover {
 	background-color: #AFE7DC; /* 호버 상태의 배경 색상 */
 	text-decoration: none; /* 호버 상태에서 밑줄 제거 */
 }
@@ -76,23 +77,23 @@ body {
 	border-radius: 10px; /* 부모의 border-radius를 상속 */
 	pointer-events: none; /* 오버레이가 클릭 이벤트 방해 안 함 */
 	display: flex; /* 플렉스박스 설정 */
-	align-items: center; /* 수직 중앙 정렬 */
-	justify-content: center; /* 수평 중앙 정렬 */
-	text-align: center; /* 텍스트 중앙 정렬 */
+	align-items: center; /* 수직 중앙 정렬 */ justify-content : center;
+	/* 수평 중앙 정렬 */
+	text-align: center;
+	justify-content: center; /* 텍스트 중앙 정렬 */
 }
 </style>
 <body>
 	<div class="main-content">
 
-		<div class="row align-items-center" style="width: 520px;">
+		<div class="row align-items-center mt-4 mb-4" style="width: 520px;">
 			<div class="col-1">
 				<button id="backButton">
 					<i class="fa-solid fa-angle-left"> </i>
 				</button>
 			</div>
 			<div class="col-10">
-				<h4 class="mt-4 mb-4"
-					style="color: #434343; font-weight: bold; text-align: center;">나의
+				<h4 style="color: #434343; font-weight: bold; text-align: center;">나의
 					선물 펀딩 내역</h4>
 			</div>
 			<div class="col-1"></div>
@@ -107,7 +108,7 @@ body {
                fundingUid=${funding.fundingUid},
                successFunding=${funding.successFunding},
                dDay=${funding.dDay}"
-			class="funding-item my-2 p-3">
+			class="funding-items my-2 p-3">
 
 			<a th:href="@{'/fundings/detail/' + ${fundingUid}}">
 				<div class="row">
@@ -125,24 +126,20 @@ body {
 						<div style="color: #FFB6B6; font-weight: bold;">[[${dDay}]]</div>
 					</div>
 				</div>
-			</a> 
+			</a>
 			<!-- th:if="true" th:if="${successFunding}" -->
 			<div class="overlay" th:if="${successFunding}">
 				<span style="color: white; font-weight: bold;">전달완료</span>
 			</div>
 		</div>
 
-
-		<div th:if="${successFunding}">
-			<a th:href="@{'/fundings/detail/' + ${fundingUid}}"
-				th:text="'View Details'">View Details</a>
-		</div>
+ 
 	</div>
 </body>
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 		// 모든 '.funding-item a' 요소에 대해 이벤트 리스너 추가
-		document.querySelectorAll('.funding-item a').forEach(function(link) {
+		document.querySelectorAll('.funding-items a').forEach(function(link) {
 			// 마우스가 요소 위에 올라갈 때
 			link.addEventListener('mouseenter', function() {
 				this.parentNode.style.backgroundColor = '#AFE7DC'; // 배경색 변경
@@ -153,6 +150,10 @@ body {
 			});
 		});
 	});
-</script>
+
+	document.getElementById('backButton').onclick = function() {
+		window.history.back();
+	};
+</script> 
 
 </html>

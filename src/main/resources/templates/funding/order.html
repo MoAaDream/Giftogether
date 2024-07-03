@@ -88,6 +88,18 @@ textarea {
 	color: #666;
 }
 
+.custom-rounded-border {
+	border: 3px solid #EBF5F3; /* 경계선 추가 */
+	border-radius: 8px; /* 모서리 둥글게 */
+	padding: 13px; /* 내용과 경계 사이의 여백 */
+}
+
+.custom-rounded-border:focus {
+	outline: none; /* 포커스 상태에서 테두리 제거 */
+	border: 3px solid #AFE7DC; /* 선택 시 보이는 테두리를 은은한 회색으로 설정 */
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 내부 그림자 효과 추가 */
+}
+
 textarea.form-control {
 	border: none; /* 테두리 제거 */
 	color: #495057; /* 내용 색상 */
@@ -108,6 +120,7 @@ textarea.form-control::placeholder {
 	color: inherit; /* 상속된 색상 사용 */
 	padding: 0; /* 패딩 제거 */
 	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
+	outline: none; /* 누를 때 테두리 제거 */
 }
 </style>
 <body>
@@ -159,20 +172,19 @@ textarea.form-control::placeholder {
 					</div>
 				</div>
 
-				<div class="white-box large-box" style="margin-top: 30px;">
-					<div class="form-group" style="padding: 5px;">
+				<div class="white-box large-box" style="margin-top: 30px; padding: 0px;">
+					<div class="form-group"  >
 						<!--
 						<label for="message">메시지:</label>  -->
 						<textarea id="message" name="message"
 							placeholder="축하 메시지를 입력해 주세요" maxlength="100" rows="7"
-							class="form-control"></textarea>
+							class="form-control custom-rounded-border"></textarea>
 					</div>
 				</div>
 				<button type="submit" style="margin-top: 15px;"
 					class="btn btn-primary">결제하기</button>
 
-
-
+ 
 			</div>
 		</form>
 
