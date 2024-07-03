@@ -45,17 +45,13 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable) // CSRF 보호를 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // 기본 폼 로그인 비활성화. 
                 .formLogin(AbstractHttpConfigurer::disable) // HTTP 기본 인증을 비활성화. 
-               
+                .logout(AbstractHttpConfigurer::disable) // 로그아웃 비활성화
                 .authorizeHttpRequests((authorize) -> authorize
                 		.requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 경로는 ADMIN 권한을 가진 사용자만 접근 허용
                         .requestMatchers("/", "/login/**", "/home", "/current-user").permitAll()
-                        //.requestMatchers("/member/**").authenticated() // /member/** 경로는 인증된 사용자에게만 접근 허용
+                        .requestMatchers("/member/**").authenticated() // /member/** 경로는 인증된 사용자에게만 접근 허용
                         .anyRequest().permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout-success")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"))
+                
                 .sessionManagement(session -> session
                         .sessionFixation().none() // 세션 고정 방지
                         .invalidSessionUrl("/login")); // 세션이 유효하지 않을 때 리다이렉션할 URL;

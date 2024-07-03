@@ -1,5 +1,7 @@
 package com.moadream.giftogether.member;
 
+
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,6 @@ import com.moadream.giftogether.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-
 
 @Controller
 @Slf4j
@@ -231,23 +232,58 @@ public class MemberController {
 	 * @return
 	 * @throws JsonProcessingException
 	 */
-	 @PostMapping("/logout")
-	public String logout(HttpSession session) throws JsonProcessingException {
+	/*
+	@GetMapping("/logout")
+	public String logout(HttpSession session ,  HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
 		log.info("로그아웃 세션 정보 : " + session.getCreationTime());
 		String accessToken = (String) session.getAttribute("accessToken");
 		log.info("============ 로그아웃 ===========");
 		if (accessToken != null && !accessToken.isEmpty()) {
-			log.info("Access token found : " + accessToken);
+			
 			kakaoService.logoutFromKakao(accessToken);
 		} else {
 			log.info("No access token found in session.");
 		}
 		session.invalidate(); // 세션 무효화
+		
+		// 모든 쿠키 삭제
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setValue(null);
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
+        }
+        
+		
 		log.info("logout 경로 도착");
 
 		return "redirect:/login?logout";
-	}
+	}*/
 
+
+	@GetMapping("/logout")
+    public RedirectView logout(@RequestParam(name = "state", required = false) String state) {
+        if (state == null) {
+            state = "defaultState"; // or generate a unique state for CSRF protection
+        }
+
+        String logoutUrl = kakaoService.getKakaoLogoutUrl(state);
+        return new RedirectView(logoutUrl);
+    }
+
+    @GetMapping("/logout/redirect")
+    public String handleLogoutRedirect(@RequestParam(name = "state", required = false) String state) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            SecurityContextHolder.getContext().setAuthentication(null);
+        }
+        return "redirect:/login"; // Redirect to your home or login page after logout
+    }
+    
+    
 	/**
 	 * 친구 불러오기
 	 * 
@@ -476,8 +512,6 @@ public class MemberController {
     /**
 	  * 초대 메세지 보내기
 	  */
-
-
 	 /*@GetMapping("/member/message")
 	 public ResponseEntity<String> getMessage(HttpSession session){
 		 
