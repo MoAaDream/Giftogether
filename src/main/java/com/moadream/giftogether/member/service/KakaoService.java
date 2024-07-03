@@ -84,7 +84,6 @@ public class KakaoService {
 	//토큰 만료
 	public void logoutFromKakao(String accessToken) throws JsonProcessingException{
 		 String logoutUrl = "https://kapi.kakao.com/v1/user/logout";
-	        
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.set("Authorization", "Bearer " + accessToken);
 	        
@@ -92,6 +91,7 @@ public class KakaoService {
 	        RestTemplate restTemplate = new RestTemplate();
 	        ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
 	        
+	      
 	        if (response.getStatusCode().is2xxSuccessful()) {
 	            log.info("Successfully logged out from Kakao");
 	        } else {

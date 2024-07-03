@@ -8,16 +8,6 @@ import com.siot.IamportRestClient.IamportClient;
 
 @Configuration
 public class PortoneConfig {
-
-	private static String code; 
-
-    @Value("${PORTONE_CODE}")
-    public void setCode(String code) {
-        PortoneConfig.code = code;
-    }
-    public static String getCode() {
-        return code;
-    }
     
     @Value("${PORTONE_KEY}")
     private String apiKey;

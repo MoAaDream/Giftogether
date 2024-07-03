@@ -1,6 +1,8 @@
 package com.moadream.giftogether.product.controller;
 
 
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.moadream.giftogether.bank.model.BankForm;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
 import com.moadream.giftogether.funding.service.FundingService;
+import com.moadream.giftogether.global.exception.SessionNotFoundException;
 import com.moadream.giftogether.member.service.MemberService;
 import com.moadream.giftogether.product.Service.ProductService;
 import com.moadream.giftogether.product.model.Product;
@@ -58,7 +61,7 @@ public class ProductController {
     }
 	
 	@GetMapping("/products/{product_link}")
-	public String detail(Model model, @PathVariable("product_link") String productLink) {
+	public String detail(HttpSession session, Model model, @PathVariable("product_link") String productLink) {
 	    Product product = this.productService.getProduct(productLink);
 	    model.addAttribute("product", product);
 	    
@@ -66,11 +69,23 @@ public class ProductController {
 		
 		int insufficientAmount = fundingService.getInsufficientAmount(productLink);
 		model.addAttribute("insufficientAmount", insufficientAmount);
+
+		
+		// 날짜 지난 펀딩 모금 실패시 true 반환
+	    boolean isDeadFundingComplete = productService.isDeadFundingComplete(productLink);
+	    model.addAttribute("isDeadFundingComplete", isDeadFundingComplete);
+
+	    // productLink의 유저가 지금 유저와 같으면 true
+		String socialId = checkSession(session); 		
+	    boolean isUserProduct = productService.isUserProduct(socialId, productLink);
+	    model.addAttribute("isUserProduct", isUserProduct);
 		// 제품의 펀딩 리스트
-		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(productLink);
+		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(socialId, productLink);
 		model.addAttribute("fundingDetailP", fundingDetailP);
 		
-		
+//        for (FundingDetailsDTO s : fundingDetailP) {
+//            log.info("ㅁㅁㅁ", s.isCanViewDetails());
+//        }
 	    return "products/product_detail";
 	}
 	
@@ -182,10 +197,12 @@ public class ProductController {
 
 
 	private String checkSession(HttpSession session){
-        if (session == null)
-            log.error("세션이 없습니다.");
+		if (session == null)
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
 
-        return session.getAttribute("kakaoId").toString();
+		if (session.getAttribute("kakaoId") == null)
+			throw new SessionNotFoundException(SESSION_NOT_FOUND);
+		return session.getAttribute("kakaoId").toString();
 
     }
 	

@@ -8,14 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
-import com.moadream.giftogether.DataNotFoundException;
-import com.moadream.giftogether.global.email.EmailService;
-import com.moadream.giftogether.product.Repository.ProductRepository;
-import com.moadream.giftogether.product.model.Product;
-import com.moadream.giftogether.wishlist.exception.WishListException;
-import jakarta.mail.MessagingException;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +19,7 @@ import com.moadream.giftogether.funding.model.PaymentStatus;
 import com.moadream.giftogether.funding.model.RequestPayDto;
 import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.funding.repository.PaymentRepository;
+import com.moadream.giftogether.global.email.EmailService;
 import com.moadream.giftogether.member.MemberRepository;
 import com.moadream.giftogether.member.exception.MemberException;
 import com.moadream.giftogether.member.model.Member;
@@ -39,6 +32,7 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -88,6 +82,9 @@ public class PaymentService {
 			// 모금 성공 -> 금액 증가
 			Integer sumAmount = fund.getPayment().getAmount() + fund.getProduct().getCurrentAmount();
 			fund.getProduct().setCurrentAmount(sumAmount);
+			
+			
+			// 메일
 			if(fund.getProduct().getGoalAmount() <= sumAmount){
 				String email = fund.getProduct().getWishlist().getMember().getEmail();
 				Product product = fund.getProduct();
