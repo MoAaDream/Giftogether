@@ -1,0 +1,108 @@
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f9f9f9;
+	color: #333;
+	margin: 0;
+	padding: 0;
+}
+
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 600px; /* 최대 너비 설정 */
+	margin: 0 auto; /* 중앙 정렬 */
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 10px;
+}
+
+.wishlist p{
+	color: #000;
+	font-size:30px;
+	font-weight:bold;
+	margin-bottom: 10px;
+	text-align:left;
+	padding-right:15px;
+}
+
+.detail{
+	width:600px;
+	display: flex;
+	justify-content: center; /* 가로 방향 가운데 정렬 */
+    align-items: center; 
+}
+
+
+
+
+.wishlist-link {
+	text-decoration: none;
+	color: inherit;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.wishlist-img {
+	max-width: 200px;
+	height: auto;
+	margin-bottom: 10px;
+	border-radius: 10px;
+}
+
+.wishlist-info {
+	text-align: center;
+}
+
+.wishlist-info h4 {
+	margin-bottom: 5px;
+	color: #007bff;
+}
+
+.navBar{
+	max-width: 600px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #EBF5F3;
+	margin: 0 auto;
+}
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px 0;
+}
+
+.pagination .page-item {
+	display: inline-block;
+	margin: 0 5px;
+}
+
+.pagination .page-link {
+	display: block;
+	padding: 5px 10px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	text-decoration: none;
+	color: #333;
+	background-color: #ffffff;
+	transition: background-color 0.2s;
+}
+
+.pagination .page-link:hover {
+	background-color: #7DD4C3;
+	color: #fff;
+}
+
+.pagination .page-item.active .page-link {
+	background-color: #7DD4C3;
+	color: #fff;
+	border-color: #7DD4C3;
+}
+
+.pagination .page-item.disabled .page-link {
+	color: #ccc;
+}

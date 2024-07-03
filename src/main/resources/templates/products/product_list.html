@@ -4,33 +4,86 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/CardLayout.css">
-<link rel="stylesheet" href="/css/Detail.css">
+<link rel="stylesheet" href="/css/background.css">
 </head>
 <body>
-<div class="detail">
-	<div class="detail-image">
-	        <img th:src="${wishlist.listImg}" alt="Wishlist Image">
-	    </div>
-	<div class="detail-info">
-		<h1 th:text="${wishlist.name}"></h1>
-		<div class="description" th:text="${wishlist.description}"></div>
-	</div>
-</div>
-<div class="container">
-	<div class="card-list" th:if="${productList != null}">
-		<a th:each="product : ${productList}" th:href="@{|/products/${product.productLink}|}" class="card">
-			<img th:src="${product.productImg}" alt="Product Image" class="card-image">
-			<div class="card-details">
-				<h2 th:text="${product.name}" class="card-title"></h2>
-				<p class="card-progress"
-						th:text="${(product.currentAmount * 100.0 / product.goalAmount).toString().substring(0, (product.currentAmount * 100.0 / product.goalAmount).toString().indexOf('.')) + '%'}"></p>
+	<div class="background">
+		<div class="detail">
+			<div class="detail-info">
+				<h1 th:text="${wishlist.name}"></h1>
+				<div class="description" th:text="${wishlist.description}"></div>
+				<div class="dday">
+					<div class=ddayblock>
+						<p>D</p>
+					</div>
+					<div class=ddayzero th:if="${daysDiff == 0}">
+						<div class=ddaybar></div>
+						<div th:each="digit : ${#numbers.sequence(0, 'DAY'.length() - 1)}">
+							<div class=ddayblock>
+								<p th:text="${'DAY'.toString().charAt(digit)}"></p>
+							</div>
+						</div>
+					</div>
+					<div class=ddayzero th:if="${daysDiff > 0}">
+						<div class=ddaybar></div>
+						<div th:each=" digit: ${#numbers.sequence(0, daysDiff.toString().length() - 1)}">
+							<div class=ddayblock>
+								<p th:if="${daysDiff > 0}" th:text="${daysDiff.toString().charAt(digit)}"></p>
+							</div>
+						</div>
+					</div>
+					<div class=ddayzero th:if="${daysDiff < 0}">
+						<div class=ddayplus>+</div>
+						<div th:each=" digit: ${#numbers.sequence(1, daysDiff.toString().length() - 1)}">
+							<div class=ddayblock>
+								<p th:if="${daysDiff < 0 && digit != 0}" th:text="${daysDiff.toString().charAt(digit)}"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="copyLink"><a href="#" onclick="clip(); return false;">URL주소복사</a></div>
 			</div>
-		</a>
-	</div>
-		
-</div>
-</div>
+			<div class="detail-image">
+				<img th:src="${wishlist.listImg}" alt="Wishlist Image"> 
+				<span>
+					<p th:text="|${#temporals.format(wishlist.deadline, 'yyyy-MM-dd')} 그날만 기다리며..☆|"></p>
+				</span>
+			</div>
+		</div>
 
+		<div class="container">
+			<div class="card-list" th:if="${productList != null}">
+				<a th:each="product : ${productList}"
+					th:href="@{|/products/${product.productLink}|}" class="card"> <img
+					th:src="${product.productImg}" alt="Product Image"
+					class="card-image">
+					<div class="card-details">
+						<h2 th:text="${product.name}" class="card-title"></h2>
+						<p class="card-progress"
+							th:text="${(product.currentAmount * 100.0 / product.goalAmount).toString().substring(0, (product.currentAmount * 100.0 / product.goalAmount).toString().indexOf('.')) + '%'}"></p>
+					</div>
+				</a>
+			</div>
+
+		</div>
+	</div>
+	
 
 </body>
+<script type="text/javascript">
+
+function clip(){
+
+	var url = '';
+	var textarea = document.createElement("textarea");
+	document.body.appendChild(textarea);
+	url = window.document.location.href;
+	textarea.value = url;
+	textarea.select();
+	document.execCommand("copy");
+	document.body.removeChild(textarea);
+	alert("URL이 복사되었습니다.")
+}
+
+</script>
 </html>

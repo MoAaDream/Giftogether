@@ -87,7 +87,7 @@ public class MemberService {
 	        member.setNickname(updateMemberReq.getNickname());
 	    }
 	    if (updateMemberReq.getProfile() != null) {
-	    	log.info(updateMemberReq.getProfile());
+	    	log.info("프로필 변경" + updateMemberReq.getProfile());
 	        member.setProfile(updateMemberReq.getProfile());
 	    }
 	    if (updateMemberReq.getBirth() != null) {
@@ -99,6 +99,8 @@ public class MemberService {
 	    if (updateMemberReq.getPhoneNumber() != null) {
 	    	member.setPhoneNumber(updateMemberReq.getPhoneNumber());
 	    }
+	    
+	    
 	    memberRepository.save(member);
 
 	}

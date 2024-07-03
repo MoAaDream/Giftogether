@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -88,11 +89,13 @@ public class WishListController {
 		wishListService.modifyWishList(wishListForm, socialId, wishlistLink);
 		log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 수정");
 
-		model.addAttribute("message", "제출이 완료되었습니다!");
-		model.addAttribute("link", "/products/" + wishlistLink);
+
+        model.addAttribute("message", "제출이 완료되었습니다!");
+        model.addAttribute("link", "/"+wishlistLink+"/products");
 
 		return "wishlists/wishlistalert";
 	}
+
 
 	@DeleteMapping("/{wishlistlink}")
 	public String wishlistDelete(@PathVariable("wishlistlink") String wishlistLink, HttpSession session) {
