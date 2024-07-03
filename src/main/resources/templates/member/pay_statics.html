@@ -1,80 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<meta charset="UTF-8">
+<title>Title</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
+
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-    }
+body {
+	display: flex;
+	justify-content: center;
+	background-color: white; /* 바깥쪽 배경 흰색으로 설정 */
+	min-height: 100vh; /* 전체 화면 높이 */
+	margin: 0;
+	padding: 0;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+.main-content {
+	background: #EBF5F3;
+	width: 600px; /* 내용의 너비를 600px로 설정 */
+	padding: 40px; /* 안쪽 여백 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	display: flex;
+	align-items: center; /* 수직 중앙 정렬 */
+	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
+}
 
-    th, td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
+.fa-solid {
+	font-size: 24px; /* 아이콘 크기 조정 */
+}
 
-    th {
-        background-color: #f2f2f2;
-    }
-
-    a {
-        color: blue;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
+#backButton {
+	background: none; /* 배경 제거 */
+	border: none; /* 테두리 제거 */
+	color: inherit; /* 상속된 색상 사용 */
+	padding: 0; /* 패딩 제거 */
+	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
+}
 </style>
 <body>
-<h2>나의 결제 리스트</h2>
-<div style="margin-top: 30px">
-    <div>
-        <table>
-            <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Message</th>
-                <th>Giver</th>
-                <th>Receiver</th>
-                <th>Created At</th>
-                <th>Deadline</th>
-                <th>Details</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="funding : ${fundingDetailM}"
-                th:with="productName=${funding.productName},
-                 amount=${funding.amount},
-                 status=${funding.status},
-                 messageContent=${funding.messageContent},
-                 giverNickname=${funding.giverNickname},
-                 receiverNickname=${funding.receiverNickname},
-                 createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
-                <td th:text="${productName}">Product Name</td>
-                <td th:text="${amount}">Amount</td>
-                <td th:text="${status}">Status</td>
-                <td th:text="${messageContent}">Message</td>
-                <td th:text="${giverNickname}">Giver</td>
-                <td th:text="${receiverNickname}">Receiver</td>
-                <td th:text="${createdAtFormatted}">createdAt</td>
-                <td th:text="${deadlineFormatted}">Deadline</td>
-                <td><a th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
-                       th:text="'View Details'">View Details</a></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+	<div class="main-content">
+		<div class="row align-items-center" style="width: 520px;">
+			<div class="col-1">
+				<button id="backButton">
+					<i class="fa-solid fa-angle-left"> </i>
+				</button>
+			</div>
+			<div class="col-10">
+				<h4 class="mt-4 mb-4" style="text-align: center;">나의 선물 펀딩 내역</h4>
+			</div>
+			<div class="col-1"></div>
+		</div>
+		<div style="margin-top: 30px">
+			<div>
+				<table>
+					<thead>
+						<tr>
+							<th>Product Name</th>
+							<th>Amount</th>
+							<th>Status</th>
+							<th>Message</th>
+							<th>Giver</th>
+							<th>Receiver</th>
+							<th>Created At</th>
+							<th>Deadline</th>
+							<th>Details</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="funding : ${fundingDetailM}"
+							th:with="productName=${funding.productName},
+               amount=${funding.amount},
+               status=${funding.status},
+               messageContent=${funding.messageContent},
+               giverNickname=${funding.giverNickname},
+               receiverNickname=${funding.receiverNickname},
+               createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
+               deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
+
+							<td th:text="${receiverNickname}">TO. Receiver</td>
+							<td th:text="${amount}">Amount 원</td> 
+ 
+							<td th:text="${deadlineFormatted}">Deadline</td>
+							<td><a
+								th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
+								th:text="'View Details'">View Details</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 </body>
 </html>
