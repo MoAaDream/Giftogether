@@ -21,10 +21,6 @@ public class FundingQueueManager {
 		new Thread(this::processQueue).start();
 	}
 
-//	public void addFundingRequest(FundingRequest request) {
-//		queue.add(request);
-//	}
-
 	private void processQueue() {
 		while (true) {
 			FundingRequest request = queue.poll();
@@ -41,7 +37,6 @@ public class FundingQueueManager {
 		}
 	}
 
-	// FundingQueueManager에 CompletableFuture를 반환하는 메서드 추가
 	public CompletableFuture<FundingRequest> addFundingRequest(FundingRequest request) {
 		CompletableFuture<FundingRequest> future = new CompletableFuture<>();
 		queue.add(request);

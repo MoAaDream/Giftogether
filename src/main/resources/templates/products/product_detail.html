@@ -130,9 +130,10 @@ a:hover {
                  messageContent=${funding.messageContent},
                  giverNickname=${funding.giverNickname},
                  receiverNickname=${funding.receiverNickname},
-
                  createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
+                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'},
+                 isCanViewDetails=${funding.canViewDetails}">
+
 					<td th:text="${productName}">Product Name</td>
 					<td th:text="${amount}">Amount</td>
 					<td th:text="${status}">Status</td>
@@ -141,7 +142,7 @@ a:hover {
 					<td th:text="${receiverNickname}">Receiver</td>
 					<td th:text="${createdAtFormatted}">createdAt</td>
 					<td th:text="${deadlineFormatted}">Deadline</td>
-					<td><a
+					<td th:if="${isCanViewDetails}"><a
 						th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
 						th:text="'View Details'">View Details</a></td>
 				</tr>

@@ -7,6 +7,7 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
 </head>
 
 <style>
@@ -82,8 +83,8 @@ body {
                deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">
 
 							<td th:text="${receiverNickname}">TO. Receiver</td>
-							<td th:text="${amount}">Amount 원</td> 
- 
+							<td th:text="${amount}">Amount 원</td>
+
 							<td th:text="${deadlineFormatted}">Deadline</td>
 							<td><a
 								th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"

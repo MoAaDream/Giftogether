@@ -34,30 +34,27 @@ public class FundingController {
 
 	private final FundingService fundingService;
 	private final MemberService memberService;
-    private final FundingQueueManager queueManager;
- 
-	
-    
+	private final FundingQueueManager queueManager;
+
 	@GetMapping("/{productlink}")
-	public String fund(@PathVariable(name = "productlink", required = true) String productLink,
-			@RequestParam(name = "messageT", required = false) String messageT,
+	public String fund(@PathVariable(name = "productlink", required = true) String productLink, 
 			@RequestParam(name = "fundingUid", required = false) String fundingUid, HttpSession session, Model model) {
 
 		int[] amountOptions = fundingService.getFundingAmounts(productLink);
-		
+
 		String productName = fundingService.getProductName(productLink);
-		model.addAttribute("amountOptions", amountOptions);
-		model.addAttribute("messageT", messageT);
-		model.addAttribute("fundingUid", fundingUid); 
-		model.addAttribute("productLink", productLink); 
+		String productDescription = fundingService.getProductDescription(productLink);
+		String productProductImg = fundingService.getProductProductImg(productLink);
+
+		model.addAttribute("amountOptions", amountOptions); 
+		model.addAttribute("fundingUid", fundingUid);
+		model.addAttribute("productLink", productLink);
 		model.addAttribute("productName", productName);
+		model.addAttribute("productDescription", productDescription);
+		model.addAttribute("productProductImg", productProductImg);
 		
-		 
- 
 		return "funding/order";
 	}
-
-	
 
 	@PostMapping("/{productlink}")
 	public String setAmount(@PathVariable(name = "productlink", required = true) String productLink,
@@ -66,52 +63,40 @@ public class FundingController {
 
 		// 결제 이전 금액 설정 단계에서 금액 제한
 		try {
-			fundingService.validateAmount(amount, productLink);  
+			fundingService.validateAmount(amount, productLink);
 
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
 			return "redirect:/fundings/" + productLink;
 		}
 
-		String socialId = checkSession(session); 
-//		Funding funding = fundingService.fund(socialId, productLink, amount, messageF);
-// 
-//		
-//		String messageT = "주문 실패 ";
-//		if (funding != null) {
-//			messageT = "주문 성공 " + amount + "<br>메시지 : " + messageF;
-//		}
-//		String encode = URLEncoder.encode(messageT, StandardCharsets.UTF_8);
-//
-//		return "redirect:/fundings/payment/" + funding.getFundingUid();
-		
-        FundingRequest request = new FundingRequest(socialId, productLink, amount, messageF);
+		String socialId = checkSession(session);
+		FundingRequest request = new FundingRequest(socialId, productLink, amount, messageF);
 
-        CompletableFuture<FundingRequest> future = queueManager.addFundingRequest(request);
-        return future.thenApply(r -> {
-            // 처리가 완료된 후의 로직
-            redirectAttributes.addFlashAttribute("message", "주문이 접수되었습니다. 처리 중입니다.");
-            return "redirect:/fundings/payment/" + r.getFundingUid();
-        }).exceptionally(e -> {
-            // 예외 처리
-            redirectAttributes.addFlashAttribute("errorMessage", "주문 처리 중 오류가 발생했습니다.");
-            return "redirect:/fundings/" + productLink;
-        }).join();  // CompletableFuture가 완료될 때까지 기다립니다.
-        
-//        queueManager.addFundingRequest(request);
-//        redirectAttributes.addFlashAttribute("message", "주문이 접수되었습니다. 처리 중입니다.");
-//        log.info("ㅁㅁㅁ제발 " +request.getFundingUid());
-//        return "redirect:/fundings/payment/" + request.getFundingUid(); // 임의 UID 할당 로직 필요
+		CompletableFuture<FundingRequest> future = queueManager.addFundingRequest(request);
+		return future.thenApply(r -> {
+			// 처리가 완료된 후의 로직
+			redirectAttributes.addFlashAttribute("message", "주문이 접수되었습니다. 처리 중입니다.");
+			return "redirect:/fundings/payment/" + r.getFundingUid();
+		}).exceptionally(e -> {
+			// 예외 처리
+			redirectAttributes.addFlashAttribute("errorMessage", "주문 처리 중 오류가 발생했습니다.");
+			return "redirect:/fundings/" + productLink;
+		}).join(); // CompletableFuture가 완료될 때까지 기다립니다.
 	}
 
 	@GetMapping("/detail/{fundinguid}")
 	public String getFundingDetail(@PathVariable(name = "fundinguid", required = true) String fundingUid, Model model,
-			RedirectAttributes redirectAttributes) {
+			HttpSession session, RedirectAttributes redirectAttributes) {
 
-		FundingDetailsDTO fundingDetail = fundingService.getFundingDetailByUid(fundingUid);
-
-		model.addAttribute("fundingDetail", fundingDetail);
-		// model에서 flash attribute를 확인하고 추가 처리
+		String socialId = checkSession(session); 
+		FundingDetailsDTO fundingDetail = fundingService.getFundingDetailByUid(fundingUid,socialId);
+        if (!fundingDetail.isCanViewDetails()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to view this page.");
+            return "redirect:/home";
+        }
+		
+		model.addAttribute("fundingDetail", fundingDetail); 
 		if (model.containsAttribute("successMessage")) {
 			model.addAttribute("message", model.getAttribute("successMessage"));
 		}
