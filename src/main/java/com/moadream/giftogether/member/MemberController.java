@@ -111,8 +111,6 @@ public class MemberController {
 		
 		String email = kakaoAccount.get("email").toString();
 
-		
-		
 		// 5. 사용자 정보를 세션에 저장
 		session.setAttribute("kakaoId", kakaoId);
 		session.setAttribute("nickname", nickname);
@@ -120,7 +118,7 @@ public class MemberController {
 		session.setAttribute("accessToken", accessToken);
 		session.setAttribute("email", email); 
 		
-		
+
 		// 6. 세션 유지 시간 설정 
 		session.setMaxInactiveInterval(60 * 30); //60초  * 30 ->  30분
 		
@@ -148,9 +146,7 @@ public class MemberController {
 		} else {
 			userDetails = (CustomUserDetails) customUserService.loadUserByUsername(kakaoId);
 		}
-		
-		
-		
+
 		log.info("==========카카오 로그인 ========= " + userDetails);
 		// 로그인 처리
 		customUserService.loadUserDirectly(userDetails, session);
@@ -292,16 +288,8 @@ public class MemberController {
 	 
 	 
 	 
-	 /**
-	  * 초대 메세지 보내기
-	  */
-
-	 /*@GetMapping("/member/message")
-	 public ResponseEntity<String> getMessage(HttpSession session){
-		 
-	 }*/
-	
 	 
+
 	 
 	 
 	/**
@@ -439,7 +427,7 @@ public class MemberController {
 		}
 	}
 	
-	
+	/* 이용중 프로필  동의 구하기 */
 	
 	  
     @GetMapping("/request/friends-consent")
@@ -450,5 +438,14 @@ public class MemberController {
     }
 
 	
+    /**
+	  * 초대 메세지 보내기
+	  */
 
+
+	 /*@GetMapping("/member/message")
+	 public ResponseEntity<String> getMessage(HttpSession session){
+		 
+	 }*/
+	
 }
