@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moadream.giftogether.member.MemberRepository;
@@ -99,6 +100,16 @@ public class KakaoService {
 	        }
 	}
 	
+
+	 public String getKakaoLogoutUrl(String state) {
+	        String logoutUrl = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/logout")
+	                .queryParam("client_id", clientId)
+	                .queryParam("logout_redirect_uri", "http://localhost:8080/logout/redirect")
+	                .queryParam("state", state)
+	                .toUriString();
+
+	        return logoutUrl;
+	    }
 
 	
 	

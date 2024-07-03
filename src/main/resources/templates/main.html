@@ -1,46 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift Together</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            
-            font-family: Arial, sans-serif;
-            overflow-x: hidden;
-        }
-        .container {
-            width: 600px;
-            height: auto;
-            text-align: center;
-            position: relative;
-            background: url('/images/login_page_resized.png') no-repeat center center;
-            background-size: contain;
-            padding-bottom: 200%;
-            padding-top: 10%;
-        }
-        .overlay-image {
-            position: absolute;
-            top: 20%; /* Adjust this to position the button beneath the gift image */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150px; /* Adjust as needed */
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gift Together</title>
+<style>
+.container {
+	width: 600px;
+	height: 4200px;
+	position: relative;
+	background: url('/images/login_page_resized.png') no-repeat;
+	background-size: contain;
+	margin: 0 auto;
+}
+
+.bottom{
+	position: sticky;
+	align-items: center;
+	top: 750px;
+	width:600px;
+	height:300px;
+	background: linear-gradient(to top, white,  rgba(255, 255, 255, 0));
+}
+
+.wishlistButton {
+	background-color: #3B9785;
+	border: 1px solid #3B9785;
+	border-radius: 100px;
+	cursor: pointer;
+	position: sticky;
+	top: 850px;
+	margin: 0 20px;
+	min-width: 250px;
+	max-width: 600px;
+	text-align: center;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+	display:flex;
+	text-decoration: none;
+}
+
+
+.wishlist {
+	font-size: 18px;
+	color: #fff;
+	font-weight: bold;
+	margin: 15px auto;
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <a href="/wishlists/my/0">
-            <img src="/images/wishlist_button.png" alt="create wishlists" class="overlay-image">
-        </a>
-    </div>
+	<div class="container">
+		<div class=bottom>
+	    	<a class=wishlistButton href="/wishLists/my/0" alt="my wishlist" >
+	    		<p class="wishlist">위시리스트 만들기</p>
+	    	</a>
+    	</div>
+	</div>
 </body>
+
 </html>
+
+
