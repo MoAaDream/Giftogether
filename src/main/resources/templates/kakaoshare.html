@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<script type="text/javascript"  src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<input type="button" th:onClick="javascript:sendLinkDefault()" value="Default"/>
+<script layout:fragment="script" type='text/javascript'>
+Kakao.init('39ecf8ba4e17106e03b3cb7830278013')
+console.log(Kakao.isInitialized());
+ function kakaoShare() {
+	    Kakao.Link.sendDefault({
+	      objectType: 'feed',
+	      content: {
+	        title: '카카오공유하기 시 타이틀',
+	        description: '카카오공유하기 시 설명',
+	        imageUrl: '카카오공유하기 시 썸네일 이미지 경로',
+	        link: {
+	          mobileWebUrl: '카카오공유하기 시 클릭 후 이동 경로',
+	          webUrl: 'http://localhost:8080/wishlists/my/0',
+	        },
+	      },
+	      buttons: [
+	        {
+	          title: '웹으로 보기',
+	          link: {
+	            mobileWebUrl: '카카오공유하기 시 클릭 후 이동 경로',
+	            webUrl: 'http://localhost:8080/wishlists/my/0',
+	          },
+	        },
+	      ],
+	      // 카카오톡 미설치 시 카카오톡 설치 경로이동
+	      installTalk: true,
+	    })
+	  }
+	
+</script>
+
+</body>
+</html>

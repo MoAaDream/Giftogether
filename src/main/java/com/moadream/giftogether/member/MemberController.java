@@ -12,12 +12,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.config.CustomUserDetails;
 import com.moadream.giftogether.config.CustomUserDetailsService;
@@ -38,6 +42,7 @@ import com.moadream.giftogether.member.model.Role;
 import com.moadream.giftogether.member.model.UpdateMemberReq;
 import com.moadream.giftogether.member.service.KakaoService;
 import com.moadream.giftogether.member.service.MemberService;
+import com.moadream.giftogether.wishlist.service.WishListService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -55,6 +60,10 @@ public class MemberController {
 
 	@Autowired
 	FundingService fundingService;
+	
+	
+	@Autowired
+	WishListService wishListService;
 
 	@Autowired
 	CustomUserDetailsService customUserService;
@@ -284,55 +293,7 @@ public class MemberController {
     }
     
     
-	/**
-	 * 친구 불러오기
-	 * 
-	 */
-	@GetMapping("/member/friends")
-	public ResponseEntity<String> getFriends(HttpSession session) {
-		String accessToken = (String) session.getAttribute("accessToken");
-
-		if (accessToken == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
-		}
-
-		String url = "https://kapi.kakao.com/v1/api/talk/friends";
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(accessToken);
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-
-		return response;
-	}
-
-	/**
-	 * 초대 메세지 보내기
-	 */
-
-
-
-	 /* 카카오 동의항목 조회 */
-	 @GetMapping("/consent")
-	    public ResponseEntity<String> getConsentInfo(HttpSession session) {
-		 String scopeInfoUri="https://kapi.kakao.com/v2/user/scopes";	
-		 
-		 String accessToken = (String) session.getAttribute("accessToken");
-	    	 RestTemplate restTemplate = new RestTemplate();
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setBearerAuth(accessToken);
-
-	        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-	        ResponseEntity<String> response = restTemplate.exchange(scopeInfoUri, HttpMethod.GET, entity, String.class);
-
-	        return response;
-	    }
-	 
-	 
-	 
-	 
+	
 	 
 	/**
 	 * 마이페이지
@@ -376,7 +337,11 @@ public class MemberController {
 		getMemberRes.setAddress(member.getAddress());
 
 		model.addAttribute("member", getMemberRes);
+		
 
+		model.addAttribute("ongoingWishlists", wishListService.getListsByStatus(id,Status.A));  // 진행중인 위시리스트 
+		model.addAttribute("expiredWishlists" , wishListService.getListsByStatus(id, Status.I)); // 종료된 위시리스트
+		
 		return "member/mypage";
 
 	}
@@ -469,17 +434,108 @@ public class MemberController {
 		}
 	}
 	
-	/* 이용중 프로필  동의 구하기 */
 	
-	  
+	/**
+	 * 친구 불러오기
+	 * 
+	 */
+	@GetMapping("/member/friends")
+	public ResponseEntity<String> getFriends(HttpSession session) {
+		String accessToken = (String) session.getAttribute("accessToken");
+
+		if (accessToken == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
+		}
+
+		String url = "https://kapi.kakao.com/v1/api/talk/friends";
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(accessToken);
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+		return response;
+	}
+
+	 /* 카카오 동의항목 조회 */
+	 @GetMapping("/consent")
+	    public ResponseEntity<String> getConsentInfo(HttpSession session) {
+		 String scopeInfoUri="https://kapi.kakao.com/v2/user/scopes";	
+		 
+		 String accessToken = (String) session.getAttribute("accessToken");
+	    
+		 RestTemplate restTemplate = new RestTemplate();
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setBearerAuth(accessToken);
+
+	        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+	        ResponseEntity<String> response = restTemplate.exchange(scopeInfoUri, HttpMethod.GET, entity, String.class);
+
+	        return response;
+	    }
+	 
+	 
+	/* 이용중 프로필 , 메세지 동의 구하기 */
     @GetMapping("/request/friends-consent")
     public RedirectView requestFriendsConsent() {
-        String consentUri = String.format("%s?client_id=%s&redirect_uri=%s&response_type=code&scope=friends",
+    	
+        String consentUri = String.format("%s?client_id=%s&redirect_uri=%s&response_type=code&scope=friends, talk_message",
         		"https://kauth.kakao.com/oauth/authorize", client_id, redirect_uri);
         return new RedirectView(consentUri);
     }
 
+    @GetMapping("/share")
+    public String index() {
+    	
+    	// 친구 목록 보여주고 여기서 선택
+    	return "sendMessage";
+    }
+    
+    @PostMapping("/sendMessage")
+    public String message(Model model, HttpSession session) throws JsonProcessingException {
+        String apiUrl = "https://kapi.kakao.com/v1/api/talk/friends/message/default/send";
+        String[] receivers = {"0uDR4dbi1eLU-MD2xfDB8cn_0-LS69nh2O2Z"};
+        String accessToken = (String) session.getAttribute("accessToken");
+        
+        RestTemplate restTemplate = new RestTemplate();
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // 메시지 템플릿 구성 요소
+        Map<String, Object> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", "Hello, this is a test message.");
+        templateObject.put("link", Map.of("web_url", "https://developers.kakao.com"));
+        templateObject.put("button_title", "Check this out");
+
+        // URL 인코딩된 문자열로 변환
+        String receiversStr = String.join(",", receivers);
+        String templateObjectStr = new ObjectMapper().writeValueAsString(templateObject);
+
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        //requestBody.add("receiver_uuids", receivers);
+        requestBody.add("template_object", templateObjectStr);
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
+            
+            model.addAttribute("response", response.getBody());
+        } catch (Exception e) {
+            model.addAttribute("response", "Error: " + e.getMessage());
+        }
+        
+        log.info("메시지 보내기 성공");
+        return "message";
+    }
+
+
+    
 	@GetMapping("/member/{id}/fundings")
 	public String getUserFundings(@PathVariable("id") Long id, Model model, HttpSession session) throws Exception {
 
@@ -511,15 +567,10 @@ public class MemberController {
 		return "member/pay_statics";
 
 	}
+	
+
 
 
 	
-    /**
-	  * 초대 메세지 보내기
-	  */
-	 /*@GetMapping("/member/message")
-	 public ResponseEntity<String> getMessage(HttpSession session){
-		 
-	 }*/
 	
 }

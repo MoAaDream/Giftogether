@@ -2,6 +2,8 @@ package com.moadream.giftogether.wishlist.controller;
 
 import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.moadream.giftogether.Status;
 import com.moadream.giftogether.global.exception.SessionNotFoundException;
 import com.moadream.giftogether.member.service.MemberService;
 import com.moadream.giftogether.wishlist.model.WishListForm;
@@ -129,6 +132,39 @@ public class WishListController {
 
 		return "wishlists/wishlists";
 	}
+	/* 진행 중인 위시리스트 */
+	
+	@GetMapping("/my/ongoing")
+	public String getOngoingWishlists(HttpSession session, Model model) {
+
+		String socialId = checkSession(session);
+		Long memberId = memberService.getMemberBySocialId(socialId).getId();
+		
+		List<WishlistDto> list = wishListService.getListsByStatus(memberId, Status.A);
+		
+		model.addAttribute("id", memberId);
+		model.addAttribute("ongoingWishlists", list);
+		return "wishlists/wishlist_ongoing";
+	}
+	
+	
+	/* 종료된 위시리스트 */
+	@GetMapping("/my/expired")
+	public String getExpiredWishlists(HttpSession session, Model model) {
+
+		String socialId = checkSession(session);
+		Long memberId = memberService.getMemberBySocialId(socialId).getId();
+		
+		List<WishlistDto> list = wishListService.getListsByStatus(memberId, Status.I);
+		model.addAttribute("id", memberId);
+		model.addAttribute("expiredWishlists", list);
+		return "wishlists/wishlist_expired";
+	}
+	
+	
+	
+	
+	
 
 	private String checkSession(HttpSession session) {
 		if (session == null)
