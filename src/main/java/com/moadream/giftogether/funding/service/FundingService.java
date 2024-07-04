@@ -46,10 +46,6 @@ public class FundingService {
 	@Autowired
 	private FundingQueueManager fundingQueueManager; // FundingQueueManager 주입
 
-	public void enqueueFundingRequest(FundingRequest request) {
-		fundingQueueManager.addFundingRequest(request);
-	}
-
 	public int[] getFundingAmounts(String productLink) {
 		// 제품을 찾아 없으면 예외 발생
 		Product product = productRepository.findByProductLink(productLink)
@@ -98,13 +94,12 @@ public class FundingService {
 		}
 	}
 
-//	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
+	// 큐매니저 사용 메소드
 	public void processFundingRequest(FundingRequest request) {
 		String socialId = request.getSocialId();
 		String productLink = request.getProductLink();
 		Integer amount = request.getAmount();
 		String messageF = request.getMessage();
-
 		Member member = findMemberBySocialId(socialId);
 
 		// 임시 결제내역 생성
@@ -128,18 +123,32 @@ public class FundingService {
 
 		Message message = Message.builder().content(messageF).status(Status.I).funding(funding)
 				.wishlist(product.getWishlist()).build();
-
 		messageRepository.save(message);
+
 	}
 
-//    
-//	public List<FundingDetailsDTO> findFundingsByProductLink(String socialId, String productLink) {
-//		return productRepository.findByProductLink(productLink)
-//				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))
-//				.map(fundings -> fundings.stream().filter(funding -> funding.getStatus() == Status.A)
-//						.map(this::mapToDTO).collect(Collectors.toList()))
-//				.orElse(Collections.emptyList());
-//	}
+	// 큐매니저 없음 테스트용
+	public Funding fund(String socialId, String productLink, Integer amount, String messageF) {
+
+		Member member = findMemberBySocialId(socialId);
+
+		Payment payment = Payment.builder().amount(amount).status(PaymentStatus.R).build();
+		paymentRepository.save(payment);
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
+
+		Funding funding = Funding.builder().amount(amount).status(Status.I).fundingUid(UUID.randomUUID().toString())
+				.payment(payment).member(member).product(product).build();
+
+		fundingRepository.save(funding);
+
+		Message message = Message.builder().content(messageF).status(Status.I).funding(funding)
+				.wishlist(product.getWishlist()).build();
+
+		messageRepository.save(message);
+
+		return funding;
+	}
 
 	public String getProductLinkByFundingUid(String fundingUid) {
 		Funding funding = fundingRepository.findByFundingUid(fundingUid);

@@ -4,6 +4,8 @@ import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESS
 
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
 import com.moadream.giftogether.funding.model.FundingRequest;
 import com.moadream.giftogether.funding.service.FundingQueueManager;
@@ -37,7 +40,7 @@ public class FundingController {
 	private final FundingQueueManager queueManager;
 
 	@GetMapping("/{productlink}")
-	public String fund(@PathVariable(name = "productlink", required = true) String productLink, 
+	public String fund(@PathVariable(name = "productlink", required = true) String productLink,
 			@RequestParam(name = "fundingUid", required = false) String fundingUid, HttpSession session, Model model) {
 
 		int[] amountOptions = fundingService.getFundingAmounts(productLink);
@@ -46,13 +49,13 @@ public class FundingController {
 		String productDescription = fundingService.getProductDescription(productLink);
 		String productProductImg = fundingService.getProductProductImg(productLink);
 
-		model.addAttribute("amountOptions", amountOptions); 
+		model.addAttribute("amountOptions", amountOptions);
 		model.addAttribute("fundingUid", fundingUid);
 		model.addAttribute("productLink", productLink);
 		model.addAttribute("productName", productName);
 		model.addAttribute("productDescription", productDescription);
 		model.addAttribute("productProductImg", productProductImg);
-		
+
 		return "funding/order";
 	}
 
@@ -85,22 +88,69 @@ public class FundingController {
 		}).join(); // CompletableFuture가 완료될 때까지 기다립니다.
 	}
 
+	// 테스트 큐매니저 있음
+	@PostMapping("/yes/{productlink}")
+	public ResponseEntity<Object> setAmountY(@PathVariable(name = "productlink", required = true) String productLink,
+			@RequestParam(name = "message") String messageF, @RequestParam("amount") Integer amount,
+			HttpSession session, RedirectAttributes redirectAttributes) {
+
+		try {
+			fundingService.validateAmount(amount, productLink);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body("금액 초과");
+		}
+
+		String socialId = checkSession(session);
+		FundingRequest request = new FundingRequest(socialId, productLink, amount, messageF);
+
+		CompletableFuture<FundingRequest> future = queueManager.addFundingRequest(request);
+        try {
+            FundingRequest result = future.join(); // CompletableFuture가 완료될 때까지 기다립니다. 
+            return ResponseEntity.ok("redirect:/fundings/payment/" + result.getFundingUid());
+        } catch (Exception e) { 
+            return ResponseEntity.status(500).body("Error processing your funding request.");
+        }
+	}
+
+	// 테스트2 큐매니저 없음
+	@PostMapping("/no/{productlink}")
+	public ResponseEntity<Object> setAmountN(@PathVariable(name = "productlink", required = true) String productLink,
+			@RequestParam(name = "message") String messageF, @RequestParam("amount") Integer amount,
+			HttpSession session, RedirectAttributes redirectAttributes) {
+
+		// 결제 이전 금액 설정 단계에서 금액 제한
+		try {
+			fundingService.validateAmount(amount, productLink);
+		} catch (IllegalArgumentException e) { 
+			return ResponseEntity.badRequest().body("금액 초과");
+		}
+
+		String socialId = checkSession(session);
+		Funding funding = fundingService.fund(socialId, productLink, amount, messageF);
+
+		if (funding == null) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주문 실패");
+		}
+
+		return ResponseEntity.ok("주문 성공");
+	}
+
 	@GetMapping("/detail/{fundingUid}")
 	public String getFundingDetail(@PathVariable(name = "fundingUid", required = true) String fundingUid, Model model,
 			HttpSession session, RedirectAttributes redirectAttributes) {
 
-		String socialId = checkSession(session); 
+		String socialId = checkSession(session);
 
 		String productLink = fundingService.getProductLinkByFundingUid(fundingUid);
 		model.addAttribute("productLink", productLink);
-		
-		FundingDetailsDTO fundingDetail = fundingService.getFundingDetailByUid(fundingUid,socialId);
-        if (!fundingDetail.isCanViewDetails()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to view this page.");
-            return "redirect:/home";
-        }
-		
-		model.addAttribute("fundingDetail", fundingDetail); 
+
+		FundingDetailsDTO fundingDetail = fundingService.getFundingDetailByUid(fundingUid, socialId);
+		if (!fundingDetail.isCanViewDetails()) {
+			redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to view this page.");
+			return "redirect:/home";
+		}
+
+		model.addAttribute("fundingDetail", fundingDetail);
 		if (model.containsAttribute("successMessage")) {
 			model.addAttribute("message", model.getAttribute("successMessage"));
 		}
