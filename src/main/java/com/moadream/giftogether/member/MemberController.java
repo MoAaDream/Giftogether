@@ -441,14 +441,14 @@ public class MemberController {
                 }
 
                 model.addAttribute("friends", friends);
-                return "member/friendList"; // Ensure this matches your template name
+                return "member/friendList"; 
             } catch (Exception e) {
                 model.addAttribute("errorMessage", "Failed to parse friends list.");
-                return "errorPage"; // Ensure this matches your error page template name
+                return "errorPage"; 
             }
         } else {
             model.addAttribute("errorMessage", "Failed to retrieve friends list.");
-            return "errorPage"; // Ensure this matches your error page template name
+            return "errorPage"; 
         }
     
 	}
