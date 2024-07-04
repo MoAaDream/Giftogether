@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Friend List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            min-height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(to bottom, #FFFFFF, #EBF5F3);
+            text-align: center;
+            position: relative;
+        }
+        .label {
+            font-size: 24px;
+            color: #333;
+            margin-top: 30px;
+            position: relative;
+            z-index: 3;
+        }
+        .prev-button {
+            cursor: pointer;
+            position: absolute;
+            left: 20px; 
+            top: 20px; 
+        }
+        .prev-button img {
+            height: 24px;
+        }
+        .friend-list-section {
+            margin-top: 100px;
+            margin-bottom: 100px;
+            position: relative;
+            z-index: 2;
+        }
+        .friend-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .friend {
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .friend img {
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            margin-right: 20px;
+        }
+        .friend .info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .friend .info span {
+            font-size: 18px;
+            color: #333;
+        }
+        .friend .actions {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .friend .actions button {
+            padding: 10px 20px;
+            background-color: #FF94B4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .friend .actions button:hover {
+            background-color: #ff7fa1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a th:href="@{/member/{id}(id=${id})}" class="prev-button"><img src="/images/prev_button.png" alt="Previous"></a>
+            <label class="label">Friend List</label>
+        </div>
+        <div class="friend-list-section">
+            <div id="friend-list" class="friend-list-items">
+                <div th:each="friend : ${friends}" class="friend">
+                    <img th:src="${#strings.defaultString(friend.profileImage, '/images/user_default.png')}" alt="Profile Image">
+                    <div class="info">
+                        <span th:text="${friend.nickname}"></span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>John Doe</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Jane Smith</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Michael Johnson</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Emily Davis</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Chris Brown</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/sendMessage';
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>
