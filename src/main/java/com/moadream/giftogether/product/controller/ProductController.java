@@ -103,7 +103,7 @@ public class ProductController {
 		
 		
 		if (product.getWishlist().getMember().getSocialLoginId().equals(socialId)){
-			return "products/product_detail";
+			return "products/product_mydetail";
 		}
 		
 		
