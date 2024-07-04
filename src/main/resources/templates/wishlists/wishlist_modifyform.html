@@ -1,114 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>File Upload</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 600px;
-        }
-
-        h2 {
-            color: #333;
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        img {
-            display: block;
-            margin: 10px 0;
-            max-width: 100%;
-            height: auto;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .error-message {
-            color: red;
-            display: none;
-            margin-top: 10px;
-        }
-    </style>
-    <script th:inline="javascript">
-        function uploadFile(event) {
-            var file = event.target.files[0];
-            var formData = new FormData();
-            formData.append('file', file);
-            formData.append('imageUri', document.getElementById('uploadedImage').src);
-
-            fetch("/files/image/wishlists", {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.text();
-                    } else {
-                        throw new Error('파일 업로드 실패');
-                    }
-                })
-                .then(imageUri => {
-                    document.getElementById('uploadedImage').style.display = 'block'; // 이미지 태그의 display 속성을 block으로 변경
-                    document.getElementById('uploadedImage').src = imageUri;
-                    document.getElementById('uploadedImageUri').value = imageUri;
-                })
-                .catch(error => {
-                    document.getElementById('errorMessage').textContent = error.message;
-                    document.getElementById('errorMessage').style.display = 'block';
-                });
-        }
-    </script>
+<meta charset="UTF-8">
+<title>File Upload</title>
+<link rel="stylesheet" href="/css/messageForm.css">
 </head>
 <body>
 <div class="container">
-    <h2>위시 리스트 수정</h2>
-    <form th:action="@{'/wishlists/' + ${wishListForm.link}}" th:object="${wishListForm}" method="post">
+		<div class="top">
+			<p>위시리스트 정보 수정</p>
+		</div>
+		<form th:action="@{'/wishlists/' + ${wishListForm.link}}" th:object="${wishListForm}" method="post">
         <label for="name">위시리스트 이름</label>
         <input type="text" id="name" th:field="*{name}">
 
@@ -121,14 +23,114 @@
         <input type="hidden" id="uploadedImageUri" th:field="*{uploadedImage}">
 
         <label for="address">주소</label>
-        <input type="text" id="address" th:field="*{address}">
+        <div class="col-sm-10">
+    		<input type="text" class="form-control mb-2" id="zipp_code_id" name="zipp_code" maxlength="10" placeholder="우편번호" style="width: 50%; display: inline;">
+    		<input type="button" id="zipp_btn" class="btn btn-primary" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+    		<input type="text" class="form-control mb-2" name="user_add1" id="UserAdd1" maxlength="40" placeholder="기본 주소를 입력하세요" required>
+    		<input type="text" class="form-control" name="user_add2" id="UserAdd2" maxlength="40" placeholder="상세 주소를 입력하세요">
+			<input type="text" id="address" th:field="*{address}" value="">
+		</div>
 
         <label for="phoneNumber">핸드폰번호</label>
         <input type="text" id="phoneNumber" th:field="*{phoneNumber}">
 
-        <button type="submit">위시 리스트 수정</button>
+        <input type="submit" value="위시 리스트 수정">
     </form>
     <div id="errorMessage" class="error-message"></div>
 </div>
 </body>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- CDN 방식 사용 -->
+    <script>
+	    function execDaumPostcode() {
+	        new daum.Postcode({
+	            oncomplete: function(data) {
+	                // 팝업을 통한 검색 결과 항목 클릭 시 실행
+	                var addr = ''; // 주소_결과값이 없을 경우 공백 
+	                var extraAddr = ''; // 참고항목
+	
+	                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+	                if (data.userSelectedType === 'R') { // 도로명 주소를 선택
+	                    addr = data.roadAddress;
+	                } else { // 지번 주소를 선택
+	                    addr = data.jibunAddress;
+	                }
+	
+	                if(data.userSelectedType === 'R'){
+	                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                        extraAddr += data.bname;
+	                    }
+	                    if(data.buildingName !== '' && data.apartment === 'Y'){
+	                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	                    }
+	                    if(extraAddr !== ''){
+	                        extraAddr = ' (' + extraAddr + ')';
+	                    }
+	                } else {
+	                    document.getElementById("UserAdd1").value = '';
+	                }
+	
+	                // 선택된 우편번호와 주소 정보를 input 박스에 넣는다.
+	                document.getElementById('zipp_code_id').value = data.zonecode;
+	                document.getElementById("UserAdd1").value = addr;
+	                document.getElementById("UserAdd1").value += extraAddr;
+	                document.getElementById("UserAdd2").focus(); // 우편번호 + 주소 입력이 완료되었음으로 상세주소로 포커스 이동
+	            }
+	        }).open();
+	    }
+	    
+	    
+	 // 주소 정보 합치기 함수
+	    function combineAddress() {
+	        var zippCode = document.getElementById('zipp_code_id').value; // 우편번호 입력 값
+	        var userAdd1 = document.getElementById('UserAdd1').value;     // 기본 주소 입력 값
+	        var userAdd2 = document.getElementById('UserAdd2').value;     // 상세 주소 입력 값
+	        
+	        // 주소 조합하여 address 입력 필드에 넣기
+	        var addressField = document.getElementById('address');
+	        addressField.value = zippCode + ' ' + userAdd1 + ' ' + userAdd2;
+	    }
+	    
+	    // 페이지 로드 후 실행할 초기화 함수 등록
+	    document.addEventListener('DOMContentLoaded', function() {
+	        // 주소 입력 필드의 값이 변경될 때마다 combineAddress 함수 호출
+	        document.getElementById('zipp_code_id').addEventListener('change', combineAddress);
+	        document.getElementById('UserAdd1').addEventListener('input', combineAddress);
+	        document.getElementById('UserAdd2').addEventListener('input', combineAddress);
+	    });
+	    
+	    function uploadFile(event) {
+	        var file = event.target.files[0];
+	        var formData = new FormData();
+	        formData.append('file', file);
+	        formData.append('imageUri', document.getElementById('uploadedImage').src);
+
+	        fetch("/files/image/wishlists", {
+	            method: 'POST',
+	            body: formData
+	        })
+	            .then(response => {
+	                if (response.ok) {
+	                    return response.text();
+	                } else {
+	                    throw new Error('파일 업로드 실패');
+	                }
+	            })
+	            .then(imageUri => {
+	                document.getElementById('uploadedImage').style.display = 'block';
+	                document.getElementById('uploadedImage').src = imageUri;
+	                document.getElementById('uploadedImageUri').value = imageUri;
+	            })
+	            .catch(error => {
+	                const errorMessageElement = document.getElementById('errorMessage');
+	                if (errorMessageElement) {
+	                    errorMessageElement.textContent = error.message;
+	                    errorMessageElement.style.display = 'block';
+	                } else {
+	                    console.error('errorMessage 요소를 찾을 수 없습니다.');
+	                }
+	            });
+	    }
+	</script>
 </html>

@@ -42,7 +42,7 @@ public class Message extends BaseTimeEntity {
     private Status status;
 
     @ManyToOne
-    @JoinColumn(name = "wishlist_id", nullable = false)
+    @JoinColumn(name = "wishlist_id", nullable = true)
     private WishList wishlist;
 
     @OneToOne

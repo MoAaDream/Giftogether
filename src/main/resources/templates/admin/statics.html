@@ -1,53 +1,64 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Statistics</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden; /* 컨테이너에서 넘치는 부분 숨김 */
-        }
+<meta charset="UTF-8">
+<title>Admin Statistics</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 
-        .top, .bottom {
-            flex: 0 1 auto; /* 크기가 자동으로 조정되도록 설정 */
-            display: flex;
-            overflow: auto; /* 넘치는 부분 스크롤 가능하게 설정 */
-            align-content: center;
-        }
+<style>
+.container {
+	display: flex;
+	flex-direction: column;
+	height: 92vh;
+	overflow: hidden; /* 컨테이너에서 넘치는 부분 숨김 */	
+	justify-content: center; /* 내부 요소들을 가로 축 중앙에 위치시킴 */
+    margin-top: -30px;
+}
 
-        .chart-container {
-            flex: 1;
-            overflow: auto; /* 차트 컨테이너가 넘칠 경우 스크롤 가능하게 설정 */
-        }
+.top, .bottom {
+	flex: 0 1 auto;
+	display: flex;
+	overflow: auto;
+	align-content: center;
+}
 
-    </style>
+.chart-container {
+	flex: 1;
+	display: flex; /* flex를 추가하여 내부 요소를 유연하게 조정 */
+	justify-content: center; /* 내부 요소들을 가로 축 중앙에 위치시킴 */
+	align-items: center; /* 내부 요소들을 세로 축 중앙에 위치시킴 */
+	overflow: auto;
+	margin-top: 10px; /* 상단 마진 추가 */
+	margin-bottom: 10px; /* 하단 마진 추가 */
+}
+</style>
 </head>
 <body>
-<h1>Admin Statistics12</h1>
-<div class="container">
-    <div class="top">
-        <div class="chart-container">
-            <canvas id="totalAmountChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="totalProductCountChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="finishedProductCountChart"></canvas>
-        </div>
-    </div>
-    <div class="bottom">
-        <div class="chart-container">
-            <canvas id="priceRangeChart"></canvas>
-        </div>
-    </div>
-</div>
 
-<script th:inline="javascript">
+	<h3 style="text-align: center; margin-top: 30px;" >서비스 통계</h3>
+	<div class="container">
+		<div class="top">
+			<div class="chart-container">
+				<canvas id="totalAmountChart"></canvas>
+			</div>
+			<div class="chart-container">
+				<canvas id="totalProductCountChart"></canvas>
+			</div>
+			<div class="chart-container">
+				<canvas id="finishedProductCountChart"></canvas>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="chart-container" style="height: 500px;">
+				<canvas id="priceRangeChart" ></canvas>
+			</div>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
     /*<![CDATA[*/
     const totalAmountData = [[${data.totalAmount}]];
     const totalProductCountData = [[${data.productTotalCount}]];
@@ -75,7 +86,7 @@
     /*]]>*/
 </script>
 
-<script>
+	<script>
     function ceilToThousand(value) {
         return Math.ceil(value / 1000) * 1000;
     }

@@ -10,7 +10,7 @@ public class FundingRequest {
     private String productLink;
     private Integer amount;
     private String message;
-    private String fundingUid;  
+    private String fundingUid;   
     
     public FundingRequest(String socialId, String productLink, Integer amount, String message) {
         this.socialId = socialId;

@@ -37,7 +37,7 @@ body {
 	align-items: center; /* 내부 요소를 수직 중앙 정렬 */
 	margin: 15px 0px; /* 상하 마진 */
 	padding: 5px; /* 내부 패딩 */
-	border-radius: 5px; /* 하단 꼭지점만 둥글게 */
+	border-radius: 15px; /* 하단 꼭지점만 둥글게 */
 	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
 }
 
@@ -78,20 +78,25 @@ textarea {
 	display: flex;
 	align-items: center;
 	width: 100%;
+	 
 }
 
 .custom-select {
-	background: transparent;
-	border: none;
-	border-radius: 0; /* 둥근 모서리 제거 */
+	border: 3px solid transparent;
+	border-radius: 10px; /* 둥근 모서리 제거 */
 	box-shadow: none; /* 그림자 제거 */
-	color: #666;
+	color: #606060;
+}
+
+.custom-select:focus {
+	border: 3px solid #AFE7DC; /* 선택 시 보이는 테두리를 은은한 회색으로 설정 */ 
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 내부 그림자 효과 추가 */
 }
 
 .custom-rounded-border {
 	border: 3px solid #EBF5F3; /* 경계선 추가 */
-	border-radius: 8px; /* 모서리 둥글게 */
-	padding: 13px; /* 내용과 경계 사이의 여백 */
+	border-radius: 15px; /* 모서리 둥글게 */
+	padding: 15px; /* 내용과 경계 사이의 여백 */
 }
 
 .custom-rounded-border:focus {
@@ -101,8 +106,8 @@ textarea {
 }
 
 textarea.form-control {
-	border: none; /* 테두리 제거 */
-	color: #495057; /* 내용 색상 */
+	border: 3px solid #EBF5F3; /* 테두리 제거 */ 
+	color: #495057; /* 내용 색상 */ 
 }
 
 textarea.form-control::placeholder {
@@ -155,12 +160,13 @@ textarea.form-control::placeholder {
 				class="alert-link">제품 페이지로 돌아가기</a>
 		</div>
 
-		<form style="width: 520px; margin-top: 0px;" method="post"
+		<form style="width: 526px; margin-top: 0px;" method="post"
 			th:action="@{/fundings/{productLink} (productLink=${productLink})}">
 			<div
 				th:unless="${amountOptions.length == 1 and amountOptions[0] == 0}">
 
-				<div class="white-box small-box">
+				<div class="white-box small-box"
+					style="width: 520px; margin-left: 3px;">
 					<div class="form-group">
 						<label style="width: 400px; text-align: center; padding-top: 8px;"
 							for="amount">선물 펀딩 금액 </label> <select
@@ -172,8 +178,9 @@ textarea.form-control::placeholder {
 					</div>
 				</div>
 
-				<div class="white-box large-box" style="margin-top: 30px; padding: 0px;">
-					<div class="form-group"  >
+				<div class="white-box large-box"
+					style="margin-top: 30px; padding: 0px;">
+					<div class="form-group">
 						<!--
 						<label for="message">메시지:</label>  -->
 						<textarea id="message" name="message"
@@ -184,7 +191,7 @@ textarea.form-control::placeholder {
 				<button type="submit" style="margin-top: 15px;"
 					class="btn btn-primary">결제하기</button>
 
- 
+
 			</div>
 		</form>
 

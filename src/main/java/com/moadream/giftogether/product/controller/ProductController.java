@@ -101,6 +101,12 @@ public class ProductController {
 		List<FundingDetailsDTO> fundingDetailP = fundingService.findFundingsByProductLink(socialId, productLink);
 		model.addAttribute("fundingDetailP", fundingDetailP);
 		
+		
+		if (product.getWishlist().getMember().getSocialLoginId().equals(socialId)){
+			return "products/product_mydetail";
+		}
+		
+		
 //        for (FundingDetailsDTO s : fundingDetailP) {
 //            log.info("ㅁㅁㅁ", s.isCanViewDetails());
 //        }

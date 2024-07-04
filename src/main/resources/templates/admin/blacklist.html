@@ -1,108 +1,109 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Blacklist</title>
+<meta charset="UTF-8">
+<title>Blacklist</title>
 </head>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f8f9fa;
-        margin: 0;
-        padding: 0;
-    }
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f8f9fa;
+	margin: 0;
+	padding: 0;
+}
 
-    .container {
-        width: 80%;
-        margin: 50px auto;
-        background-color: #fff;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+.container {
+	width: 80%;
+	margin: 50px auto;
+	background-color: #fff;
+	padding: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+h1 {
+	text-align: center;
+	margin-bottom: 20px;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
 
-    table, th, td {
-        border: 1px solid #ddd;
-    }
+table, th, td {
+	border: 1px solid #ddd;
+	text-align: center; /* 모든 테이블 내용을 중앙 정렬 */
+}
 
-    th, td {
-        padding: 10px;
-        text-align: left;
-    }
+th, td {
+	padding: 10px;
+}
 
-    th {
-        background-color: #f2f2f2;
-    }
+th {
+	background-color: #f2f2f2;
+}
 
-    .profile-img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-    }
+.profile-img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+}
 
-    button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 14px;
-        margin: 4px 2px;
-        cursor: pointer;
-        border-radius: 4px;
-    }
+button {
+	background-color: rgba(255, 182, 182, 0.8); /* 기본 배경 색상 변경 */
+	color: white;
+	border: none; /* 테두리 제거 */
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14px;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 4px;
+}
 
-    button:hover {
-        background-color: #0056b3;
-    }
-
+button:hover {
+	background-color: #FFB6B6; /* 마우스 오버 시 배경 색상 변경 */
+}
 </style>
+
 <body>
-<div class="container">
-    <h1>Blacklist</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>Nickname</th>
-            <th>Profile</th>
-            <th>Birth</th>
-            <th>Phone Number</th>
-            <th>Address</th>
-            <th>Misbehavior Count</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="member : ${data}">
-            <td th:text="${member.nickname}"></td>
-            <td>
-                <img th:src="${member.profile}" alt="Profile Image" class="profile-img">
-            </td>
-            <td th:text="${#dates.format(member.birth, 'yyyy-MM-dd')}"></td>
-            <td th:text="${member.phoneNumber}"></td>
-            <td th:text="${member.address}"></td>
-            <td th:text="${member.misbehaviorCount}"></td>
-            <td>
-                <form th:action="@{/admin/blacklist/{memberId}(memberId=${member.id})}" method="post">
-                    <input type="hidden" name="_method" value="delete"/>
-                    <button type="submit">Remove from Blacklist</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+	<div class="container">
+		<h1>블랙리스트</h1>
+		<table>
+			<thead>
+				<tr>
+					<th>닉네임</th>
+					<th>프로필</th>
+					<th>생일</th>
+					<th>전화 번호</th>
+					<th style="width: 350px;">주소</th>
+					<th>경고 누적</th>
+					<th>블랙리스트 해제</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="member : ${data}">
+					<td th:text="${member.nickname}"></td>
+					<td><img th:src="${member.profile}" alt="Profile Image"
+						class="profile-img"></td>
+					<td th:text="${#dates.format(member.birth, 'yyyy-MM-dd')}"></td>
+					<td th:text="${member.phoneNumber}"></td>
+					<td th:text="${member.address}"></td>
+					<td th:text="${member.misbehaviorCount}"></td>
+					<td>
+						<form class="button-custom"
+							th:action="@{/admin/blacklist/{memberId}(memberId=${member.id})}"
+							method="post">
+							<input type="hidden" name="_method" value="delete" />
+							<button type="submit">Remove from Blacklist</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </body>
 </html>
