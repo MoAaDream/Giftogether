@@ -4,126 +4,40 @@
     <meta charset="UTF-8">
     <title>Insert title here</title>
     <link rel="stylesheet" href="/css/messageForm.css">
-    <!-- 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        form {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"], input[type="file"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .alert {
-            padding: 10px;
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        img#uploadedImage {
-            max-width: 100%;
-            margin-top: 10px;
-            display: block;
-        }
-
-        span#errorMessage {
-            display: block;
-            color: red;
-            margin-top: 10px;
-        }
-
-        #goalAmountError {
-            color: red;
-            font-size: 12px;
-            margin-top: -10px;
-            margin-bottom: 10px;
-        }
-    </style>
-    -->
 </head>
 <body>
+    <div class="container">
+    	<div class="top">
+    		<p>상품 추가하기</p>
+    	</div>
+        <form th:action="@{|/${wishlistLink}/create|}" th:object="${productForm}" method="post">
+            <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
+            </div>
+            
+            <input type="text" id="name" th:field="*{name}" placeholder="구매할 상품명을 작성해주세요" value="">
 
-<h2>위시리스트에 물건 추가하기</h2>
-<form th:action="@{|/${wishlistLink}/create|}" th:object="${productForm}" method="post">
-    <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-        <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
+            <input type="text" id="externalLink" th:field="*{externalLink}" placeholder="상품을 구매할 링크를 입력해주세요" value="">
+
+			
+			<div class="upload-photo">
+                <input type="file" accept="image/jpeg, image/png, image/gif, image/heic, image/webp" id="file" name="file" onchange="uploadFile(event)">
+                <img id="uploadedImage" alt="Uploaded Image">
+                <input type="hidden" id="uploadedImageUri" name="uploadedImage">
+            </div>
+
+		
+			<input type="text" id="description" th:field="*{description}" placeholder="상품에 대해 설명해주세요 (ex.갖고 싶은 이유)" value="">
+            
+            <input type="text" id="optionDetail" th:field="*{optionDetail}" placeholder="상품에 옵션이 있다면 작성해주세요" value="">
+            
+            <input type="text" id="goalAmount" th:field="*{goalAmount}" onblur="checkGoalAmount()" placeholder="상품 가격을 입력해주세요" value="">
+            <span id="goalAmountError"></span>
+            
+            <input type="submit" value="상품 추가하기">
+        </form>
     </div>
-    
-    <input type="text" id="name" th:field="*{name}" placeholder="구매할 상품명을 입력하세요" value="">
 
-	
-    <input type="text" id="externalLink" th:field="*{externalLink}" placeholder="상품을 구매할 링크를 입력해주세요" value="">
-    
-    
-    <input type="file" id="file" name="file" onchange="uploadFile(event)" placeholder="상품 사진 등록하기">
-    <img id="uploadedImage" alt="Uploaded Image" style="display: none;">
-    <input type="hidden" id="uploadedImageUri" name="uploadedImage">
-    
-    
-    
-    <input type="text" id="description" th:field="*{description}" placeholder="상품에 대해 설명해주세요 (ex.갖고 싶은 이유)" value="">
-
-    
-    <input type="text" id="optionDetail" th:field="*{optionDetail}" placeholder="상품에 옵션이 있다면 작성해주세요" value="">
-
-   
-    <input type="text" id="goalAmount" th:field="*{goalAmount}" onblur="checkGoalAmount()" placeholder="상품 가격을 입력해주세요" value="">
-    <span id="goalAmountError"></span>
-
-    <input type="submit" value="위시리스트에 상품 추가하기">
-</form>
-</body>
 <script>
     function uploadFile(event) {
         var file = event.target.files[0];

@@ -4,60 +4,26 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/Detail.css">
-<link rel="stylesheet" href="/css/messageForm.css">
-<link rel="stylesheet" href="/css/ttt.css">
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 </head>
 
-<style>
-body {
-	font-family: Arial, sans-serif;
-	margin: 20px;
-}
-
-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-th, td {
-	padding: 8px;
-	text-align: left;
-	border-bottom: 1px solid #ddd;
-}
-
-th {
-	background-color: #f2f2f2;
-}
-
-a {
-	color: blue;
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-</style>
 <body>
 	<div class="detail">
+		<div class ="top">
+			<img src="/images/moreButton.png" alt="뒤로가기" class="back">
+			<div class="copyLink"><a href="#" onclick="clip(); return false;">URL주소복사</a></div>
+		</div>
+	
+	
 		<div class="detail-image">
 			<img th:src="${product.productImg}" alt="Product Image">
 		</div>
 		<div class="detail-info">
 			<h1 th:text="${product.name}"></h1>
 			<div class="description" th:text="${product.description}"></div>
-			<a th:href="@{|/products/${product.productLink}/modify|}"
-				class="btn-primary">수정하기</a> <a
-				th:href="@{|/products/${product.productLink}/delete|}"
-				class="btn-primary">삭제하기</a>
-			<!--<button id="deleteButton" data-product-link="${product.productLink}" class="btn-primary">삭제하기</button>-->
 		</div>
-	</div>
-
-	<div class="goal-amount-box">
+		<div class="goal-amount-box">
 		<p class="percent"
 			th:text="${(product.currentAmount * 100.0 / product.goalAmount).toString().substring(0, (product.currentAmount * 100.0 / product.goalAmount).toString().indexOf('.')) + '% 달성 했어요!'}"></p>
 		<div class="progress-bar">
@@ -66,110 +32,31 @@ a:hover {
 		</div>
 		<div class="rest-amount"
 			th:text="${product.goalAmount}-${product.currentAmount} + '원 남았어요!'"></div>
-	</div>
 
-	<!-- 데드라인 안지남 && 펀딩 미완료 -->
-	<div th:if="${!isDeadFunding and !isGoalAmount}"></div>
-	<a th:href="@{|/fundings/${product.productLink}|}" class="btn-primary">선물
-		펀딩 하기</a>
-
-	<br>
-	<br>
-	<br>
-
-	<!-- 데드라인 지남 && 펀딩 미완료 && 자기자신   -->
-	<div th:if="${isDeadFunding and !isGoalAmount and isUserProduct}"></div>
-
-	<!-- 밑에 from 2개 css 확인후 위에 div로 -->
-	<p th:text="'부족한 금액은 ' + ${insufficientAmount} + '입니다. 결제하시겠습니까?'"></p>
-	<form method="post"
-		th:action="@{/fundings/{productLink} (productLink=${product.productLink})}">
-		<input type="hidden" name="amount" th:value="${insufficientAmount}" />
-		<input type="hidden" name="message" value="부족한 금액 스스로 충전" />
-
-		<button type="submit" class="btn btn-primary">부족한 금액 결제 페이지로
-			이동</button>
-	</form>
-
-	<br>
-	<br>
-	<br>
-
-	<form id="refundForm" th:object="${bankForm}"
-		th:action="@{|/bank/${product.productLink}|}" method="post">
-		<input type="text" id="bankName" th:field="*{bankName}"
-			placeholder="은행 이름 입력" required> <input type="number"
-			id="account" th:field="*{account}" placeholder="은행 계좌 입력" required>
-		<button type="submit" class="btn btn-primary">펀딩 금액 계좌로 받기</button>
-	</form>
-	<div class="mt-3" style="color: #FF4F4F; text-align: center;">주의 : 계좌로 받을시 제품도 함께 삭제됩니다.</div>
-
-
-
-	<h2>제품의 결제 리스트</h2>
-	<div>
-		<table>
-			<thead>
-				<tr>
-					<th>Product Name</th>
-					<th>Amount</th>
-					<th>Status</th>
-					<th>Message</th>
-					<th>Giver</th>
-					<th>Receiver</th>
-					<th>Created At</th>
-					<th>Deadline</th>
-					<th>Details</th>
-				</tr>
-			</thead>
-			<!-- th:with를 사용하면 각 속성값을 로컬 변수로 저장 -->
-			<tbody>
-				<tr th:each="funding : ${fundingDetailP}"
-					th:with="productName=${funding.productName},
-                 amount=${funding.amount},
-                 status=${funding.status},
-                 messageContent=${funding.messageContent},
-                 giverNickname=${funding.giverNickname},
-                 receiverNickname=${funding.receiverNickname},
-                 createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 isCanViewDetails=${funding.canViewDetails}">
-
-					<td th:text="${productName}">Product Name</td>
-					<td th:text="${amount}">Amount</td>
-					<td th:text="${status}">Status</td>
-					<td th:text="${messageContent}">Message</td>
-					<td th:text="${giverNickname}">Giver</td>
-					<td th:text="${receiverNickname}">Receiver</td>
-					<td th:text="${createdAtFormatted}">createdAt</td>
-					<td th:text="${deadlineFormatted}">Deadline</td>
-					<td th:if="${isCanViewDetails}"><a
-						th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
-						th:text="'View Details'">View Details</a></td>
-				</tr>
-			</tbody>
-		</table>
+		</div>
+	
+		<div class=bottom>
+			<a class=fundingButton th:href="@{|/fundings/${product.productLink}|}" alt="Kakao Login"> 
+				<p class="goFunding">선물 펀딩하기</p>
+			</a>
+		</div>
 	</div>
 
 
 	<script>
-		$(document).ready(function() {
-			$('#refundForm').submit(function(event) {
-				event.preventDefault(); // 폼 기본 제출 동작을 방지
-				var postData = $(this).serialize(); // 폼 데이터를 직렬화
-				$.ajax({
-					url : $(this).attr('action'), // 폼의 action 속성 값으로 URL 설정
-					type : 'POST',
-					data : postData,
-					success : function(response) {
-						alert('환불 완료!');
-					},
-					error : function(xhr) {
-						alert('환불 실패!' + xhr.responseText);
-					}
-				});
-			});
-		});
+		
+		function clip(){
+
+			var url = '';
+			var textarea = document.createElement("textarea");
+			document.body.appendChild(textarea);
+			url = window.document.location.href;
+			textarea.value = url;
+			textarea.select();
+			document.execCommand("copy");
+			document.body.removeChild(textarea);
+			alert("URL이 복사되었습니다.")
+		}
 	</script>
 </body>
 
