@@ -10,7 +10,8 @@
             background-color: #ffffff;
         }
         .container {
-            width: 600px;
+        	min-height : 1800px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
             background-color: #EBF5F3;
@@ -183,6 +184,7 @@
         </div>
         <div class="wishlist-container">
              <div class="wishlist-section">
+<<<<<<< HEAD
                 <h3>
                     <span>진행 중인 위시리스트</span>
                     <a href="/wishlists/my/ongoing" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
@@ -198,11 +200,19 @@
                                 <span th:text="${wishlist.dDay}"></span>
                             </div>
                         </a>
+
                     </div>
-                </div>
+                    <div class="details">
+                        <span th:text="${wishlist.name}"></span>
+                        <span th:text="${wishlist.dDay}"></span>
+                    </div>
+                </a>
             </div>
+        </div>
+    </div>
 
             <div class="wishlist-section">
+<<<<<<< HEAD
                 <h3>
                     <span>종료된 위시리스트</span>
                     <a href="/wishlists/my/expired" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
@@ -219,8 +229,14 @@
                             </div>
                         </a>
                     </div>
-                </div>
+                    <div class="details">
+                        <span th:text="${wishlist.name}"></span>
+                        <span th:text="${wishlist.dDay}"></span>
+                    </div>
+                </a>
             </div>
+        </div>
+    </div>
 
 
             <div class="funding-section">
