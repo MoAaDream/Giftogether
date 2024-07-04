@@ -5,7 +5,7 @@
     align-items: center; /* 수직 정렬 */
     max-width: 600px; /* 최대 너비 설정 */
     margin: 0 auto; /* 가운데 정렬 */
-    padding: 50px;
+    padding: 20px 50px;
     border-radius: 8px;
     background: linear-gradient(to bottom, white, #EBF5F3 100%); /* 그라데이션 배경 */
 }

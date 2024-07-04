@@ -1,13 +1,115 @@
+.top{
+	display: flex;
+    justify-content: flex-start;
+}
+.back{
+	margin-right: auto;
+}
+.toggle{
+	magin-left:auto;
+	padding:10px;
+}
+
+#toggle{
+	width:20px;
+}
+
+
+.blur-it {
+  filter: blur(4px);
+}
+
+
+.modal-wrapper {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0; 
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.25s ease-in-out;
+}
+
+.modal-wrapper.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  width: 400px;
+  height: 250px;
+  display: block;
+  position: relative;
+  top: 500px; 
+  margin: 0 auto;
+  background: #fff;
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+  border-radius: 10px;
+  
+}
+
+.modal-wrapper.open .modal {
+  margin-top: -200px;
+  opacity: 1;
+}
+
+
+.content {
+	border-radius: 50px;
+	magin: auto 0;
+	padding-top:2px;
+}
+
+.content a {
+	display: block; 
+	text-decoration: none;
+	color: #000;
+	font-size: 18px;
+	border-radius: 4px;
+	background-color: #fff; 
+	padding:10px;
+	text-align: center; /* 텍스트를 중앙 정렬합니다. */
+	transition: background-color 0.3s ease, color 0.3s ease;
+	/* 호버 효과를 위한 트랜지션 설정 */
+}
+
+.content .btn-primary{
+	border-bottom: 1px solid #D9D9D9; /* 링크 기본 테두리 */
+}
+
+.content a:hover {
+	background-color: #D9D9D9; /* 호버 시 배경색 변경 */
+	color: #fff; /* 호버 시 글자색 변경 */
+}
+
+
+label.menu{
+padding: 5px 0;
+}
+
+input#menu{
+	display:none;
+}
+
+nav#main_nav{
+	display:none;
+}
+
+input#menu:checked + nav#main_nav{
+	display:block;
+}
+
+
 .detail {
-    display: flex;
+	background-color: #EBF5F3;
     align-items: center; /* 수직 정렬 */
-    max-width: 800px; /* 최대 너비 설정 */
+    max-width: 600px; /* 최대 너비 설정 */
     margin: 0 auto; /* 가운데 정렬 */
-    padding: 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-    /*transition: transform 0.3s ease-in-out; /* 호버 효과용 트랜지션
+    padding-top: 20px ;
+    
 }
 
 .product-detail:hover {
@@ -15,21 +117,18 @@
 }
 
 .detail-image {
-    /*flex: 0 0 auto; /* 이미지 크기 유지 */
-    max-width: 450px;
-    width: auto;
+    width: 100%;
     height:auto;
-    margin-right: 20px; /* 이미지 오른쪽 간격 */
 }
 
 .detail-image img {
-    max-width: 100%;
+    width: 100%;
     height: auto;
     border-radius: 8px; /* 이미지에 둥근 모서리 적용 */
 }
 
 .detail-info {
-    flex: 1; /* 남은 공간을 차지하도록 설정 */
+    margin: 20px;
 }
 
 .detail-info h1 {
@@ -92,4 +191,52 @@
 }
 
 
+.bottom{
+	position: sticky;
+	align-items: center;
+	top: 780px;
+	width:600px;
+	height:350px;
+	background: linear-gradient(to top, white,  rgba(255, 255, 255, 0));
+}
+
+.fundingButton {
+	background-color: #000;
+	border: 1px solid #000;
+	border-radius: 100px;
+	cursor: pointer;
+	position: sticky;
+	top: 850px;
+	margin: 0 20px;
+	min-width: 250px;
+	max-width: 600px;
+	text-align: center;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+	display:flex;
+	text-decoration: none;
+}
+
+.goFunding {
+	font-size: 18px;
+	color: #fff;
+	font-weight: bold;
+	margin: 15px auto;
+}
+
+.copyLink {
+	width: 150px;
+	height: 35px;
+	background-color: #ffffff;
+	border-radius: 5px;
+	text-align:center;
+	padding:5px;
+	margin: 15px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.copyLink a{
+	text-decoration-line: none;
+	color: #545454;
+	font-weight: 450;
+}
 
