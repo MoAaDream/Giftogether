@@ -90,6 +90,14 @@ public class WishListService implements WishListServiceI {
 		return new PageImpl<>(wishlists, pageable, wishListPage.getTotalElements());
 	}
 
+	
+	public List<WishlistDto> getListsByStatus(Long memberId,Status status){
+		List<WishlistDto> wishlists = wishListRepository.findAllByMember_IdAndStatus(memberId, status)
+				.stream().map(wishList -> new WishlistDto(wishList)).toList();
+		return wishlists;
+	}
+	
+	
 
     @Override
     @Transactional

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kakao Message</title>
+</head>
+<body>
+    <h1>Send Kakao Message</h1>
+    <form action="/sendMessage" method="post">
+        <label for="friendId">Friend ID:</label>
+        <input type="text" id="friendId" name="friendId">
+        <br><br>
+        <button type="submit">Send Message</button>
+    </form>
+</body>
+</html>

@@ -90,7 +90,7 @@
             cursor: pointer;
             transition: background-color 0.3s, color 0.3s;
             font-size: 18px;  /* 글자 크기 증가 */
-    font-weight: bold;  /* 글자를 굵게 */
+            font-weight: bold;  /* 글자를 굵게 */
         }
         .buttons button:hover {
             background-color: #ffffff;
@@ -101,7 +101,7 @@
             border: 2px solid #9BCEC4;
             color: #9BCEC4;
             font-size: 18px;  /* 글자 크기 증가 */
-    font-weight: bold;  /* 글자를 굵게 */
+            font-weight: bold;  /* 글자를 굵게 */
         }
         .buttons button.logout:hover {
             background-color: #9BCEC4;
@@ -112,25 +112,48 @@
         }
         .wishlist-section h3 {
             margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 18px;
             color: #333;
+            font-weight: bold; /* 글자를 굵게 */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         .wishlist-items {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
         }
-        .wishlist-item {
+        .wishlist-item, .funding-item {
             width: calc(33.333% - 10px);
             background-color: #f0f0f0;
             border-radius: 5px;
             text-align: center;
-            padding: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .wishlist-item .image, .funding-item .image {
+            width: 100%;
+            padding-bottom: 100%;
+            background-color: #e0e0e0;
+        }
+        .wishlist-item .details, .funding-item .details {
+            padding: 10px;
+            background-color: #ffffff;
+        }
+        .wishlist-item .details span, .funding-item .details span {
+            display: block;
         }
         .delete-account {
             text-align: center;
             margin-top: 20px;
+        }
+        .section-button {
+            cursor: pointer;
+        }
+        .section-button img {
+            width: 24px;
+            height: 24px;
         }
     </style>
 </head>
@@ -143,7 +166,8 @@
                 <div class="profile-pic">
                     <img th:if="${member != null && member.profile != null}" th:src="${member.profile}" alt="프로필 이미지">
                 </div>
-                <div class="profile-name" th:text="${member != null ? member.nickname : 'Guest'} + ' 님'"> 이름 </div>
+                <div class="profile-name" th:text
+"${member != null ? member.nickname : 'Guest'} + ' 님'"> 이름 </div>
             </div>
 
             <div class="buttons">
@@ -151,27 +175,53 @@
                 <button class="logout" onclick="location.href='/logout'">로그아웃</button>
             </div>
         </div>
-
         <div class="wishlist-container">
             <div class="wishlist-section">
-                <h3>진행 중인 위시리스트</h3>
+                <h3>
+                    <span>진행 중인 위시리스트</span>
+                    <a href="/ongoingWishlists" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
+                </h3>
                 <div class="wishlist-items">
-                    <div class="wishlist-item">나의 위시리스트1<br>D - 22</div>
-                    <div class="wishlist-item">나의 위시리스트1<br>D - 22</div>
-                    <div class="wishlist-item">나의 위시리스트1<br>D - 22</div>
+                    <div class="wishlist-item" th:each="wishlist : ${ongoingWishlists}">
+                        <div class="image"></div>
+                        <div class="details">
+                            <span th:text="${wishlist.name}"></span>
+                            <span th:text="${wishlist.dDay}"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="wishlist-section">
-                <h3>종료된 위시리스트</h3>
+                <h3>
+                    <span>종료된 위시리스트</span>
+                    <a href="/expiredWishlists" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
+                </h3>
                 <div class="wishlist-items">
-                    <div class="wishlist-item">나의 위시리스트1<br>D - 22</div>
-                    <div class="wishlist-item">나의 위시리스트1<br>D - 22</div>
+                    <div class="wishlist-item" th:each="wishlist : ${expiredWishlists}">
+                        <div class="image"></div>
+                        <div class="details">
+                            <span th:text="${wishlist.name}"></span>
+                            <span th:text="${wishlist.dDay}"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="wishlist-section">
-                <h3>나의 선물 펀딩 내역</h3>
+            <div class="funding-section">
+                <h3>
+                    <span>나의 선물 펀딩 내역</span>
+                    <a href="/myFundings" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
+                </h3>
+                <div class="funding-items">
+                    <div class="funding-item" th:each="funding : ${myFundings}">
+                        <div class="image"></div>
+                        <div class="details">
+                            <span th:text="${funding.name}"></span>
+                            <span th:text="${funding.amount}"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -184,3 +234,4 @@
     </div>
 </body>
 </html>
+                
