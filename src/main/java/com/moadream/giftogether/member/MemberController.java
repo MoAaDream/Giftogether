@@ -411,11 +411,13 @@ public class MemberController {
 	 */
 	@GetMapping("/member/friends")
     public String getFriends(Model model, HttpSession session) {
+		Long memberId = memberService.getMemberBySocialId((String) session.getAttribute("kakaoId")).getId();
         String accessToken = (String) session.getAttribute("accessToken");
         if (accessToken == null) {
             return "redirect:/login";
         }
 
+        model.addAttribute("id", memberId);
         String url = "https://kapi.kakao.com/v1/api/talk/friends";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -479,19 +481,17 @@ public class MemberController {
         return new RedirectView(consentUri);
     }
 
-    @GetMapping("/share")
-    public String index() {
-    	
-
-    	
-    	return "sendMessage";
-    }
+   
     
     @PostMapping("/sendMessage")
     public String message(Model model, HttpSession session) throws JsonProcessingException {
-        String apiUrl = "https://kapi.kakao.com/v1/api/talk/friends/message/default/send";
+    	String apiUrl = "https://kapi.kakao.com/v1/api/talk/friends/message/default/send";
         String[] receivers = {"0uDR4dbi1eLU-MD2xfDB8cn_0-LS69nh2O2Z"};
-        String accessToken = (String) session.getAttribute("accessToken");
+        
+    	String[] recievers = {};
+    	
+    	
+    	String accessToken = (String) session.getAttribute("accessToken");
         
         RestTemplate restTemplate = new RestTemplate();
 
@@ -506,26 +506,28 @@ public class MemberController {
         templateObject.put("link", Map.of("web_url", "https://developers.kakao.com"));
         templateObject.put("button_title", "Check this out");
 
-        // URL 인코딩된 문자열로 변환
-        String receiversStr = String.join(",", receivers);
+        // JSON 문자열로 변환
         String templateObjectStr = new ObjectMapper().writeValueAsString(templateObject);
 
+        // 수신자 배열을 JSON 배열 문자열로 변환
+        String receiversJsonArray = new ObjectMapper().writeValueAsString(receivers);
+
+        // URL 인코딩된 문자열로 변환
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        //requestBody.add("receiver_uuids", receivers);
+        requestBody.add("receiver_uuids", receiversJsonArray);
         requestBody.add("template_object", templateObjectStr);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
-            
             model.addAttribute("response", response.getBody());
         } catch (Exception e) {
             model.addAttribute("response", "Error: " + e.getMessage());
         }
         
         log.info("메시지 보내기 성공");
-        return "message";
+        return "redirect:/member/friends";
     }
 
 

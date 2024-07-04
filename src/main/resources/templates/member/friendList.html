@@ -53,16 +53,31 @@
             padding: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             width: 100%;
+            justify-content: flex-start;
         }
         .friend img {
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
+            width: 70px;
+            height: 70px;
+            margin-right: 20px;
         }
-        .friend button {
+        .friend .info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .friend .info span {
+            font-size: 18px;
+            color: #333;
+        }
+        .friend .actions {
+            display: flex;
+            gap: 10px;
             margin-left: auto;
-            padding: 5px 10px;
+        }
+        .friend .actions button {
+            padding: 10px 20px;
             background-color: #FF94B4;
             color: #fff;
             border: none;
@@ -70,7 +85,7 @@
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .friend button:hover {
+        .friend .actions button:hover {
             background-color: #ff7fa1;
         }
     </style>
@@ -84,9 +99,58 @@
         <div class="friend-list-section">
             <div id="friend-list" class="friend-list-items">
                 <div th:each="friend : ${friends}" class="friend">
-                    <img th:src="${friend.profileImage}" alt="Profile Image">
-                    <span th:text="${friend.nickname}"></span>
-                    <button onclick="sendMessage()">Invite</button>
+                    <img th:src="${#strings.defaultString(friend.profileImage, '/images/user_default.png')}" alt="Profile Image">
+                    <div class="info">
+                        <span th:text="${friend.nickname}"></span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>John Doe</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Jane Smith</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Michael Johnson</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Emily Davis</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
+                </div>
+                <div class="friend">
+                    <img src="/images/user_default.png" alt="Profile Image">
+                    <div class="info">
+                        <span>Chris Brown</span>
+                    </div>
+                    <div class="actions">
+                        <button onclick="sendMessage()">Send Message</button>
+                    </div>
                 </div>
             </div>
         </div>
