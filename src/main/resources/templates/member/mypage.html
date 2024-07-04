@@ -10,7 +10,8 @@
             background-color: #ffffff;
         }
         .container {
-            width: 600px;
+        	min-height : 1800px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 20px;
             background-color: #EBF5F3;
@@ -183,44 +184,44 @@
         </div>
         <div class="wishlist-container">
              <div class="wishlist-section">
-                <h3>
-                    <span>진행 중인 위시리스트</span>
-                    <a href="/wishlists/my/ongoing" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
-                </h3>
-                <div class="wishlist-items">
-                    <div class="wishlist-item" th:each="wishlist : ${ongoingWishlists}">
-                        <a th:href="@{/wishlists/{wishlistLink}(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
-                            <div class="image" th:style="|background-color: ${wishlist.listImg == null ? '#e0e0e0' : 'transparent'}|">
-                                <img th:if="${wishlist.listImg != null}" th:src="${wishlist.listImg}" alt="wishlist image">
-                            </div>
-                            <div class="details">
-                                <span th:text="${wishlist.name}"></span>
-                                <span th:text="${wishlist.dDay}"></span>
-                            </div>
-                        </a>
+        <h3>
+            <span>진행 중인 위시리스트</span>
+            <a th:href="@{/wishlists/my/ongoing/{page}(page=${currentPage == null ? 0 : currentPage + 1})}" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
+        </h3>
+        <div class="wishlist-items">
+            <div class="wishlist-item" th:each="wishlist : ${ongoingWishlists}">
+                <a th:href="@{/wishlists/{wishlistLink}(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
+                    <div class="image" th:style="|background-color: ${wishlist.listImg == null ? '#e0e0e0' : 'transparent'}|">
+                        <img th:if="${wishlist.listImg != null}" th:src="${wishlist.listImg}" alt="wishlist image">
                     </div>
-                </div>
+                    <div class="details">
+                        <span th:text="${wishlist.name}"></span>
+                        <span th:text="${wishlist.dDay}"></span>
+                    </div>
+                </a>
             </div>
+        </div>
+    </div>
 
             <div class="wishlist-section">
-                <h3>
-                    <span>종료된 위시리스트</span>
-                    <a href="/wishlists/my/expired" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
-                </h3>
-                <div class="wishlist-items">
-                    <div class="wishlist-item" th:each="wishlist : ${expiredWishlists}">
-                        <a th:href="@{/wishlists/{wishlistLink}(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
-                            <div class="image" th:style="|background-color: ${wishlist.listImg == null ? '#e0e0e0' : 'transparent'}|">
-                                <img th:if="${wishlist.listImg != null}" th:src="${wishlist.listImg}" alt="wishlist image">
-                            </div>
-                            <div class="details">
-                                <span th:text="${wishlist.name}"></span>
-                                <span th:text="${wishlist.dDay}"></span>
-                            </div>
-                        </a>
+        <h3>
+            <span>종료된 위시리스트</span>
+            <a th:href="@{/wishlists/my/expired/{page}(page=${currentPage == null ? 0 : currentPage + 1})}" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
+        </h3>
+        <div class="wishlist-items">
+            <div class="wishlist-item" th:each="wishlist : ${expiredWishlists}">
+                <a th:href="@{/wishlists/{wishlistLink}(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
+                    <div class="image" th:style="|background-color: ${wishlist.listImg == null ? '#e0e0e0' : 'transparent'}|">
+                        <img th:if="${wishlist.listImg != null}" th:src="${wishlist.listImg}" alt="wishlist image">
                     </div>
-                </div>
+                    <div class="details">
+                        <span th:text="${wishlist.name}"></span>
+                        <span th:text="${wishlist.dDay}"></span>
+                    </div>
+                </a>
             </div>
+        </div>
+    </div>
 
 
             <div class="funding-section">

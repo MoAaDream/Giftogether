@@ -2,6 +2,7 @@ package com.moadream.giftogether.member;
 
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +31,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.config.CustomUserDetails;
 import com.moadream.giftogether.config.CustomUserDetailsService;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
 import com.moadream.giftogether.funding.service.FundingService;
+import com.moadream.giftogether.member.model.Friend;
 import com.moadream.giftogether.member.model.GetMemberRes;
 import com.moadream.giftogether.member.model.Member;
 import com.moadream.giftogether.member.model.Role;
@@ -202,39 +205,6 @@ public class MemberController {
 
 		return "current-user-page"; // 해당 템플릿 페이지의 이름
 	}
-
-	@GetMapping("/home")
-	public String home(Model model, HttpSession session) {
-		// 세션에서 사용자 이름 가져오기
-		String nickname = (String) session.getAttribute("nickname");
-		model.addAttribute("name", nickname);
-		Long id = memberService.getMemberBySocialId((String) session.getAttribute("kakaoId")).getId();
-		model.addAttribute("id", id);
-		/*
-		 * Authentication authentication =
-		 * SecurityContextHolder.getContext().getAuthentication();
-		 * 
-		 * if (authentication == null || !authentication.isAuthenticated()) {
-		 * model.addAttribute("currentUser", "사용자가 인증되지 않았습니다.");
-		 * model.addAttribute("sessionUser", "세션에 저장된 사용자 정보가 없습니다."); } else { Object
-		 * principal = authentication.getPrincipal();
-		 * 
-		 * if (principal instanceof UserDetails) { String username = ((UserDetails)
-		 * principal).getUsername(); model.addAttribute("currentUser", "현재 로그인 사용자: " +
-		 * username); } else { model.addAttribute("currentUser", "현재 로그인 사용자: " +
-		 * principal.toString()); }
-		 * 
-		 * // 세션에서 저장된 정보 가져오기 (예시로 kakaoId를 가져오는 경우) String sessionKakaoId = (String)
-		 * session.getAttribute("kakaoId"); if (sessionKakaoId != null) {
-		 * model.addAttribute("sessionUser", "세션에 저장된 사용자 (kakaoId): " +
-		 * sessionKakaoId); } else { model.addAttribute("sessionUser",
-		 * "세션에 저장된 사용자 정보가 없습니다."); } }
-		 */
-		return "home";
-	}
-	
-	
-
 	/**
 	 * 카카오 로그아웃
 	 * 
@@ -339,8 +309,8 @@ public class MemberController {
 		model.addAttribute("member", getMemberRes);
 		
 
-		model.addAttribute("ongoingWishlists", wishListService.getListsByStatus(id,Status.A));  // 진행중인 위시리스트 
-		model.addAttribute("expiredWishlists" , wishListService.getListsByStatus(id, Status.I)); // 종료된 위시리스트
+		model.addAttribute("ongoingWishlists", wishListService.getListsByStatusAndPage(id,Status.A, 0));  // 진행중인 위시리스트 
+		model.addAttribute("expiredWishlists" , wishListService.getListsByStatusAndPage(id, Status.I, 0)); // 종료된 위시리스트
 		
 		return "member/mypage";
 
@@ -440,22 +410,45 @@ public class MemberController {
 	 * 
 	 */
 	@GetMapping("/member/friends")
-	public ResponseEntity<String> getFriends(HttpSession session) {
-		String accessToken = (String) session.getAttribute("accessToken");
+    public String getFriends(Model model, HttpSession session) {
+        String accessToken = (String) session.getAttribute("accessToken");
+        if (accessToken == null) {
+            return "redirect:/login";
+        }
 
-		if (accessToken == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No access token found.");
-		}
+        String url = "https://kapi.kakao.com/v1/api/talk/friends";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-		String url = "https://kapi.kakao.com/v1/api/talk/friends";
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(accessToken);
-		HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
-		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode root = objectMapper.readTree(response.getBody());
+                JsonNode friendsList = root.path("elements");
 
-		return response;
+                List<Friend> friends = new ArrayList<>();
+                for (JsonNode friendNode : friendsList) {
+                    String friendId = friendNode.path("uuid").asText();
+                    String profileImage = friendNode.path("profile_thumbnail_image_url").asText();
+                    String nickname = friendNode.path("profile_nickname").asText();
+                    friends.add(new Friend(friendId, profileImage, nickname));
+                }
+
+                model.addAttribute("friends", friends);
+                return "member/friendList"; // Ensure this matches your template name
+            } catch (Exception e) {
+                model.addAttribute("errorMessage", "Failed to parse friends list.");
+                return "errorPage"; // Ensure this matches your error page template name
+            }
+        } else {
+            model.addAttribute("errorMessage", "Failed to retrieve friends list.");
+            return "errorPage"; // Ensure this matches your error page template name
+        }
+    
 	}
 
 	 /* 카카오 동의항목 조회 */
@@ -489,7 +482,8 @@ public class MemberController {
     @GetMapping("/share")
     public String index() {
     	
-    	// 친구 목록 보여주고 여기서 선택
+
+    	
     	return "sendMessage";
     }
     

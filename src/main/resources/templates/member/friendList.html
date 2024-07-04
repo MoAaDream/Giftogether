@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Friend List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            min-height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(to bottom, #FFFFFF, #EBF5F3);
+            text-align: center;
+            position: relative;
+        }
+        .label {
+            font-size: 24px;
+            color: #333;
+            margin-top: 30px;
+            position: relative;
+            z-index: 3;
+        }
+        .prev-button {
+            cursor: pointer;
+            position: absolute;
+            left: 20px; 
+            top: 20px; 
+        }
+        .prev-button img {
+            height: 24px;
+        }
+        .friend-list-section {
+            margin-top: 100px;
+            margin-bottom: 100px;
+            position: relative;
+            z-index: 2;
+        }
+        .friend-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .friend {
+            display: flex;
+            align-items: center;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .friend img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .friend button {
+            margin-left: auto;
+            padding: 5px 10px;
+            background-color: #FF94B4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .friend button:hover {
+            background-color: #ff7fa1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a th:href="@{/member/{id}(id=${id})}" class="prev-button"><img src="/images/prev_button.png" alt="Previous"></a>
+            <label class="label">Friend List</label>
+        </div>
+        <div class="friend-list-section">
+            <div id="friend-list" class="friend-list-items">
+                <div th:each="friend : ${friends}" class="friend">
+                    <img th:src="${friend.profileImage}" alt="Profile Image">
+                    <span th:text="${friend.nickname}"></span>
+                    <button onclick="sendMessage()">Invite</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/sendMessage';
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+</html>
