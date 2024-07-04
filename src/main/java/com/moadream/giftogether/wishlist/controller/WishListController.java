@@ -105,7 +105,7 @@ public class WishListController {
 		wishListService.deleteWishList(socialId, wishlistLink);
 		log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 삭제");
 
-		return "redirect:/wishlists";
+		return "redirect:/wishlists/my/0";
 	}
 
 	@DeleteMapping("/{wishlistlink}/funding")
@@ -116,7 +116,7 @@ public class WishListController {
 		wishListService.deleteWishlistForExistFunding(socialId, wishlistLink);
 		log.info("CONTROLLER = [" + socialId + "]" + "위시리스트 하위 다 삭제");
 
-		return "redirect:/wishlists";
+		return "redirect:/wishlists/my/0";
 	}
 
 	@GetMapping("/my/{page}")
