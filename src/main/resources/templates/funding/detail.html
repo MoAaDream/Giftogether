@@ -2,98 +2,237 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>모금 상세보기</title>
+<title>펀딩 상세 보기</title>
+
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
 <style>
-.detail-container {
-	margin-top: 30px;
-	border: 1px solid #ddd;
-	padding: 20px;
-	border-radius: 8px;
-	background-color: #f9f9f9;
+body {
+	display: flex;
+	justify-content: center;
+	background-color: white; /* 바깥쪽 배경 흰색으로 설정 */
+	min-height: 100vh; /* 전체 화면 높이 */
+	margin: 0;
+	padding: 0;
 }
 
-.detail-item {
-	margin-bottom: 10px;
-	padding: 10px;
-	border-bottom: 1px solid #eee;
+.main-content {
+	background: #EBF5F3;
+	width: 600px; /* 내용의 너비를 600px로 설정 */
+	padding: 40px; /* 안쪽 여백 */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+	display: flex;
+	align-items: center; /* 수직 중앙 정렬 */
+	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
 }
 
-.detail-label {
-	font-weight: bold;
-	color: #333;
+.fa-solid {
+	font-size: 24px; /* 아이콘 크기 조정 */
 }
 
-.detail-value {
-	margin-left: 10px;
-	color: #666;
+#backButton {
+	background: none; /* 배경 제거 */
+	border: none; /* 테두리 제거 */
+	color: inherit; /* 상속된 색상 사용 */
+	padding: 0; /* 패딩 제거 */
+	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
+	outline: none; /* 누를 때 테두리 제거 */
+}
+
+.funding-item {
+	background: #FFFFFF;
+	border-radius: 10px;
+	width: 100%;
+	text-decoration: none; /* 링크의 기본 스타일 제거 */
+	color: inherit; /* 상속된 색상 사용 */
+	transition: background-color 0.3s; /* 배경색 변경 애니메이션 */
+}
+
+.funding-items a {
+	display: block; /* 링크가 전체 영역을 차지하도록 설정 */
+	text-decoration: none; /* 기본 링크 밑줄 제거 */
+	color: inherit; /* 텍스트 색상을 상속 받음 */
+	background: #FFFFFF; /* 기본 배경 색상 */
+	transition: background-color 0.3s; /* 배경색 변경 애니메이션 */
+}
+
+.funding-items a:hover {
+	background-color: #AFE7DC; /* 호버 상태의 배경 색상 */
+	text-decoration: none; /* 호버 상태에서 밑줄 제거 */
+}
+
+.link-like-button {
+	background: none; /* 배경 제거 */
+	border: none; /* 테두리 제거 */
+	color: #606060; /* 부트스트랩 링크 색상 */
+	padding: 0; /* 패딩 제거 */
+	font-size: 16px; /* 폰트 사이즈 조정 */
+	cursor: pointer; /* 커서 스타일 */
+	text-decoration: underline; /* 밑줄 추가 */
+	display: inline; /* 디스플레이 속성 변경 */
+	margin: 0; /* 마진 제거 */
+	outline: none; /* 포커스 테두리 제거 */
+}
+
+.link-like-button:focus, .link-like-button:active {
+	outline: none; /* 포커스 및 활성화 상태에서 테두리 제거 */
+	box-shadow: none; /* 버튼 활성화 시 생성되는 그림자 제거 */
+}
+
+.custom-rounded-border {
+	border: 3px solid #EBF5F3; /* 경계선 추가 */
+	border-radius: 8px; /* 모서리 둥글게 */
+	padding: 13px; /* 내용과 경계 사이의 여백 */
+}
+
+.custom-rounded-border:focus {
+	outline: none; /* 포커스 상태에서 테두리 제거 */
+	border: 3px solid #AFE7DC; /* 선택 시 보이는 테두리를 은은한 회색으로 설정 */
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* 내부 그림자 효과 추가 */
 }
 </style>
 </head>
-<body> 
-	<div class="detail-container" th:with="fundingUid=${fundingDetail.fundingUid}">
-		<h2 th:text="'(' + ${fundingUid} + ')의 상세보기'">모금
-		상세보기</h2>
-		<div class="detail-item">
-			<span class="detail-label">Product Name:</span> <span
-				class="detail-value" th:text="${fundingDetail.productName}">Product
-				Name</span>
+<body>
+	<div class="main-content">
+		<div class="row align-items-center" style="width: 520px;">
+			<div class="col-1">
+				<button id="backButton">
+					<i class="fa-solid fa-angle-left"> </i>
+				</button>
+			</div>
+			<div class="col-10">
+				<h4 class="mt-4 mb-4"
+					style="color: #434343; font-weight: bold; text-align: center;">펀딩
+					내역 상세 보기</h4>
+			</div>
+			<div class="col-1"></div>
 		</div>
-		<div class="detail-item">
-			<span class="detail-label">Amount:</span> 
-			<span class="detail-value"
-				th:text="${fundingDetail.amount}">Amount</span>
-			<br><span class="detail-value"> 주의 : 결제 취소시 메시지도 삭제됩니다. </span> 
-			<!-- 결제 취소 버튼 추가 -->
-			<form
-				th:action="@{/fundings/cancel-payment/{id} (id=${fundingUid})}"
-				method="post"> 
-				<!-- Spring Security  CSRF 토큰 -->
-				<input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf.token}"/>
-				<button type="submit" style="margin-left: 10px;">결제 취소</button>
-			</form>
+		<div class="funding-item p-3">
+			<div class="row align-items-center mt-2 mb-1"
+				style="height: 60px; font-size: 18px; font-weight: bold;">
+				<div class="col-1"></div>
+				<div class="col-8 text-left">
+					<div style="color: #434343;">To.
+						[[${fundingDetail.receiverNickname}]]</div>
+				</div>
+				<div class="col-3 text-left" style="color: #FFB6B6;">[[${fundingDetail.dDay}]]</div>
+			</div>
+			<div class="row align-items-center mb-1">
+				<div class="col-1"></div>
+				<div class="col-3 text-left"
+					style="font-weight: 600; color: #434343;">
+					<div class="mb-1">펀딩 금액</div>
+					<div class="mb-1">펀딩 물품</div>
+					<div class="mb-1">펀딩 일시</div>
+					<div class="mb-1">축하 메시지</div>
+				</div>
+				<div class="col-8 text-left"
+					style="font-weight: 400; color: #434343;">
+					<div class="mb-1">[[${#numbers.formatDecimal(fundingDetail.amount,
+						0, 'COMMA', 0, 'POINT')}]] 원</div>
+					<button type="button" class="link-like-button"
+						style="padding-bottom: 3px;"
+						th:onclick="redirectToProduct([[${productLink}]]);">[[${fundingDetail.productName}]]</button>
+					<div class="mb-1">[[${fundingDetail.createdAt != null ?
+						#temporals.format(fundingDetail.createdAt, 'yyyy-MM-dd HH:mm:ss')
+						: 'Not Available'}]]</div>
+					<button type="button" class="link-like-button"
+						style="padding-bottom: 3px; margin-bottom: 3px;"
+						data-toggle="modal" data-target="#editMessageModal">수정하기</button>
+				</div>
+			</div>
+			<div class="row align-items-center mt-2">
+				<div class="col-1"></div>
 
-		</div>
-		<div class="detail-item">
-			<span class="detail-label">Status:</span> <span class="detail-value"
-				th:text="${fundingDetail.status}">Status</span>
-		</div>
-		<div class="detail-item">
-			<span class="detail-label">Message:</span> <span class="detail-value"
-				th:text="${fundingDetail.messageContent}">Message</span>
-		</div>
-		<div class="detail-item">
-			<span class="detail-label">Giver:</span> <span class="detail-value"
-				th:text="${fundingDetail.giverNickname}">Giver</span>
-		</div>
-		<div class="detail-item">
-			<span class="detail-label">Receiver:</span> <span
-				class="detail-value" th:text="${fundingDetail.receiverNickname}">Receiver</span>
-		</div>
-		<div class="detail-item">
-			<span class="detail-label">Funding UID:</span> <span
-				class="detail-value" th:text="${fundingUid}">Funding
-				UID</span>
-		</div>
-		<div class="detail-item">
-			<span class="detail-label">Created At:</span> <span
-				class="detail-value"
-				th:text="${fundingDetail.createdAt != null ? #temporals.format(fundingDetail.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'}">createdAt</span>
-		</div>
-		<div class="detail-item">
-			<span class="detail-label">Deadline:</span> <span
-				class="detail-value"
-				th:text="${fundingDetail.deadline != null ? #temporals.format(fundingDetail.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'}">Deadline</span>
+				<div class="col-10 text-left custom-rounded-border"
+					style="font-weight: 400; color: #434343;">
+					<div>[[${fundingDetail.messageContent}]]</div>
+				</div>
+				<div class="col-1"></div>
+			</div>
 
+			<div class="row align-items-center mt-3">
+				<div class="col-1"></div>
+
+				<div class="col-10 text-right"
+					style="font-weight: 400; padding-right: 0px; color: #434343;">
+
+					<form
+						th:action="@{/fundings/cancel-payment/{id} (id=${fundingDetail.fundingUid})}"
+						method="post">
+						<!-- Spring Security  CSRF 토큰 -->
+						<input type="hidden" name="_csrf" th:if="${_csrf != null}"
+							th:value="${_csrf.token}" />
+
+						<button type="submit" class="link-like-button">선물 펀딩 취소하기
+							버튼</button>
+					</form>
+				</div>
+				<div class="col-1"></div>
+			</div>
+		</div>
+		<div class="mt-3" style="color: red;">주의 : 결제 취소(전체 환불)시 메시지도 함께
+			삭제됩니다.</div>
+	</div>
+	<!-- 메시지 수정 모달 -->
+
+
+	<div class="modal fade" id="editMessageModal" tabindex="-1"
+		role="dialog" aria-labelledby="editMessageModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+
+
+
+			<div class="modal-content"
+				style="color: #434343; border: 5px solid #AFE7DC;">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editMessageModalLabel">메시지 수정</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="post"
+						th:action="@{/message/{fundinguid} (fundinguid=${fundingDetail.fundingUid})}">
+						<div class="form-group">
+							<textarea id="message" name="message"
+								placeholder="축하 메시지를 입력해 주세요" maxlength="100" rows="7"
+								class="form-control custom-rounded-border"></textarea>
+						</div>
+						<button
+							style="background-color: #AFE7DC; color: #434343; border-color: #AFE7DC;"
+							type="submit" class="btn btn-primary">저장</button>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
-<div th:if="${message}" th:text="${message}" id="hiddenMessage" style="display:none;"></div>
-<script>
-    window.onload = function() {
-        var message = document.getElementById('hiddenMessage').innerText;
-        if (message) {
-            alert(message);
-        }
-    };
-</script>
+	<div th:if="${message}" th:text="${message}" id="hiddenMessage"
+		style="display: none;"></div>
+
+	<script>
+		function redirectToProduct(productLink) {
+			window.location.href = '/products/' + productLink;
+		}
+		window.onload = function() {
+			var message = document.getElementById('hiddenMessage').innerText;
+			if (message) {
+				alert(message);
+			}
+		};
+		document.getElementById('backButton').onclick = function() {
+			window.history.back();
+		};
+	</script>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

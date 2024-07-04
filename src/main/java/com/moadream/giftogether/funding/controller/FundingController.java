@@ -85,11 +85,15 @@ public class FundingController {
 		}).join(); // CompletableFuture가 완료될 때까지 기다립니다.
 	}
 
-	@GetMapping("/detail/{fundinguid}")
-	public String getFundingDetail(@PathVariable(name = "fundinguid", required = true) String fundingUid, Model model,
+	@GetMapping("/detail/{fundingUid}")
+	public String getFundingDetail(@PathVariable(name = "fundingUid", required = true) String fundingUid, Model model,
 			HttpSession session, RedirectAttributes redirectAttributes) {
 
 		String socialId = checkSession(session); 
+
+		String productLink = fundingService.getProductLinkByFundingUid(fundingUid);
+		model.addAttribute("productLink", productLink);
+		
 		FundingDetailsDTO fundingDetail = fundingService.getFundingDetailByUid(fundingUid,socialId);
         if (!fundingDetail.isCanViewDetails()) {
             redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to view this page.");
@@ -107,6 +111,8 @@ public class FundingController {
 		return "funding/detail";
 	}
 
+	
+	
 	private String checkSession(HttpSession session) {
 		if (session == null)
 			throw new SessionNotFoundException(SESSION_NOT_FOUND);

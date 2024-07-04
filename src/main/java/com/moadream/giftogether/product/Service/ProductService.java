@@ -128,26 +128,6 @@ public class ProductService {
 		}
 	}
 
-	public boolean isDeadFundingComplete(String productLink) {
-		Product product = productRepository.findByProductLink(productLink)
-				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
-		// 제품의 상태가 Status.I이고, 현재 모금액이 목표액에 미치지 못하는 경우 false를 반환
-		if (product.getStatus() == Status.I && product.getCurrentAmount() < product.getGoalAmount()) {
-			return true;
-		}
-		return false;
-	}
 
-	public boolean isUserProduct(String socialId, String productLink) {
-		// 제품 연결된 회원 찾기
-		Optional<Member> memberOpt = productRepository.findMemberByProductLink(productLink);
-		// 찾은 회원의 소셜 ID가 입력받은 socialId와 일치하는지 확인
-		if (memberOpt.isPresent()) {
-			Member member = memberOpt.get();
-			return member.getSocialLoginId().equals(socialId);
-		}
-		// 회원 정보가 없거나, ID가 일치하지 않으면 false 반환
-		return false;
-	}
 
 }

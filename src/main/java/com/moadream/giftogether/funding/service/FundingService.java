@@ -1,8 +1,11 @@
 package com.moadream.giftogether.funding.service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -138,6 +141,11 @@ public class FundingService {
 //				.orElse(Collections.emptyList());
 //	}
 
+	public String getProductLinkByFundingUid(String fundingUid) {
+		Funding funding = fundingRepository.findByFundingUid(fundingUid);
+		return funding.getProduct().getProductLink();
+	}
+
 	public List<FundingDetailsDTO> findFundingsByProductLink(String socialId, String productLink) {
 		return productRepository.findByProductLink(productLink)
 				.map(product -> fundingRepository.findByProductIdWithDetails(product.getId()))
@@ -185,7 +193,56 @@ public class FundingService {
 		dto.setProductName(funding.getProduct().getName());
 		dto.setDeadline(funding.getProduct().getWishlist().getDeadline());
 		dto.setCanViewDetails(funding.getMember().getSocialLoginId().equals(socialId));
+		dto.setSuccessFunding(isSuccessFunding(funding)); // 날짜 지났고 모금액 도달 => true
+		LocalDate deadlineDate = funding.getProduct().getWishlist().getDeadline().toLocalDate();
+		long dDayValue = ChronoUnit.DAYS.between(LocalDate.now(), deadlineDate);
+		dto.setDDay("D - " + dDayValue);
+		if (dDayValue == 0)
+			dto.setDDay("D - day");
+		else
+			dto.setDDay("D + " + Math.abs(dDayValue));
 		return dto;
+	}
+
+	// 날짜 지났고 모금액 도달 => true
+	public boolean isSuccessFunding(Funding funding) {
+		String productLink = funding.getProduct().getProductLink();
+		if (isDeadFunding(productLink) && isGoalAmount(productLink)) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isDeadFunding(String productLink) {
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
+		// 제품의 상태가 Status.I인 경우 true를 반환
+		if (product.getStatus() == Status.I && product.getStatus() != Status.D) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isGoalAmount(String productLink) {
+		Product product = productRepository.findByProductLink(productLink)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found with link: " + productLink));
+		// 모금액 미달 false
+		if (product.getCurrentAmount() < product.getGoalAmount()) {
+			return false;
+		}
+		return true;
+	}
+
+	public boolean isUserProduct(String socialId, String productLink) {
+		// 제품 연결된 회원 찾기
+		Optional<Member> memberOpt = productRepository.findMemberByProductLink(productLink);
+		// 찾은 회원의 소셜 ID가 입력받은 socialId와 일치하는지 확인
+		if (memberOpt.isPresent()) {
+			Member member = memberOpt.get();
+			return member.getSocialLoginId().equals(socialId);
+		}
+		// 회원 정보가 없거나, ID가 일치하지 않으면 false 반환
+		return false;
 	}
 
 	private Member findMemberBySocialId(String socialId) {
