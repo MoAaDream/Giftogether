@@ -189,7 +189,7 @@
                 </h3>
                 <div class="wishlist-items">
                     <div class="wishlist-item" th:each="wishlist : ${ongoingWishlists}">
-                        <a th:href="@{/wishlists/{wishlistLink}(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
+                        <a th:href="@{/{wishlistLink}/products(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
                             <div class="image" th:style="|background-color: ${wishlist.listImg == null ? '#e0e0e0' : 'transparent'}|">
                                 <img th:if="${wishlist.listImg != null}" th:src="${wishlist.listImg}" alt="wishlist image">
                             </div>
@@ -209,7 +209,7 @@
                 </h3>
                 <div class="wishlist-items">
                     <div class="wishlist-item" th:each="wishlist : ${expiredWishlists}">
-                        <a th:href="@{/wishlists/{wishlistLink}(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
+                        <a th:href="@{/{wishlistLink}/products(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
                             <div class="image" th:style="|background-color: ${wishlist.listImg == null ? '#e0e0e0' : 'transparent'}|">
                                 <img th:if="${wishlist.listImg != null}" th:src="${wishlist.listImg}" alt="wishlist image">
                             </div>
