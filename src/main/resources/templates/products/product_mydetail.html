@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/Detail.css">
-
-<link rel="stylesheet" href="/css/ttt.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -101,20 +99,20 @@ a:hover {
 	<br>
 	<!-- 여기밑으로 -->
 
-	<!-- 데드라인 지남 && 펀딩 미완료 && 자기자신   -->
-	<div th:if="${isDeadFundingComplete and isUserProduct}"></div>
-
-	<!-- 밑에 from 2개 css 확인후 위에 div로 -->
-	<p th:text="'부족한 금액은 ' + ${insufficientAmount} + '입니다. 결제하시겠습니까?'"></p>
-	<form method="post"
-		th:action="@{/fundings/{productLink} (productLink=${product.productLink})}">
-		<input type="hidden" name="amount" th:value="${insufficientAmount}" />
-		<input type="hidden" name="message" value="부족한 금액 스스로 충전" />
-
-		<button type="submit" class="btn btn-primary">부족한 금액 결제 페이지로
-			이동</button>
-	</form>
-
+	<!-- 데드라인 지남 && 펀딩 미완료 && 자기자신  
+	<div th:if="${isDeadFundingComplete and isUserProduct}"> -->
+	<div th:if="${isDeadFundingComplete != null and isUserProduct != null and isDeadFundingComplete and isUserProduct}">
+		<!-- 밑에 from 2개 css 확인후 위에 div로 -->
+		<p th:text="'부족한 금액은 ' + ${insufficientAmount} + '입니다. 결제하시겠습니까?'"></p>
+		<form method="post"
+			th:action="@{/fundings/{productLink} (productLink=${product.productLink})}">
+			<input type="hidden" name="amount" th:value="${insufficientAmount}" />
+			<input type="hidden" name="message" value="부족한 금액 스스로 충전" />
+	
+			<button type="submit" class="btn btn-primary">부족한 금액 결제 페이지로
+				이동</button>
+		</form>
+	</div>
 	<br>
 	<br>
 	<br>
