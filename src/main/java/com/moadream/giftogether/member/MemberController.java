@@ -13,7 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -410,7 +409,8 @@ public class MemberController {
 	 * 
 	 */
 	@GetMapping("/member/friends")
-    public String getFriends(Model model, HttpSession session) {
+    public String getFriends(
+    		@RequestParam(value = "wishlistlinks") String wishlistlinks, Model model, HttpSession session) {
 		Long memberId = memberService.getMemberBySocialId((String) session.getAttribute("kakaoId")).getId();
         String accessToken = (String) session.getAttribute("accessToken");
         if (accessToken == null) {
@@ -418,6 +418,8 @@ public class MemberController {
         }
 
         model.addAttribute("id", memberId);
+        model.addAttribute("wishlistlinks", wishlistlinks);
+        
         String url = "https://kapi.kakao.com/v1/api/talk/friends";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -484,50 +486,54 @@ public class MemberController {
    
     
     @PostMapping("/sendMessage")
-    public String message(Model model, HttpSession session) throws JsonProcessingException {
+    public String message( @RequestParam("friendId") String friendId,
+            @RequestParam("wishlistlinks") String wishlistlinks,Model model, HttpSession session) throws JsonProcessingException {
     	String apiUrl = "https://kapi.kakao.com/v1/api/talk/friends/message/default/send";
-        String[] receivers = {"0uDR4dbi1eLU-MD2xfDB8cn_0-LS69nh2O2Z"};
-        
-    	String[] recievers = {};
-    	
-    	
-    	String accessToken = (String) session.getAttribute("accessToken");
-        
-        RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    	log.info("friendId -->" + friendId);
+    	 String accessToken = (String) session.getAttribute("accessToken");
+    	    if (accessToken == null) {
+    	        return "redirect:/login";
+    	    }
+    	    RestTemplate restTemplate = new RestTemplate();
 
-        // 메시지 템플릿 구성 요소
-        Map<String, Object> templateObject = new HashMap<>();
-        templateObject.put("object_type", "text");
-        templateObject.put("text", "Hello, this is a test message.");
-        templateObject.put("link", Map.of("web_url", "https://developers.kakao.com"));
-        templateObject.put("button_title", "Check this out");
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
 
-        // JSON 문자열로 변환
-        String templateObjectStr = new ObjectMapper().writeValueAsString(templateObject);
+    	    // Receivers 설정
+    	    String[] receivers = { friendId };
 
-        // 수신자 배열을 JSON 배열 문자열로 변환
-        String receiversJsonArray = new ObjectMapper().writeValueAsString(receivers);
+    	    // Template Object 설정
+    	    Map<String, Object> templateObject = new HashMap<>();
+    	    templateObject.put("object_type", "text");
+    	    templateObject.put("link", Map.of("web_url", wishlistlinks));
+    	    templateObject.put("text", "Giftogether에 초대합니다");
+    	    templateObject.put("button_title", "펀딩에 참여하기");
 
-        // URL 인코딩된 문자열로 변환
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("receiver_uuids", receiversJsonArray);
-        requestBody.add("template_object", templateObjectStr);
+    	    
+    	    // JSON 문자열로 변환
+            String templateObjectStr = new ObjectMapper().writeValueAsString(templateObject);
 
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
+            // 수신자 배열을 JSON 배열 문자열로 변환
+            String receiversJsonArray = new ObjectMapper().writeValueAsString(receivers);
 
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
-            model.addAttribute("response", response.getBody());
-        } catch (Exception e) {
-            model.addAttribute("response", "Error: " + e.getMessage());
-        }
-        
-        log.info("메시지 보내기 성공");
-        return "redirect:/member/friends";
+            // URL 인코딩된 문자열로 변환
+            MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+            requestBody.add("receiver_uuids", receiversJsonArray);
+            requestBody.add("template_object", templateObjectStr);
+
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+            try {
+                ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
+                model.addAttribute("response", response.getBody());
+            } catch (Exception e) {
+                model.addAttribute("response", "Error: " + e.getMessage());
+            }
+            
+            log.info("메시지 보내기 성공");
+            return "redirect:/wishlists/my/0";
+
     }
 
 
