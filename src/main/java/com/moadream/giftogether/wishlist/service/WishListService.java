@@ -1,10 +1,9 @@
 package com.moadream.giftogether.wishlist.service;
 
 import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
-import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DELETE_WISHLIST_BY_FUNDING;
-import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_FOUND_WISHLIST;
-import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_MY_WISHLIST;
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,9 @@ public class WishListService implements WishListServiceI {
 	public void createWishList(WishListForm wishListForm, String socialId) {
 		Member member = findMemberBySocialId(socialId);
 
+		if(wishListForm.getDeadLine().toLocalDate().isBefore(LocalDate.now())) {
+			throw new WishListException(NOT_DEADLINE_CREATE);
+		}
 		WishList wishList = WishList.createWishList(wishListForm, member);
 
 		wishListRepository.save(wishList);
@@ -90,6 +92,14 @@ public class WishListService implements WishListServiceI {
 		return new PageImpl<>(wishlists, pageable, wishListPage.getTotalElements());
 	}
 
+	
+	public List<WishlistDto> getListsByStatus(Long memberId,Status status){
+		List<WishlistDto> wishlists = wishListRepository.findAllByMember_IdAndStatus(memberId, status)
+				.stream().map(wishList -> new WishlistDto(wishList)).toList();
+		return wishlists;
+	}
+	
+	
 
     @Override
     @Transactional

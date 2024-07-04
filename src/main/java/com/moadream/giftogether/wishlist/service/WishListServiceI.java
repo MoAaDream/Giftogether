@@ -1,9 +1,13 @@
 package com.moadream.giftogether.wishlist.service;
 
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+
+import com.moadream.giftogether.Status;
 import com.moadream.giftogether.wishlist.model.WishListForm;
 import com.moadream.giftogether.wishlist.model.WishlistDto;
-import org.springframework.data.domain.Page;
 
 public interface WishListServiceI {
 
@@ -23,5 +27,7 @@ public interface WishListServiceI {
     public boolean checkMyPage(String socialId, String wishlistLink);
 
     public void deleteWishlistForExistFunding(String socialId, String wishlistLink);
+
+	public List<WishlistDto> getListsByStatus(Long memberId, Status status);
 
 }
