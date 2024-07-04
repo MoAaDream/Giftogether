@@ -142,7 +142,7 @@ public class WishListController {
 		
 		List<WishlistDto> list = wishListService.getListsByStatus(memberId, Status.A);
 		
-		
+		model.addAttribute("id", memberId);
 		model.addAttribute("ongoingWishlists", list);
 		return "wishlists/wishlist_ongoing";
 	}
@@ -156,8 +156,7 @@ public class WishListController {
 		Long memberId = memberService.getMemberBySocialId(socialId).getId();
 		
 		List<WishlistDto> list = wishListService.getListsByStatus(memberId, Status.I);
-		
-		
+		model.addAttribute("id", memberId);
 		model.addAttribute("expiredWishlists", list);
 		return "wishlists/wishlist_expired";
 	}

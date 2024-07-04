@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title> 진행중인 위시리스트 </title>
+    <title> 종료된 위시리스트 </title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,7 +24,7 @@
             position: relative;
             z-index: 3;
         }
-         .prev-button {
+        .prev-button {
             cursor: pointer;
             position: absolute;
             left: 20px; 
@@ -80,6 +80,7 @@
             height: 100%;
             object-fit: cover;
         }
+        
         .wishlist-item .details {
             padding: 10px;
             background-color: #ffffff;
@@ -97,13 +98,13 @@
     <div class="container">
     <div class="header">
             <a th:href="@{/member/{id}(id=${id})}" class="prev-button"><img src="/images/prev_button.png" alt="Previous"></a>
-            <label class="label">진행 중인 위시리스트</label>
+            <label class="label">종료된  위시리스트</label>
         </div>
         <img src="/images/gift_right.png" alt="Gift" class="gift-pic-right">
         <img src="/images/heart.png" alt="Heart" class="heart-pic">
         <div class="wishlist-section">
             <div class="wishlist-items">
-                <div class="wishlist-item" th:each="wishlist : ${ongoingWishlists}">
+                <div class="wishlist-item" th:each="wishlist : ${expiredWishlists}">
                     <a th:href="@{/wishlists/{wishlistLink}(wishlistLink=${wishlist.link})}" style="text-decoration: none; color: inherit;">
                         <div class="image" th:style="|background-color: ${wishlist.listImg == null ? '#e0e0e0' : 'transparent'}|">
                                 <img th:if="${wishlist.listImg != null}" th:src="${wishlist.listImg}" alt="wishlist image">
