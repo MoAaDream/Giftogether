@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,11 +22,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.moadream.giftogether.Status;
 import com.moadream.giftogether.bank.model.BankForm;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
 import com.moadream.giftogether.funding.service.FundingService;
 import com.moadream.giftogether.global.exception.SessionNotFoundException;
 import com.moadream.giftogether.member.service.MemberService;
+import com.moadream.giftogether.message.model.Message;
+import com.moadream.giftogether.message.service.MessageService;
 import com.moadream.giftogether.product.Service.ProductService;
 import com.moadream.giftogether.product.model.Product;
 import com.moadream.giftogether.product.model.ProductForm;
@@ -48,13 +53,17 @@ public class ProductController {
 	private final ProductService productService;
 	private final MemberService memberService;
 	private final WishListRepository wishListRepository;
+	private final MessageService messageService;
 	
 	@GetMapping("/{wishlist_link}/products")
     public String list(Model model,  @PathVariable("wishlist_link") String wishlistLink, HttpSession session) {
 		String socialId = checkSession(session);
 		List<Product> productList = this.productService.getProductList(wishlistLink);
+		List<Product> reversedProductList = new ArrayList<>(productList);
+	    Collections.reverse(reversedProductList);
+		
 		WishList wishlist = this.wishListRepository.findFirstByLink(wishlistLink).get();
-        model.addAttribute("productList", productList);
+        model.addAttribute("productList", reversedProductList);
         model.addAttribute("wishlistLink",wishlistLink);
         model.addAttribute("wishlist", wishlist); 
         LocalDateTime now = LocalDateTime.now();
@@ -77,8 +86,18 @@ public class ProductController {
 	@GetMapping("/products/{product_link}")
 	public String detail(HttpSession session, Model model, @PathVariable("product_link") String productLink) {
 	    Product product = this.productService.getProduct(productLink);
+	    List<Message> messageList = this.messageService.getMessageListByProduct(product);
 	    model.addAttribute("product", product);
-	    
+	    int size = 0;
+	    if(messageList!=null) {
+	    	for(Message message : messageList) {
+	    		if (message.getStatus()==Status.A) {
+	    			size ++;
+	    		}
+	    	}
+	    }
+	    model.addAttribute("messageList",messageList);
+	    model.addAttribute("totalpeople",size);
 		model.addAttribute("bankForm", new BankForm());
 		
 		int insufficientAmount = fundingService.getInsufficientAmount(productLink);

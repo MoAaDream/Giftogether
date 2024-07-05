@@ -93,12 +93,7 @@ public class FundingController {
 	public ResponseEntity<Object> setAmountY(@PathVariable(name = "productlink", required = true) String productLink,
 			@RequestParam(name = "message") String messageF, @RequestParam("amount") Integer amount,
 			HttpSession session, RedirectAttributes redirectAttributes) {
-
-		try {
-			fundingService.validateAmount(amount, productLink);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body("금액 초과");
-		}
+ 
 
 		String socialId = checkSession(session);
 		FundingRequest request = new FundingRequest(socialId, productLink, amount, messageF);
@@ -117,13 +112,7 @@ public class FundingController {
 	public ResponseEntity<Object> setAmountN(@PathVariable(name = "productlink", required = true) String productLink,
 			@RequestParam(name = "message") String messageF, @RequestParam("amount") Integer amount,
 			HttpSession session, RedirectAttributes redirectAttributes) {
-
-		// 결제 이전 금액 설정 단계에서 금액 제한
-		try {
-			fundingService.validateAmount(amount, productLink);
-		} catch (IllegalArgumentException e) { 
-			return ResponseEntity.badRequest().body("금액 초과");
-		}
+ 
 
 		String socialId = checkSession(session);
 		Funding funding = fundingService.fund(socialId, productLink, amount, messageF);

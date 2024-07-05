@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" href="/css/Detail.css">
+<link rel="stylesheet" href="/css/result.css">
+<link rel="stylesheet" href="/css/nav.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -38,32 +40,106 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+.alert-container {
+    position: fixed; /* 페이지에 상관없이 위치 고정 */
+    top: 50%; /* 상단으로부터 50% 위치 */
+    left: 50%; /* 좌측으로부터 50% 위치 */
+    transform: translate(-50%, -50%); /* 정확한 중앙 정렬을 위해 자신의 크기의 반만큼 오프셋 */
+    width: 90%; /* 전체 너비의 90% 사용 */
+    max-width: 600px; /* 최대 너비 설정 */
+    z-index: 9999; /* 다른 요소들 위에 표시 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+/* 알림 기본 스타일 */
+.alert {
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    margin: 10px auto;
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+    width: 200px;
+    text-align: center;
+}
+
+/* 성공 메시지 스타일 */
+.alert-success {
+    background-color: #4CAF50; /* 녹색 */
+}
+
+/* 에러 메시지 스타일 */
+.alert-danger {
+    background-color: #f44336; /* 빨간색 */
+}
+
+/* 페이드아웃 효과 */
+.fadeout.hide {
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0s 1s, opacity 1s linear;
+}
+
+.fadeout {
+    transition: opacity 1s ease-in-out;
+    opacity: 1;
+}
+
+.fadeout.hide {
+    opacity: 0;
+    visibility: hidden; /* 알림이 사라진 후에도 클릭 등에 방해되지 않도록 visibility를 조정 */
+}
 </style>
 <body>
+<div class="nav">	
+	<a class="logo" th:href="@{/main}">
+		<img src="/images/logo.png" alt="logo">
+	</a>
+	<div class ="menu">
+		<a class="myWish" th:href="@{/wishlists/my/0}">
+			<img src="/images/mywishButton.png" alt="mywish">
+		</a>
+		<a class="mypage" th:href="@{/mypage}">
+			<img src="/images/mypageButton.png" alt="mypage">
+		</a>
+	</div>
+</div>
 	<div class="detail">
 		<div class ="top">
-			<img src="/images/moreButton.png" alt="토글버튼" class="back">
+			<a class="back" th:href="@{|/${product.wishlist.link}/products|}">
+				<img src="/images/prev_button.png" alt="뒤로가기">
+			</a>
 			<div class="toggle">
-            	<label class="btn trigger" for="menu">
-               		<img id="toggle" src="/images/moreButton.png" alt="토글버튼">
-            	</label>
+				<label class="btn trigger" for="menu"> <img id="toggle"
+					src="/images/moreButton.png" alt="토글버튼">
+				</label>
 			</div>
 		</div>
 
-      <!-- Modal -->
+		<!-- Modal -->
 		<div class="modal-wrapper">
 			<div class="modal">
 				<div class="content">
-					<a href="#"  class="btn-primary" onclick="clip(); return false;">공유 주소 복사하기</a>
-					<a th:href="@{|/products/${product.productLink}/modify|}" class="btn-primary">수정하기</a>
-					<a th:href="@{|/products/${product.productLink}/delete|}" class="btn-primary">삭제하기</a>
-					<a class="btn-close trigger" href="#">취소</a>
-               </div>
-            </div>
+					<a href="#" class="btn-primary" onclick="clip(); return false;">공유
+						주소 복사하기</a> <a th:href="@{|/products/${product.productLink}/modify|}"
+						class="btn-primary">수정하기</a> <a
+						th:href="@{|/products/${product.productLink}/delete|}"
+						class="btn-primary">삭제하기</a> <a class="btn-close trigger" href="#">취소</a>
+				</div>
+			</div>
 		</div>
 
-	
-	
+
+<div class="alert-container">
+<div th:if="${successMessage}" class="alert alert-success fadeout" role="alert">
+    <span th:text="${successMessage}"></span>
+</div>
+<div th:if="${errorMessage}" class="alert alert-danger fadeout" role="alert">
+    <span th:text="${errorMessage}"></span>
+</div>
+</div>
+
+
+
 		<div class="detail-image">
 			<img th:src="${product.productImg}" alt="Product Image">
 		</div>
@@ -72,109 +148,133 @@ a:hover {
 			<div class="description" th:text="${product.description}"></div>
 		</div>
 		<div class="goal-amount-box">
-		<p class="percent"
-			th:text="${(product.currentAmount * 100.0 / product.goalAmount).toString().substring(0, (product.currentAmount * 100.0 / product.goalAmount).toString().indexOf('.')) + '% 달성 했어요!'}"></p>
-		<div class="progress-bar">
-			<div class="progress"
-				th:style="'width: ' + ${product.currentAmount}/${product.goalAmount}*100 + '%;'"></div>
+			<p class="percent"
+				th:text="${(product.currentAmount * 100.0 / product.goalAmount).toString().substring(0, (product.currentAmount * 100.0 / product.goalAmount).toString().indexOf('.')) + '% 달성 했어요!'}"></p>
+			<div class="progress-bar">
+				<div class="progress"
+					th:style="'width: ' + ${product.currentAmount}/${product.goalAmount}*100 + '%;'"></div>
+			</div>
+			<div class="rest-amount"
+				th:text="${product.goalAmount}-${product.currentAmount} + '원 남았어요!'"></div>
 		</div>
-		<div class="rest-amount"
-			th:text="${product.goalAmount}-${product.currentAmount} + '원 남았어요!'"></div>
-		</div>
+
 	
+
+		<div th:if="${daysDiff <= 0}" class="result">
+			<p id=celebration th:if="${product.goalAmount == product.currentAmount}">॰｡ཻ˚♡  ˗ˋˏ❤︎ˎˊ˗ 축하합니다 !! 펀딩에 성공했어요 -ˋˏ ♡ ˎˊ-  ♡✧。</p>
+			<div class="fund-info">
+				<p>총 선물 펀딩 금액 : </p>
+				<p th:text="|${product.currentAmount}  원|" id="return"/>
+			</div>
+			<div class="fund-info">
+				<p>총 선물 펀딩 인원 : </p>
+				<p th:text="|${totalpeople}  명|" id=return/>
+			</div>
+		</div>
+		
+		<div th:if="${daysDiff <= 0}" class="messages">
+			<div class="card-list" th:if="${fundingDetailP != null}">
+				<div class="card-details" th:each="funding : ${fundingDetailP}">
+					<div class="message-top">
+						<h4 th:text="${funding.giverNickname}" class="giverNickname"></h4>
+						<p th:text="${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'}" class="createdAt"></p>
+					</div>
+					<p th:text="${funding.messageContent}" class="messageContent"></p>
+       				<p th:text="|${funding.amount}원 펀딩선물 했어요❤︎|" class="amount"></p>
+       			</div>
+			</div>
+		</div>
+
+		
 		<div class=bottom>
-			<a class=fundingButton th:href="@{|/fundings/${product.productLink}|}" alt="Kakao Login"> 
-				<p class="goFunding">선물 펀딩하기</p>
-			</a>
+			<div th:if="${daysDiff > 0}" class="notyet">
+				<a class=fundingButton th:href="@{|/fundings/${product.productLink}|}" alt=""> 
+					<p class="goFunding">선물 펀딩하기</p>
+				</a>
+			</div>
+			<div th:if="${daysDiff <= 0}" class="end">
+				<div th:if="${(product.currentAmount - product.goalAmount) == 0}">
+					<a class=orderButton th:href="@{|/fundings/${product.productLink}|}" alt=""> 
+						<p class="goOrder">선물 주문하기</p>
+					</a>
+				</div>
+				<div th:if="${(product.currentAmount - product.goalAmount) != 0}">
+					<form th:action="@{/fundings/{productLink} (productLink=${product.productLink})}" alt=""> 
+						<input type="hidden" name="amount" th:value="${insufficientAmount}" />
+						<input type="hidden" name="message" value="부족한 금액 스스로 충전" />
+						<button type="submit" class="orderButton">
+            				<p class="goOrder">부족한 금액 결제하고 주문하기</p>
+        				</button>
+					</form>
+					<a class=refundButton th:href="@{|/bank/${product.productLink}|}" alt=""> 
+						<p class="goRefund">펀딩 금액 계좌로 받기</p>
+					</a>
+					<div class="mt-3" style="color: #FF4F4F; text-align: center;">주의 : 계좌로 받을시 제품도 함께 삭제됩니다.</div>
+				
+				</div>
+			</div>
+
+	
 		</div>
-	
+
+
 	</div>
 
+</body>
 
 
-
-
-	<br>
-	<br>
-	<br>
-	<!-- 여기밑으로 -->
-
-	<!-- 데드라인 지남 && 펀딩 미완료 && 자기자신  
-	<div th:if="${isDeadFundingComplete and isUserProduct}"> -->
-	<div th:if="${isDeadFundingComplete != null and isUserProduct != null and isDeadFundingComplete and isUserProduct}">
-		<!-- 밑에 from 2개 css 확인후 위에 div로 -->
-		<p th:text="'부족한 금액은 ' + ${insufficientAmount} + '입니다. 결제하시겠습니까?'"></p>
-		<form method="post"
-			th:action="@{/fundings/{productLink} (productLink=${product.productLink})}">
-			<input type="hidden" name="amount" th:value="${insufficientAmount}" />
-			<input type="hidden" name="message" value="부족한 금액 스스로 충전" />
-	
-			<button type="submit" class="btn btn-primary">부족한 금액 결제 페이지로
-				이동</button>
-		</form>
+<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
+	<div class="info_box flex justify-between">
+		<div>
+			<p>상호명 : (주)Giftogether</p>
+			<p>대표자 : MoAdream</p>
+			<p>사업자 등록번호 : 777-77-77777</p>
+			<p>
+				Email: <a href="mailto:777@777.com">777@777.com</a>
+			</p>
+			<p>Tel : 777-7777-7777</p>
+			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
+			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
+			<p>
+				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
+					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
+				</span>
+			</p>
+			<p>
+				Based on <a href="https://wishes.kr/" target="_blank">©2023
+					Wishes</a>, modified by Wishes. View original at <a
+					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
+			</p>
+			<p>
+				<span class="text-gray-200"><a class="" target="_blank"
+					href="private.html">개인정보처리방침</a></span>
+			</p>
+		</div>
 	</div>
-	<br>
-	<br>
-	<br>
+</footer>
 
-	<form id="refundForm" th:object="${bankForm}"
-		th:action="@{|/bank/${product.productLink}|}" method="post">
-		<input type="text" id="bankName" th:field="*{bankName}"
-			placeholder="은행 이름 입력" required> <input type="number"
-			id="account" th:field="*{account}" placeholder="은행 계좌 입력" required>
-		<button type="submit" class="btn btn-primary">펀딩 금액 계좌로 받기</button>
-	</form>
-	
-	<div class="mt-3" style="color: #FF4F4F; text-align: center;">주의 : 계좌로 받을시 제품도 함께 삭제됩니다.</div>
+<script> 
+document.addEventListener('DOMContentLoaded', function() {
+    const successAlert = document.querySelector('.alert-success');
+    const errorAlert = document.querySelector('.alert-danger');
+
+    // 성공 알림이 있다면 4초 후에 사라지게 함
+    if (successAlert) {
+        setTimeout(function() {
+            successAlert.classList.add('hide');
+        }, 5000);
+    }
+
+    // 에러 알림이 있다면 4초 후에 사라지게 함
+    if (errorAlert) {
+        setTimeout(function() {
+            errorAlert.classList.add('hide');
+        }, 5000);
+    }
+});
 
 
-	<h2>제품의 결제 리스트</h2>
-	<div>
-		<table>
-			<thead>
-				<tr>
-					<th>Product Name</th>
-					<th>Amount</th>
-					<th>Status</th>
-					<th>Message</th>
-					<th>Giver</th>
-					<th>Receiver</th>
-					<th>Created At</th>
-					<th>Deadline</th>
-					<th>Details</th>
-				</tr>
-			</thead>
-			<!-- th:with를 사용하면 각 속성값을 로컬 변수로 저장 -->
-			<tbody>
-				<tr th:each="funding : ${fundingDetailP}"
-					th:with="productName=${funding.productName},
-                 amount=${funding.amount},
-                 status=${funding.status},
-                 messageContent=${funding.messageContent},
-                 giverNickname=${funding.giverNickname},
-                 receiverNickname=${funding.receiverNickname},
-                 createdAtFormatted=${funding.createdAt != null ? #temporals.format(funding.createdAt, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 deadlineFormatted=${funding.deadline != null ? #temporals.format(funding.deadline, 'yyyy-MM-dd HH:mm') : 'Not Available'},
-                 isCanViewDetails=${funding.canViewDetails}">
 
-					<td th:text="${productName}">Product Name</td>
-					<td th:text="${amount}">Amount</td>
-					<td th:text="${status}">Status</td>
-					<td th:text="${messageContent}">Message</td>
-					<td th:text="${giverNickname}">Giver</td>
-					<td th:text="${receiverNickname}">Receiver</td>
-					<td th:text="${createdAtFormatted}">createdAt</td>
-					<td th:text="${deadlineFormatted}">Deadline</td>
-					<td th:if="${isCanViewDetails}"><a
-						th:href="@{'/fundings/detail/' + ${funding.fundingUid}}"
-						th:text="'View Details'">View Details</a></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	
-
-	<script>
 		$(document).ready(function() {
 			$('#refundForm').submit(function(event) {
 				event.preventDefault(); // 폼 기본 제출 동작을 방지
@@ -192,17 +292,16 @@ a:hover {
 				});
 			});
 		});
-		
-		$( document ).ready(function() {
-			  $('.trigger').on('click', function() {
-			     $('.modal-wrapper').toggleClass('open');
-			    $('.page-wrapper').toggleClass('blur-it');
-			     return false;
-			  });
+
+		$(document).ready(function() {
+			$('.trigger').on('click', function() {
+				$('.modal-wrapper').toggleClass('open');
+				$('.page-wrapper').toggleClass('blur-it');
+				return false;
 			});
-		
-		
-		function clip(){
+		});
+
+		function clip() {
 
 			var url = '';
 			var textarea = document.createElement("textarea");
@@ -215,6 +314,5 @@ a:hover {
 			alert("URL이 복사되었습니다.")
 		}
 	</script>
-</body>
 
 </html>

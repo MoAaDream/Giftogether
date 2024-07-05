@@ -571,10 +571,7 @@ log.info(wishlistlinks);
 			    
 	    
 		List<FundingDetailsDTO> fundingDetailM = fundingService.findFundingsBySocialId(kakaoId);
-		model.addAttribute("fundingDetailM", fundingDetailM);
-//		for (FundingDetailsDTO ff : fundingDetailM) {
-//			log.info("ㅁㅁㅁ" + ff.isSuccessFunding()); 
-//		}
+		model.addAttribute("fundingDetailM", fundingDetailM); 
 		return "member/pay_statics";
 
 	}

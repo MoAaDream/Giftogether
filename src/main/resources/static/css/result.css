@@ -1,0 +1,119 @@
+.result{
+	margin: 30px auto;
+	max-width:500px;
+	height: auto;
+	background-color: #3B9785;
+	border-radius: 5px;
+	padding-top: 10px;
+}
+
+.fund-info{
+	display:flex;
+	font-weight: bold;
+	color:#fff;
+	margin-left: 20%;
+}
+
+.fund-info p {
+	margin-top: 5px;
+}
+#return{
+	margin-left: 10%;
+}
+
+#celebration{
+	margin: 0 5%;
+	color: #fff;
+}
+
+.orderButton{
+	background-color: #fff;
+	border: 1px solid #9BCEC4;
+	border-radius: 100px;
+	cursor: pointer;
+	position: sticky;
+	top: 850px;
+	margin: 0 20px;
+	width: 93%;
+	text-align: center;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+	display:flex;
+	text-decoration: none;
+}
+.refundButton{
+	background-color: #3B9785;
+	border: 1px solid #3B9785;
+	border-radius: 100px;
+	cursor: pointer;
+	position: sticky;
+	top: 850px;
+	margin: 10px 20px 30px;	
+	width: 93%;
+	text-align: center;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+	display:flex;
+	text-decoration: none;
+}
+.goRefund{
+	font-size: 18px;
+	color: #fff;
+	font-weight: bold;
+	margin: 15px auto;
+	text-decoration: none;
+}
+
+
+.goOrder  {
+	font-size: 18px;
+	color: #3B9785;
+	font-weight: bold;
+	margin: 15px auto;
+	text-decoration: none;
+}
+
+a:hober{
+	text-decoration: none;
+}
+
+
+
+.card-details{
+	width: 95%;
+	height: auto;
+	background-color: #fff;
+	border-radius: 20px;
+	margin: 15px auto;
+	padding-bottom: 10px;		
+}
+.message-top{
+	display:flex;
+	margin: 15px 20px;
+}
+
+.giverNickname{
+	width: 50%;
+	text-align:left;
+}
+
+.createdAt{
+	width: 50%;
+	text-align:right;
+}
+
+.messageContent{
+	width:100%;
+	text-align:left;
+	margin: 10px 20px;
+}
+
+.amount{
+	color:#fff;
+	background-color: #3B9785;
+	margin-left: 20px;
+	margin-top:15px;
+	margin-bottom:15px;
+	border-radius: 20px;
+	width:40%;
+	text-align:center;
+	padding:5px;
+}

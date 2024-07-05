@@ -8,26 +8,21 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-
+<link rel="stylesheet" href="/css/nav.css">
 <style>
-body {
-	display: flex;
-	justify-content: center;
-	background-color: white; /* 바깥쪽 배경 흰색으로 설정 */
-	min-height: 100vh; /* 전체 화면 높이 */
-	margin: 0;
-	padding: 0;
-}
-
 .main-content {
+	margin: 0 auto;
 	background: #EBF5F3;
 	width: 600px; /* 내용의 너비를 600px로 설정 */
-	padding: 40px; /* 안쪽 여백 */
+	padding: 15px 40px; /* 안쪽 여백 */
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 	display: flex;
 	align-items: center; /* 수직 중앙 정렬 */
 	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
+	height: auto;
+	min-height: 900px;
 }
+
 
 .fa-solid {
 	font-size: 24px; /* 아이콘 크기 조정 */
@@ -50,7 +45,6 @@ body {
 	color: inherit; /* 상속된 색상 사용 */
 	transition: background-color 0.3s; /* 배경색 변경 애니메이션 */
 }
- 
 
 .link-like-button {
 	background: none; /* 배경 제거 */
@@ -83,7 +77,21 @@ body {
 }
 </style>
 </head>
+
 <body>
+<div class="nav">	
+	<a class="logo" th:href="@{/main}">
+		<img src="/images/logo.png" alt="logo">
+	</a>
+	<div class ="menu">
+		<a class="myWish" th:href="@{/wishlists/my/0}">
+			<img src="/images/mywishButton.png" alt="mywish">
+		</a>
+		<a class="mypage" th:href="@{/mypage}">
+			<img src="/images/mypageButton.png" alt="mypage">
+		</a>
+	</div>
+</div>
 	<div class="main-content">
 		<div class="row align-items-center" style="width: 520px;">
 			<div class="col-1">
@@ -162,8 +170,8 @@ body {
 				<div class="col-1"></div>
 			</div>
 		</div>
-		<div class="mt-3" style="color: #FF4F4F; ">주의 : 결제 취소(전체 환불)시 메시지도 함께
-			삭제됩니다.</div>
+		<div class="mt-3" style="color: #FF4F4F;">주의 : 결제 취소(전체 환불)시
+			메시지도 함께 삭제됩니다.</div>
 	</div>
 	<!-- 메시지 수정 모달 -->
 
@@ -171,7 +179,8 @@ body {
 	<div class="modal fade" id="editMessageModal" tabindex="-1"
 		role="dialog" aria-labelledby="editMessageModalLabel"
 		aria-hidden="true">
-		<div class="modal-dialog" role="document" style="max-width: 520px; margin-top: 200px;">
+		<div class="modal-dialog" role="document"
+			style="max-width: 520px; margin-top: 200px;">
 
 
 
@@ -203,16 +212,18 @@ body {
 	<div th:if="${message}" th:text="${message}" id="hiddenMessage"
 		style="display: none;"></div>
 
+ 
 	<script>
-		function redirectToProduct(productLink) {
-			window.location.href = '/products/' + productLink;
-		}
 		window.onload = function() {
 			var message = document.getElementById('hiddenMessage').innerText;
 			if (message) {
-				alert(message);
+				alert(message); 
 			}
 		};
+		function redirectToProduct(productLink) {
+			window.location.href = '/products/' + productLink;
+		}
+
 		document.getElementById('backButton').onclick = function() {
 			window.history.back();
 		};
@@ -223,4 +234,33 @@ body {
 	<script
 		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
+<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
+	<div class="info_box flex justify-between">
+		<div>
+			<p>상호명 : (주)Giftogether</p>
+			<p>대표자 : MoAdream</p>
+			<p>사업자 등록번호 : 777-77-77777</p>
+			<p>
+				Email: <a href="mailto:777@777.com">777@777.com</a>
+			</p>
+			<p>Tel : 777-7777-7777</p>
+			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
+			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
+			<p>
+				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
+					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
+				</span>
+			</p>
+			<p>
+				Based on <a href="https://wishes.kr/" target="_blank">©2023
+					Wishes</a>, modified by Wishes. View original at <a
+					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
+			</p>
+			<p>
+				<span class="text-gray-200"><a class="" target="_blank"
+					href="private.html">개인정보처리방침</a></span>
+			</p>
+		</div>
+	</div>
+</footer>
 </html>

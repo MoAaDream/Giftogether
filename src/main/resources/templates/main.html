@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gift Together</title>
+<link rel="stylesheet" href="/css/nav.css">
 <style>
 .container {
 	width: 600px;
@@ -50,6 +51,19 @@
 </head>
 
 <body>
+<div class="nav">	
+	<a class="logo" th:href="@{/main}">
+		<img src="/images/logo.png" alt="logo">
+	</a>
+	<div class ="menu">
+		<a class="myWish" th:href="@{/wishlists/my/0}">
+			<img src="/images/mywishButton.png" alt="mywish">
+		</a>
+		<a class="mypage" th:href="@{/mypage}">
+			<img src="/images/mypageButton.png" alt="mypage">
+		</a>
+	</div>
+</div>
 	<div class="container">
 		<div class=bottom>
 	    	<a class=wishlistButton href="/wishlists/my/0" alt="my wishlist" >
@@ -58,6 +72,35 @@
     	</div>
 	</div>
 </body>
+<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
+	<div class="info_box flex justify-between">
+		<div>
+			<p>상호명 : (주)Giftogether</p>
+			<p>대표자 : MoAdream</p>
+			<p>사업자 등록번호 : 777-77-77777</p>
+			<p>
+				Email: <a href="mailto:777@777.com">777@777.com</a>
+			</p>
+			<p>Tel : 777-7777-7777</p>
+			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
+			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
+			<p>
+				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
+					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
+				</span>
+			</p>
+			<p>
+				Based on <a href="https://wishes.kr/" target="_blank">©2023
+					Wishes</a>, modified by Wishes. View original at <a
+					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
+			</p>
+			<p>
+				<span class="text-gray-200"><a class="" target="_blank"
+					href="private.html">개인정보처리방침</a></span>
+			</p>
+		</div>
+	</div>
+</footer>
 
 </html>
 

@@ -88,7 +88,7 @@ public class WishListService implements WishListServiceI {
 	@Transactional
 	public Page<WishlistDto> getList(String socialId, int page) {
 		Member member = findMemberBySocialId(socialId);
-		Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, "id"));
+		Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
 		Page<WishList> wishListPage = wishListRepository.findAllByMember_Id(member.getId(), pageable);
 		List<WishlistDto> wishlists = wishListPage.stream().map(wishList -> new WishlistDto(wishList)).toList();
 
