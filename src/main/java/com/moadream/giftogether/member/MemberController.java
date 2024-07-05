@@ -243,7 +243,12 @@ public class MemberController {
 
 
 	@GetMapping("/logout")
-    public RedirectView logout(@RequestParam(name = "state", required = false) String state) {
+    public RedirectView logout(@RequestParam(name = "state", required = false) String state,HttpSession session) {
+		log.info("로그아웃 세션 정보 : " + session.getCreationTime());
+		String accessToken = (String) session.getAttribute("accessToken");
+		log.info("============ 로그아웃 ===========");
+		
+		session.invalidate(); // 세션 무효화
         if (state == null) {
             state = "defaultState"; // or generate a unique state for CSRF protection
         }
@@ -506,7 +511,8 @@ log.info(wishlistlinks);
     	    // Template Object 설정
     	    Map<String, Object> templateObject = new HashMap<>();
     	    templateObject.put("object_type", "text");
-    	    templateObject.put("link", Map.of("web_url", wishlistlinks));
+    	    templateObject.put("link", Map.of("web_url", "http://localhost:8080/"+wishlistlinks + "/products"));
+    	    log.info("/"+wishlistlinks + "/products");
     	    templateObject.put("text", "Giftogether에 초대합니다");
     	    templateObject.put("button_title", "펀딩에 참여하기");
 
