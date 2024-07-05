@@ -148,38 +148,34 @@
 	        document.getElementById('UserAdd1').addEventListener('input', combineAddress);
 	        document.getElementById('UserAdd2').addEventListener('input', combineAddress);
 	    });
-	    
-	    function uploadFile(event) {
-	        var file = event.target.files[0];
-	        var formData = new FormData();
-	        formData.append('file', file);
-	        formData.append('imageUri', document.getElementById('uploadedImage').src);
 
-	        fetch("/files/image/wishlists", {
-	            method: 'POST',
-	            body: formData
-	        })
-	            .then(response => {
-	                if (response.ok) {
-	                    return response.text();
-	                } else {
-	                    throw new Error('파일 업로드 실패');
-	                }
-	            })
-	            .then(imageUri => {
-	                document.getElementById('uploadedImage').style.display = 'block';
-	                document.getElementById('uploadedImage').src = imageUri;
-	                document.getElementById('uploadedImageUri').value = imageUri;
-	            })
-	            .catch(error => {
-	                const errorMessageElement = document.getElementById('errorMessage');
-	                if (errorMessageElement) {
-	                    errorMessageElement.textContent = error.message;
-	                    errorMessageElement.style.display = 'block';
-	                } else {
-	                    console.error('errorMessage 요소를 찾을 수 없습니다.');
-	                }
-	            });
-	    }
+        function uploadFile(event) {
+            var file = event.target.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('imageUri', document.getElementById('uploadedImage').src);
+
+            fetch("/files/image/wishlists", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error('파일 업로드 실패');
+                    }
+                })
+                .then(imageUri => {
+                    document.getElementById('uploadedImage').style.display = 'block'; // 이미지 태그의 display 속성을 block으로 변경
+                    document.getElementById('uploadedImage').src = imageUri;
+                    document.getElementById('uploadedImageUri').value = imageUri;
+                })
+                .catch(error => {
+                    document.getElementById('errorMessage').textContent = error.message;
+                    document.getElementById('errorMessage').style.display = 'block';
+                });
+        }
+    
 	</script>
 </html>
