@@ -77,7 +77,8 @@ body {
 	border-radius: 10px; /* 부모의 border-radius를 상속 */
 	pointer-events: none; /* 오버레이가 클릭 이벤트 방해 안 함 */
 	display: flex; /* 플렉스박스 설정 */
-	align-items: center; /* 수직 중앙 정렬 */ justify-content : center;
+	align-items: center; /* 수직 중앙 정렬 */
+	justify-content: center;
 	/* 수평 중앙 정렬 */
 	text-align: center;
 	justify-content: center; /* 텍스트 중앙 정렬 */
@@ -85,7 +86,16 @@ body {
 </style>
 <body>
 	<div class="main-content">
-
+		<!-- 메시지 표시 부분 -->
+		<div th:if="${successMessage}" class="alert alert-success"
+			role="alert">
+			<span th:text="${successMessage}"></span>
+		</div>
+		<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+			<span th:text="${errorMessage}"></span>
+		</div>
+		
+		
 		<div class="row align-items-center mt-4 mb-4" style="width: 520px;">
 			<div class="col-1">
 				<button id="backButton">
@@ -133,27 +143,64 @@ body {
 			</div>
 		</div>
 
- 
+
 	</div>
-</body>
-<script>
-	document.addEventListener('DOMContentLoaded', function() {
-		// 모든 '.funding-item a' 요소에 대해 이벤트 리스너 추가
-		document.querySelectorAll('.funding-items a').forEach(function(link) {
-			// 마우스가 요소 위에 올라갈 때
-			link.addEventListener('mouseenter', function() {
-				this.parentNode.style.backgroundColor = '#AFE7DC'; // 배경색 변경
-			});
-			// 마우스가 요소에서 벗어날 때
-			link.addEventListener('mouseleave', function() {
-				this.parentNode.style.backgroundColor = '#FFFFFF'; // 원래 배경색으로 변경
-			});
+
+
+
+	<script>
+		// 페이지 로드 후 자동으로 알림 표시
+	/* 	document.addEventListener('DOMContentLoaded', function() {
+			const successMessage = document.querySelector('.alert-success');
+			
+			
+			const errorMessage = document.querySelector('.alert-danger');
+
+			if (successMessage) {
+				alert(successMessage.textContent);
+			}
+			if (errorMessage) {
+				alert(errorMessage.textContent);
+			}
 		});
-	});
+ */		
+        document.addEventListener('DOMContentLoaded', function() {
+            const successAlert = document.querySelector('.alert-success');
+            const errorAlert = document.querySelector('.alert-danger');
 
-	document.getElementById('backButton').onclick = function() {
-		window.history.back();
-	};
-</script> 
+            // 성공 알림이 있다면 4초 후에 사라지게 함
+            if (successAlert) {
+                setTimeout(function() {
+                    successAlert.style.display = 'none';
+                }, 4000);
+            }
 
+            // 에러 알림이 있다면 4초 후에 사라지게 함
+            if (errorAlert) {
+                setTimeout(function() {
+                    errorAlert.style.display = 'none';
+                }, 4000);
+            }
+        });
+		
+		document.addEventListener('DOMContentLoaded', function() {
+			// 모든 '.funding-item a' 요소에 대해 이벤트 리스너 추가
+			document.querySelectorAll('.funding-items a').forEach(
+					function(link) {
+						// 마우스가 요소 위에 올라갈 때
+						link.addEventListener('mouseenter', function() {
+							this.parentNode.style.backgroundColor = '#AFE7DC'; // 배경색 변경
+						});
+						// 마우스가 요소에서 벗어날 때
+						link.addEventListener('mouseleave', function() {
+							this.parentNode.style.backgroundColor = '#FFFFFF'; // 원래 배경색으로 변경
+						});
+					});
+		});
+
+		document.getElementById('backButton').onclick = function() {
+			window.history.back();
+		};
+	</script>
+</body>
 </html>

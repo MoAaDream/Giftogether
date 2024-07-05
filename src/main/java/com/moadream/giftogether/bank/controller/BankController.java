@@ -2,7 +2,6 @@ package com.moadream.giftogether.bank.controller;
 
 import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,28 +31,31 @@ public class BankController {
 	private final BankService bankService;
 	private final FundingService fundingService;
 	private final ProductService productService;
- 
 
 	@GetMapping("/{productlink}")
-	public String refund(@PathVariable(name = "productlink", required = true) String productLink,
-			HttpSession session, Model model) {
-	    Product product = this.productService.getProduct(productLink);
-	    model.addAttribute("product", product);
+	public String refund(@PathVariable(name = "productlink", required = true) String productLink, HttpSession session,
+			Model model) {
+		Product product = this.productService.getProduct(productLink);
+		model.addAttribute("product", product);
 		model.addAttribute("bankForm", new BankForm());
 		return "funding/myaccount";
 	}
 
 	@PostMapping("/{productLink}")
-	public ResponseEntity<?> processRefund(@ModelAttribute BankForm bankForm,
+	public String processRefund(@ModelAttribute BankForm bankForm,
 			@PathVariable("productLink") String productLink, HttpSession session,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes) { 
+		
 		try {
 			String socialId = checkSession(session);
 			bankService.refund(bankForm, productLink, socialId);
-			return ResponseEntity.ok().body("환불 완료!");
+			redirectAttributes.addFlashAttribute("successMessage", "계좌로 환불 완료");
+ 
 		} catch (IllegalStateException e) {
-			return ResponseEntity.badRequest().body("환불 실패! " + e.getMessage());
-		}
+			redirectAttributes.addFlashAttribute("errorMessage", "환불 금액이 0원 이거나 실패하였습니다.");
+		} 
+		
+		return "redirect:/products/" + productLink;
 	}
 
 	private String checkSession(HttpSession session) {
