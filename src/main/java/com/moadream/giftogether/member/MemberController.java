@@ -13,7 +13,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -244,7 +243,12 @@ public class MemberController {
 
 
 	@GetMapping("/logout")
-    public RedirectView logout(@RequestParam(name = "state", required = false) String state) {
+    public RedirectView logout(@RequestParam(name = "state", required = false) String state,HttpSession session) {
+		log.info("로그아웃 세션 정보 : " + session.getCreationTime());
+		String accessToken = (String) session.getAttribute("accessToken");
+		log.info("============ 로그아웃 ===========");
+		
+		session.invalidate(); // 세션 무효화
         if (state == null) {
             state = "defaultState"; // or generate a unique state for CSRF protection
         }
@@ -272,11 +276,10 @@ public class MemberController {
 	 * @throws Exception
 	 */
 
-	@GetMapping("/member/{id}")
-	public String getUserInfo(@PathVariable("id") Long id, Model model, HttpSession session) throws Exception {
+	@GetMapping("/mypage")
+	public String getUserInfo(Model model, HttpSession session) throws Exception {
 
-		log.info("GET /member/{} 요청 도착", id); // 로그 추가
-		log.info("마이페이지 접근");
+		
 
 		String kakaoId = (String) session.getAttribute("kakaoId");
 		if (kakaoId == null) {
@@ -284,6 +287,10 @@ public class MemberController {
 			throw new Exception("유효하지 않은 접근입니다");
 		}
 
+		Long id = memberService.getMemberBySocialId(kakaoId).getId();
+				log.info("GET /member/{} 요청 도착", id); // 로그 추가
+				log.info("마이페이지 접근");
+				
 		Member member = memberService.getMemberInfo(id);
 
 		if (member == null) {
@@ -376,7 +383,7 @@ public class MemberController {
 			throw new Exception("message : 유효하지 않은 접근입니다");
 		}
 		memberService.updateMember(id, updateMemberReq);
-		return "redirect:/member/" + id;
+		return "redirect:/mypage";
 	}
 
 	/**
@@ -410,7 +417,8 @@ public class MemberController {
 	 * 
 	 */
 	@GetMapping("/member/friends")
-    public String getFriends(Model model, HttpSession session) {
+    public String getFriends(
+    		@RequestParam(value = "wishlistlinks") String wishlistlinks, Model model, HttpSession session) {
 		Long memberId = memberService.getMemberBySocialId((String) session.getAttribute("kakaoId")).getId();
         String accessToken = (String) session.getAttribute("accessToken");
         if (accessToken == null) {
@@ -418,6 +426,8 @@ public class MemberController {
         }
 
         model.addAttribute("id", memberId);
+        model.addAttribute("wishlistlinks", wishlistlinks);
+        log.info(wishlistlinks);
         String url = "https://kapi.kakao.com/v1/api/talk/friends";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -484,50 +494,55 @@ public class MemberController {
    
     
     @PostMapping("/sendMessage")
-    public String message(Model model, HttpSession session) throws JsonProcessingException {
+    public String message( @RequestParam("friendId") String friendId,
+            @RequestParam("wishlistlinks") String wishlistlinks,Model model, HttpSession session) throws JsonProcessingException {
     	String apiUrl = "https://kapi.kakao.com/v1/api/talk/friends/message/default/send";
-        String[] receivers = {"0uDR4dbi1eLU-MD2xfDB8cn_0-LS69nh2O2Z"};
-        
-    	String[] recievers = {};
-    	
-    	
-    	String accessToken = (String) session.getAttribute("accessToken");
-        
-        RestTemplate restTemplate = new RestTemplate();
+log.info(wishlistlinks);
+    	log.info("friendId -->" + friendId);
+    	 String accessToken = (String) session.getAttribute("accessToken");
+    	    if (accessToken == null) {
+    	        return "redirect:/login";
+    	    }
+    	    RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + accessToken);
 
-        // 메시지 템플릿 구성 요소
-        Map<String, Object> templateObject = new HashMap<>();
-        templateObject.put("object_type", "text");
-        templateObject.put("text", "Hello, this is a test message.");
-        templateObject.put("link", Map.of("web_url", "https://developers.kakao.com"));
-        templateObject.put("button_title", "Check this out");
+    	    // Receivers 설정
+    	    String[] receivers = { friendId };
 
-        // JSON 문자열로 변환
-        String templateObjectStr = new ObjectMapper().writeValueAsString(templateObject);
+    	    // Template Object 설정
+    	    Map<String, Object> templateObject = new HashMap<>();
+    	    templateObject.put("object_type", "text");
+    	    templateObject.put("link", Map.of("web_url", "http://localhost:8080/"+wishlistlinks + "/products"));
+    	    log.info("/"+wishlistlinks + "/products");
+    	    templateObject.put("text", "Giftogether에 초대합니다");
+    	    templateObject.put("button_title", "펀딩에 참여하기");
 
-        // 수신자 배열을 JSON 배열 문자열로 변환
-        String receiversJsonArray = new ObjectMapper().writeValueAsString(receivers);
+    	    
+    	    // JSON 문자열로 변환
+            String templateObjectStr = new ObjectMapper().writeValueAsString(templateObject);
 
-        // URL 인코딩된 문자열로 변환
-        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("receiver_uuids", receiversJsonArray);
-        requestBody.add("template_object", templateObjectStr);
+            // 수신자 배열을 JSON 배열 문자열로 변환
+            String receiversJsonArray = new ObjectMapper().writeValueAsString(receivers);
 
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
+            // URL 인코딩된 문자열로 변환
+            MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+            requestBody.add("receiver_uuids", receiversJsonArray);
+            requestBody.add("template_object", templateObjectStr);
 
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
-            model.addAttribute("response", response.getBody());
-        } catch (Exception e) {
-            model.addAttribute("response", "Error: " + e.getMessage());
-        }
-        
-        log.info("메시지 보내기 성공");
-        return "redirect:/member/friends";
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+            try {
+                ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
+                model.addAttribute("response", response.getBody());
+            } catch (Exception e) {
+                model.addAttribute("response", "Error: " + e.getMessage());
+            }
+            
+            log.info("메시지 보내기 성공");
+            //return "redirect:/wishlists/my/0";
+            return "redirect:/"+wishlistlinks+"/products";
     }
 
 

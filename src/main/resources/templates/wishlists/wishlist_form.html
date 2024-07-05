@@ -4,10 +4,24 @@
     <meta charset="UTF-8">
     <title>File Upload</title>
     <link rel="stylesheet" href="/css/messageForm.css">
+    <link rel="stylesheet" href="/css/nav.css">
 </head>
 <body>
 
 <div>
+<div class="nav">	
+	<a class="logo" th:href="@{/main}">
+		<img src="/images/logo.png" alt="logo">
+	</a>
+	<div class ="menu">
+		<a class="myWish" th:href="@{/wishlists/my/0}">
+			<img src="/images/mywishButton.png" alt="mywish">
+		</a>
+		<a class="mypage" th:href="@{/mypage}">
+			<img src="/images/mypageButton.png" alt="mypage">
+		</a>
+	</div>
+</div>
     <div class="top">
     	<p>새로운 위시리스트 만들기</p>
     </div>
@@ -44,7 +58,35 @@
     <div id="errorMessage"></div>
 </div>
 </body>
-
+<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
+	<div class="info_box flex justify-between">
+		<div>
+			<p>상호명 : (주)Giftogether</p>
+			<p>대표자 : MoAdream</p>
+			<p>사업자 등록번호 : 777-77-77777</p>
+			<p>
+				Email: <a href="mailto:777@777.com">777@777.com</a>
+			</p>
+			<p>Tel : 777-7777-7777</p>
+			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
+			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
+			<p>
+				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
+					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
+				</span>
+			</p>
+			<p>
+				Based on <a href="https://wishes.kr/" target="_blank">©2023
+					Wishes</a>, modified by Wishes. View original at <a
+					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
+			</p>
+			<p>
+				<span class="text-gray-200"><a class="" target="_blank"
+					href="private.html">개인정보처리방침</a></span>
+			</p>
+		</div>
+	</div>
+</footer>
 
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -106,38 +148,34 @@
 	        document.getElementById('UserAdd1').addEventListener('input', combineAddress);
 	        document.getElementById('UserAdd2').addEventListener('input', combineAddress);
 	    });
-	    
-	    function uploadFile(event) {
-	        var file = event.target.files[0];
-	        var formData = new FormData();
-	        formData.append('file', file);
-	        formData.append('imageUri', document.getElementById('uploadedImage').src);
 
-	        fetch("/files/image/wishlists", {
-	            method: 'POST',
-	            body: formData
-	        })
-	            .then(response => {
-	                if (response.ok) {
-	                    return response.text();
-	                } else {
-	                    throw new Error('파일 업로드 실패');
-	                }
-	            })
-	            .then(imageUri => {
-	                document.getElementById('uploadedImage').style.display = 'block';
-	                document.getElementById('uploadedImage').src = imageUri;
-	                document.getElementById('uploadedImageUri').value = imageUri;
-	            })
-	            .catch(error => {
-	                const errorMessageElement = document.getElementById('errorMessage');
-	                if (errorMessageElement) {
-	                    errorMessageElement.textContent = error.message;
-	                    errorMessageElement.style.display = 'block';
-	                } else {
-	                    console.error('errorMessage 요소를 찾을 수 없습니다.');
-	                }
-	            });
-	    }
+        function uploadFile(event) {
+            var file = event.target.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('imageUri', document.getElementById('uploadedImage').src);
+
+            fetch("/files/image/wishlists", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error('파일 업로드 실패');
+                    }
+                })
+                .then(imageUri => {
+                    document.getElementById('uploadedImage').style.display = 'block'; // 이미지 태그의 display 속성을 block으로 변경
+                    document.getElementById('uploadedImage').src = imageUri;
+                    document.getElementById('uploadedImageUri').value = imageUri;
+                })
+                .catch(error => {
+                    document.getElementById('errorMessage').textContent = error.message;
+                    document.getElementById('errorMessage').style.display = 'block';
+                });
+        }
+    
 	</script>
 </html>
