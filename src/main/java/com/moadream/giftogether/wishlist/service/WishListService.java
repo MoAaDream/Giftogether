@@ -96,12 +96,13 @@ public class WishListService implements WishListServiceI {
 	}
 
 	
-	public List<WishlistDto> getListsByStatus(Long memberId,Status status){
-		List<WishlistDto> wishlists = wishListRepository.findAllByMember_IdAndStatus(memberId, status)
-				.stream().map(wishList -> new WishlistDto(wishList)).toList();
-		return wishlists;
+	public Page<WishlistDto> getListsByStatusAndPage(Long memberId,Status status , int page){	
+		Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.ASC, "id"));
+		Page<WishList> wishListPage = wishListRepository.findAllByMember_IdAndStatus(memberId, status, pageable);
+		List<WishlistDto>wishlists = wishListPage.stream().map(wishList -> new WishlistDto(wishList)).toList();
+
+		return new PageImpl<>(wishlists, pageable, wishListPage.getTotalElements());
 	}
-	
 	
 
     @Override
@@ -202,4 +203,6 @@ public class WishListService implements WishListServiceI {
 					throw new WishListException(NOT_DELETE_WISHLIST_BY_FUNDING);
 				});
 	}
+
+	
 }

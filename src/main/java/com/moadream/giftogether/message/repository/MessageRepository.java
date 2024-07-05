@@ -11,7 +11,8 @@ import com.moadream.giftogether.message.model.Message;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 	
-    List<Message> findAllByWishlist_Link(String wishlist_link);
+
+	List<Message> findAllByWishlist_Link(String wishlist_link);
     List<Message> findAllByWishlist_LinkAndStatus(String wishlist_link, Status status);
 
 	Message findByFundingIdAndStatus(Long fundingId,Status status);

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.moadream.giftogether.Status;
 import com.moadream.giftogether.bank.model.BankForm;
 import com.moadream.giftogether.funding.model.FundingDetailsDTO;
 import com.moadream.giftogether.funding.service.FundingService;
@@ -89,7 +90,11 @@ public class ProductController {
 	    model.addAttribute("product", product);
 	    int size = 0;
 	    if(messageList!=null) {
-	    	size =messageList.size();
+	    	for(Message message : messageList) {
+	    		if (message.getStatus()==Status.A) {
+	    			size ++;
+	    		}
+	    	}
 	    }
 	    model.addAttribute("messageList",messageList);
 	    model.addAttribute("totalpeople",size);

@@ -99,6 +99,7 @@ a:hover {
 			th:text="${product.goalAmount}-${product.currentAmount} + '원 남았어요!'"></div>
 		</div>
 	
+
 		<div th:if="${daysDiff <= 0}" class="result">
 			<p id=celebration th:if="${product.goalAmount == product.currentAmount}">॰｡ཻ˚♡  ˗ˋˏ❤︎ˎˊ˗ 축하합니다 !! 펀딩에 성공했어요 -ˋˏ ♡ ˎˊ-  ♡✧。</p>
 			<div class="fund-info">
@@ -123,6 +124,7 @@ a:hover {
        			</div>
 			</div>
 		</div>
+
 		
 		<div class=bottom>
 			<div th:if="${daysDiff > 0}" class="notyet">
@@ -151,22 +153,44 @@ a:hover {
 				
 				</div>
 			</div>
-		</div>
+
 	
+		</div>
 	</div>
 
-<!--  
-	<form id="refundForm" th:object="${bankForm}"
-		th:action="@{|/bank/${product.productLink}|}" method="post">
-		<input type="text" id="bankName" th:field="*{bankName}"
-			placeholder="은행 이름 입력" required> <input type="number"
-			id="account" th:field="*{account}" placeholder="은행 계좌 입력" required>
-		<button type="submit" class="btn btn-primary">펀딩 금액 계좌로 받기</button>
-	</form>
--->
+</body>
 
+<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
+	<div class="info_box flex justify-between">
+		<div>
+			<p>상호명 : (주)Giftogether</p>
+			<p>대표자 : MoAdream</p>
+			<p>사업자 등록번호 : 777-77-77777</p>
+			<p>
+				Email: <a href="mailto:777@777.com">777@777.com</a>
+			</p>
+			<p>Tel : 777-7777-7777</p>
+			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
+			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
+			<p>
+				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
+					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
+				</span>
+			</p>
+			<p>
+				Based on <a href="https://wishes.kr/" target="_blank">©2023
+					Wishes</a>, modified by Wishes. View original at <a
+					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
+			</p>
+			<p>
+				<span class="text-gray-200"><a class="" target="_blank"
+					href="private.html">개인정보처리방침</a></span>
+			</p>
+		</div>
+	</div>
+</footer>
 
-	<script>
+<script>
 		$(document).ready(function() {
 			$('#refundForm').submit(function(event) {
 				event.preventDefault(); // 폼 기본 제출 동작을 방지
@@ -207,34 +231,5 @@ a:hover {
 			alert("URL이 복사되었습니다.")
 		}
 	</script>
-</body>
-<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
-	<div class="info_box flex justify-between">
-		<div>
-			<p>상호명 : (주)Giftogether</p>
-			<p>대표자 : MoAdream</p>
-			<p>사업자 등록번호 : 777-77-77777</p>
-			<p>
-				Email: <a href="mailto:777@777.com">777@777.com</a>
-			</p>
-			<p>Tel : 777-7777-7777</p>
-			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
-			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
-			<p>
-				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
-					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
-				</span>
-			</p>
-			<p>
-				Based on <a href="https://wishes.kr/" target="_blank">©2023
-					Wishes</a>, modified by Wishes. View original at <a
-					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
-			</p>
-			<p>
-				<span class="text-gray-200"><a class="" target="_blank"
-					href="private.html">개인정보처리방침</a></span>
-			</p>
-		</div>
-	</div>
-</footer>
+
 </html>

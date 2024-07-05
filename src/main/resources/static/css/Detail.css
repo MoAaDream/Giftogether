@@ -13,9 +13,12 @@
 	margin-left:auto;
 	padding:10px;
 	margin-bottom:5px;
+	align-content: right;
 }
 
+
 #toggle{
+
 	width:20px;
 }
 
@@ -231,6 +234,7 @@ input#menu:checked + nav#main_nav{
 p:hover {
     text-decoration: none; /* 커서를 올렸을 때 밑줄 없애기 */
 }
+
 .copyLink {
 	width: 150px;
 	height: 35px;
@@ -247,4 +251,5 @@ p:hover {
 	color: #545454;
 	font-weight: 450;
 }
+
 
