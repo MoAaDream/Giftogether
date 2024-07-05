@@ -276,11 +276,10 @@ public class MemberController {
 	 * @throws Exception
 	 */
 
-	@GetMapping("/member/{id}")
-	public String getUserInfo(@PathVariable("id") Long id, Model model, HttpSession session) throws Exception {
+	@GetMapping("/mypage")
+	public String getUserInfo(Model model, HttpSession session) throws Exception {
 
-		log.info("GET /member/{} 요청 도착", id); // 로그 추가
-		log.info("마이페이지 접근");
+		
 
 		String kakaoId = (String) session.getAttribute("kakaoId");
 		if (kakaoId == null) {
@@ -288,6 +287,10 @@ public class MemberController {
 			throw new Exception("유효하지 않은 접근입니다");
 		}
 
+		Long id = memberService.getMemberBySocialId(kakaoId).getId();
+				log.info("GET /member/{} 요청 도착", id); // 로그 추가
+				log.info("마이페이지 접근");
+				
 		Member member = memberService.getMemberInfo(id);
 
 		if (member == null) {
@@ -380,7 +383,7 @@ public class MemberController {
 			throw new Exception("message : 유효하지 않은 접근입니다");
 		}
 		memberService.updateMember(id, updateMemberReq);
-		return "redirect:/member/" + id;
+		return "redirect:/mypage";
 	}
 
 	/**
