@@ -61,7 +61,13 @@
 					</div>
 				</div>
 				<div class="copyLink"><a href="#" onclick="clip(); return false;">URL주소복사</a></div>
+
+				<div class="copyLink" th:if="${daysDiff <= 0}">
+					<a th:href="@{|/${wishlist.link}/message|}">메세지 보러가기</a>
+				</div>
+				
 				<div class="share-link"><a th:href="@{/member/friends(wishlistlinks=${wishlist.link})}">공유하기</a></div>
+				
 			</div>
 			<div class="detail-image">
 				<img th:src="${wishlist.listImg}" alt="Wishlist Image"> 
