@@ -16,4 +16,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
 	Message findByFundingIdAndStatus(Long fundingId,Status status);
 
+
 }

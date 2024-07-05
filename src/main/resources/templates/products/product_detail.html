@@ -11,7 +11,9 @@
 <body>
 	<div class="detail">
 		<div class ="top">
-			<img src="/images/moreButton.png" alt="뒤로가기" class="back">
+			<a class="back" th:href="@{|/${product.wishlist.link}/products|}">
+				<img src="/images/prev_button.png" alt="뒤로가기">
+			</a>
 			<div class="copyLink"><a href="#" onclick="clip(); return false;">URL주소복사</a></div>
 		</div>
 	
@@ -36,8 +38,11 @@
 		</div>
 	
 		<div class=bottom>
-			<a class=fundingButton th:href="@{|/fundings/${product.productLink}|}" alt="Kakao Login"> 
+			<a th:if="${daysDiff > 0}" class=fundingButton th:href="@{|/fundings/${product.productLink}|}" alt="Kakao Login"> 
 				<p class="goFunding">선물 펀딩하기</p>
+			</a>
+			<a th:if="${daysDiff <= 0}" class=fundingButton alt="Kakao Login"> 
+				<p class="goFunding">선물 펀딩이 종료되었어요</p>
 			</a>
 		</div>
 	</div>

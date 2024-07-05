@@ -9,7 +9,10 @@
 <body>
 	<div class="background">
 		<div class="tatle">
-			<h1 th:text="${wishlist.name}"></h1>
+			<a class="back" th:href="@{/wishlists/my/0}">
+				<img src="/images/prev_button.png" alt="뒤로가기">
+			</a>
+			<h1 class="wishName" th:text="${wishlist.name}"></h1>
 		</div>
 		<div class="detail">
 			<div class="detail-info">
@@ -52,12 +55,12 @@
 					<p th:text="|${#temporals.format(wishlist.deadline, 'yyyy-MM-dd')} 그날만 기다리며..☆|"></p>
 				</span>
 			</div>
-		</div> <!-- <a th:href="@{|/wishlists/${wishlist.link}}" class="btn-primary" methods="delete">삭제하기</a> -->
+		</div>
 		<div class="edit" th:if="${daysDiff > 0}" >
 			<a th:href="@{|/wishlists/${wishlist.link}}" class="btn-primary">수정하기</a>
-			<form th:action="@{|/wishlists/${wishlist.link}/delete|}" method="delete">
+			<form th:action="@{|/wishlists/${wishlist.link}/delete|}" method="get">
 				<input type="hidden" name="_method" value="delete" />
-				<button type="submit" class="btn-primary">삭제하기</button>
+				<button type="submit" onclick="confirmDelete()" class="btn-primary">삭제하기</button>
 			</form>
 		</div>
 		<div class="container">
@@ -91,6 +94,15 @@ function clip(){
 	document.execCommand("copy");
 	document.body.removeChild(textarea);
 	alert("URL이 복사되었습니다.")
+}
+
+function confirmDelete() {
+    if (confirm("진짜 삭제하시겠습니까?")) {
+        document.getElementById("deleteForm").submit();
+    } else {
+    	event.preventDefault(); 
+        console.log("삭제 취소");
+    }
 }
 
 </script>

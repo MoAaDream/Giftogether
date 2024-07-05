@@ -1,7 +1,10 @@
 package com.moadream.giftogether.wishlist.service;
 
 import static com.moadream.giftogether.member.exception.MemberExceptionCode.NOT_FOUND_SOCIAL_ID;
-import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.*;
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DEADLINE_CREATE;
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_DELETE_WISHLIST_BY_FUNDING;
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_FOUND_WISHLIST;
+import static com.moadream.giftogether.wishlist.exception.WishlistExceptionCode.NOT_MY_WISHLIST;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,7 +88,7 @@ public class WishListService implements WishListServiceI {
 	@Transactional
 	public Page<WishlistDto> getList(String socialId, int page) {
 		Member member = findMemberBySocialId(socialId);
-		Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, "id"));
+		Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
 		Page<WishList> wishListPage = wishListRepository.findAllByMember_Id(member.getId(), pageable);
 		List<WishlistDto> wishlists = wishListPage.stream().map(wishList -> new WishlistDto(wishList)).toList();
 

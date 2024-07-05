@@ -36,7 +36,7 @@ body {
 	display: flex; /* 플렉스박스로 내부 요소를 수평 정렬 */
 	align-items: center; /* 내부 요소를 수직 중앙 정렬 */
 	margin: 15px 0px; /* 상하 마진 */
-	padding: 5px; /* 내부 패딩 */
+	/*padding: 5px; /* 내부 패딩 */
 	border-radius: 15px; /* 하단 꼭지점만 둥글게 */
 	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
 }
@@ -47,7 +47,7 @@ body {
 }
 
 .large-box {
-	height: 200px;
+	height: 300px;
 }
 
 .btn-primary {
@@ -106,7 +106,7 @@ textarea {
 }
 
 textarea.form-control {
-	border: 3px solid #EBF5F3; /* 테두리 제거 */ 
+	
 	color: #495057; /* 내용 색상 */ 
 }
 
@@ -127,6 +127,29 @@ textarea.form-control::placeholder {
 	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
 	outline: none; /* 누를 때 테두리 제거 */
 }
+
+.pro-box{
+	height: auto;
+}
+
+
+.product-details{
+	display : flex;
+}
+
+#producImg{
+	max-width: 250px;
+	height: auto;
+	max-height: 300px;
+	margin: 10px;
+	border-radius: 10px;
+}
+
+.detail-info{
+align-content: center;
+margin: 10px;
+}
+
 </style>
 <body>
 	<div class="main-content">
@@ -143,11 +166,18 @@ textarea.form-control::placeholder {
 		</div>
 
 
-		<div class="white-box large-box">
+		<div class="white-box pro-box">
 			<div class="product-info">
 				<div class="product-image"></div>
-				<div class="product-details">${productProductImg}
-					${productName} ${productDescription}</div>
+				<div class="product-details">
+					<div class="detail-image">
+						<img th:src="${productProductImg}" id=producImg alt="Product Image">
+					</div>
+					<div class="detail-info">
+						<h3 th:text="${productName}"></h3>
+						<div class="description" th:text="${productDescription}"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -178,8 +208,7 @@ textarea.form-control::placeholder {
 					</div>
 				</div>
 
-				<div class="white-box large-box"
-					style="margin-top: 30px; padding: 0px;">
+				<div class="white-box" style="margin-top: 30px; padding: 0px;">
 					<div class="form-group">
 						<!--
 						<label for="message">메시지:</label>  -->
@@ -188,6 +217,8 @@ textarea.form-control::placeholder {
 							class="form-control custom-rounded-border"></textarea>
 					</div>
 				</div>
+				
+				
 				<button type="submit" style="margin-top: 15px;"
 					class="btn btn-primary">결제하기</button>
 
