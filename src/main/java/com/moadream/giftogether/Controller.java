@@ -12,7 +12,7 @@ public class Controller {
     
     @GetMapping("/")
     public String getLayout(){
-        return "layout";
+        return "redirect:/login";
     }
     @GetMapping("/ex")
     public String getEx(){

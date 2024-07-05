@@ -157,7 +157,9 @@ body {
         <img src="/images/gift_left.png" alt="Gift" class="gift-pic-left">
         <img src="/images/gift_right.png" alt="Gift" class="gift-pic-right">
         <div class="profile-container">
-            <div class="profile">
+          
+            <form th:action="@{'/member/' + ${id}}" th:object="${member}" method="post" enctype="multipart/form-data">
+              <div class="profile">
                 <div class="profile-pic" onclick="document.getElementById('profileImageInput').click();">
                     <img id="profileImage" th:if="${member != null && member.profile != null}" th:src="${member.profile}" alt="프로필 이미지">
                     <input type="file" id="profileImageInput" name="profileImage" accept="image/*" onchange="previewProfileImage(event)">
@@ -165,7 +167,6 @@ body {
                 </div>
                 <div class="profile-name" th:text="${member != null ? member.nickname : 'Guest'} + ' 님'"></div>
             </div>
-            <form th:action="@{'/member/' + ${id}}" th:object="${member}" method="post" enctype="multipart/form-data">
                 <div class="profile-details">
                     <div class="form-group">
                         <label for="nickname">닉네임</label>
@@ -205,6 +206,7 @@ body {
             var file = event.target.files[0];
             var formData = new FormData();
             formData.append('file', file);
+            formData.append('imageUri', document.getElementById('profile').src);
             console.log('Uploading file:', file); // 파일 업로드 시작 로그
             fetch("/files/image/profiles", {
                 method: 'POST',

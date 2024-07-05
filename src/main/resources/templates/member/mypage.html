@@ -192,7 +192,7 @@
             </div>
 
             <div class="buttons">
-                <button type="button" th:onclick="'location.href=\'/member/' + ${id} + '/edit\''">정보수정</button>
+                <button type="button" th:onclick="'location.href=\'/member/' + ${member.id} + '/edit\''">정보수정</button>
                 <button class="logout" onclick="location.href='/logout'">로그아웃</button>
             </div>
         </div>
@@ -241,20 +241,21 @@
             <div class="funding-section">
                 <h3>
                     <span>나의 선물 펀딩 내역</span>
-                     <a th:href="@{/member/{id}/fundings(id=${id})}" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
+                     <a th:href="@{/member/{id}/fundings(id=${member.id})}" class="section-button"><img src="/images/next_button.png" alt="Next"></a>
                 </h3>
            
             </div>
         </div>
 
         <div class="delete-account">
-            <form id="deleteForm" th:action="@{'/member/' + ${id} + '/d'}" method="POST">
+            <form id="deleteForm" th:action="@{'/member/' + ${member.id} + '/d'}" method="POST">
                 <input type="hidden" name="_method" value="delete">
                 <a href="#" onclick="event.preventDefault(); document.getElementById('deleteForm').submit();">회원 탈퇴</a>
             </form>
         </div>
     </div>
 </body>
+
 <footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
 	<div class="info_box flex justify-between">
 		<div>

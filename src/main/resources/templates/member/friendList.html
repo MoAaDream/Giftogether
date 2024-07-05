@@ -92,6 +92,7 @@
     </style>
 </head>
 <body>
+
 <div class="nav">	
 	<a class="logo" th:href="@{/main}">
 		<img src="/images/logo.png" alt="logo">
@@ -105,81 +106,93 @@
 		</a>
 	</div>
 </div>
-    <div class="container">
-        <div class="header">
-            <a th:href="@{/member/{id}(id=${id})}" class="prev-button"><img src="/images/prev_button.png" alt="Previous"></a>
-            <label class="label">Friend List</label>
-        </div>
-        <div class="friend-list-section">
-            <div id="friend-list" class="friend-list-items">
+	<div class="container">
+		<div class="header">
+			<a th:href="@{/member/{id}(id=${id})}" class="prev-button"><img
+				src="/images/prev_button.png" alt="Previous"></a> <label
+				class="label">Friend List</label>
+		</div>
+		<div class="friend-list-section">
+			<div id="friend-list" class="friend-list-items">
                 <div th:each="friend : ${friends}" class="friend">
                     <img th:src="${#strings.defaultString(friend.profileImage, '/images/user_default.png')}" alt="Profile Image">
                     <div class="info">
                         <span th:text="${friend.nickname}"></span>
                     </div>
                     <div class="actions">
-                        <button onclick="sendMessage()">Send Message</button>
-                    </div>
-                </div>
-                <div class="friend">
-                    <img src="/images/user_default.png" alt="Profile Image">
-                    <div class="info">
-                        <span>John Doe</span>
-                    </div>
-                    <div class="actions">
-                        <button onclick="sendMessage()">Send Message</button>
-                    </div>
-                </div>
-                <div class="friend">
-                    <img src="/images/user_default.png" alt="Profile Image">
-                    <div class="info">
-                        <span>Jane Smith</span>
-                    </div>
-                    <div class="actions">
-                        <button onclick="sendMessage()">Send Message</button>
-                    </div>
-                </div>
-                <div class="friend">
-                    <img src="/images/user_default.png" alt="Profile Image">
-                    <div class="info">
-                        <span>Michael Johnson</span>
-                    </div>
-                    <div class="actions">
-                        <button onclick="sendMessage()">Send Message</button>
-                    </div>
-                </div>
-                <div class="friend">
-                    <img src="/images/user_default.png" alt="Profile Image">
-                    <div class="info">
-                        <span>Emily Davis</span>
-                    </div>
-                    <div class="actions">
-                        <button onclick="sendMessage()">Send Message</button>
-                    </div>
-                </div>
-                <div class="friend">
-                    <img src="/images/user_default.png" alt="Profile Image">
-                    <div class="info">
-                        <span>Chris Brown</span>
-                    </div>
-                    <div class="actions">
-                        <button onclick="sendMessage()">Send Message</button>
+                        <form th:action="@{/sendMessage}" method="post">
+                            <input type="hidden" name="friendId" th:value="${friend.friendId}">
+                            <input type="hidden" name="wishlistlinks" th:value="${wishlistlinks}">
+                            <button type="submit">Send Message</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+				<div class="friend">
+					<img src="/images/user_default.png" alt="Profile Image">
+					<div class="info">
+						<span>강민경</span>
+					</div>
+					<div class="actions">
+						<button
+							onclick="sendMessage('${friend.friendId}', '${wishlistlinks}')">Send
+							Message</button>
 
-    <script>
-        function sendMessage() {
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/sendMessage';
+					</div>
+				</div>
+				<div class="friend">
+					<img src="/images/user_default.png" alt="Profile Image">
+					<div class="info">
+						<span>김민성</span>
+					</div>
+					<div class="actions">
+						<button
+							onclick="sendMessage('${friend.friendId}', '${wishlistlinks}')">Send
+							Message</button>
 
-            document.body.appendChild(form);
-            form.submit();
-        }
-    </script>
+					</div>
+				</div>
+				<div class="friend">
+					<img src="/images/user_default.png" alt="Profile Image">
+					<div class="info">
+						<span>김승민</span>
+					</div>
+					<div class="actions">
+						<button
+							onclick="sendMessage('${friend.friendId}', '${wishlistlinks}')">Send
+							Message</button>
+
+					</div>
+				</div>
+				<div class="friend">
+					<img src="/images/user_default.png" alt="Profile Image">
+					<div class="info">
+						<span>김승애</span>
+					</div>
+					<div class="actions">
+						<button
+							onclick="sendMessage('${friend.friendId}', '${wishlistlinks}')">Send
+							Message</button>
+
+					</div>
+				</div>
+				<div class="friend">
+					<img src="/images/user_default.png" alt="Profile Image">
+					<div class="info">
+						<span>김예슬</span>
+					</div>
+					<div class="actions">
+						<button
+							onclick="sendMessage('${friend.friendId}', '${wishlistlinks}')">Send
+							Message</button>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 </body>
 <footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
 	<div class="info_box flex justify-between">

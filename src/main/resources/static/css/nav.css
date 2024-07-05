@@ -9,7 +9,7 @@
 
 
 .logo{
-	with:35px;
+	width:35px;
 	margin-right: auto;
 	margin-left: 10px;
 }
@@ -20,6 +20,7 @@
 	height: 20px;
 	width: auto;
 	text-decoration: none;
+
 }
 
 .menu img{
