@@ -25,4 +25,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	@Query("SELECT p.wishlist.member FROM Product p WHERE p.productLink = :productLink")
 	Optional<Member> findMemberByProductLink(@Param("productLink") String productLink);
+	
 }

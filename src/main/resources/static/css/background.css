@@ -1,3 +1,19 @@
+.title{
+	display: flex;
+    align-content: center;
+    justify-content: space-between; /* 좌우 정렬 */
+    padding: 10px 20px;
+}
+.back{
+	display: inline-block;
+	text-align: left; 
+}
+
+.wishName{
+	text-align: center; /* 텍스트 가운데 정렬 */
+    margin: 0;
+    width:90%;
+}
 
 
 .detail {

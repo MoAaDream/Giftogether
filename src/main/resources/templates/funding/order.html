@@ -8,26 +8,22 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-
+<link rel="stylesheet" href="/css/nav.css">
 </head>
 <style>
-body {
-	display: flex;
-	justify-content: center;
-	background-color: white; /* 바깥쪽 배경 흰색으로 설정 */
-	min-height: 100vh; /* 전체 화면 높이 */
-	margin: 0;
-	padding: 0;
-}
+
 
 .main-content {
+	margin: 0 auto;
 	background: #EBF5F3;
 	width: 600px; /* 내용의 너비를 600px로 설정 */
-	padding: 40px; /* 안쪽 여백 */
+	padding: 15px 40px; /* 안쪽 여백 */
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 	display: flex;
 	align-items: center; /* 수직 중앙 정렬 */
 	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
+	height: auto;
+	min-height: 900px;
 }
 
 .white-box {
@@ -36,7 +32,7 @@ body {
 	display: flex; /* 플렉스박스로 내부 요소를 수평 정렬 */
 	align-items: center; /* 내부 요소를 수직 중앙 정렬 */
 	margin: 15px 0px; /* 상하 마진 */
-	padding: 5px; /* 내부 패딩 */
+	/*padding: 5px; /* 내부 패딩 */
 	border-radius: 15px; /* 하단 꼭지점만 둥글게 */
 	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
 }
@@ -47,7 +43,7 @@ body {
 }
 
 .large-box {
-	height: 200px;
+	height: 300px;
 }
 
 .btn-primary {
@@ -106,7 +102,7 @@ textarea {
 }
 
 textarea.form-control {
-	border: 3px solid #EBF5F3; /* 테두리 제거 */ 
+	
 	color: #495057; /* 내용 색상 */ 
 }
 
@@ -127,8 +123,44 @@ textarea.form-control::placeholder {
 	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
 	outline: none; /* 누를 때 테두리 제거 */
 }
+
+.pro-box{
+	height: auto;
+}
+
+
+.product-details{
+	display : flex;
+}
+
+#producImg{
+	max-width: 250px;
+	height: auto;
+	max-height: 300px;
+	margin: 10px;
+	border-radius: 10px;
+}
+
+.detail-info{
+align-content: center;
+margin: 10px;
+}
+
 </style>
 <body>
+<div class="nav">	
+	<a class="logo" th:href="@{/main}">
+		<img src="/images/logo.png" alt="logo">
+	</a>
+	<div class ="menu">
+		<a class="myWish" th:href="@{/wishlists/my/0}">
+			<img src="/images/mywishButton.png" alt="mywish">
+		</a>
+		<a class="mypage" th:href="@{/mypage}">
+			<img src="/images/mypageButton.png" alt="mypage">
+		</a>
+	</div>
+</div>
 	<div class="main-content">
 		<div class="row align-items-center" style="width: 520px;">
 			<div class="col-1">
@@ -143,11 +175,18 @@ textarea.form-control::placeholder {
 		</div>
 
 
-		<div class="white-box large-box">
+		<div class="white-box pro-box">
 			<div class="product-info">
 				<div class="product-image"></div>
-				<div class="product-details">${productProductImg}
-					${productName} ${productDescription}</div>
+				<div class="product-details">
+					<div class="detail-image">
+						<img th:src="${productProductImg}" id=producImg alt="Product Image">
+					</div>
+					<div class="detail-info">
+						<h3 th:text="${productName}"></h3>
+						<div class="description" th:text="${productDescription}"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -178,8 +217,7 @@ textarea.form-control::placeholder {
 					</div>
 				</div>
 
-				<div class="white-box large-box"
-					style="margin-top: 30px; padding: 0px;">
+				<div class="white-box" style="margin-top: 30px; padding: 0px;">
 					<div class="form-group">
 						<!--
 						<label for="message">메시지:</label>  -->
@@ -188,6 +226,8 @@ textarea.form-control::placeholder {
 							class="form-control custom-rounded-border"></textarea>
 					</div>
 				</div>
+				
+				
 				<button type="submit" style="margin-top: 15px;"
 					class="btn btn-primary">결제하기</button>
 
@@ -212,4 +252,33 @@ textarea.form-control::placeholder {
 		};
 	</script>
 </body>
+<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
+	<div class="info_box flex justify-between">
+		<div>
+			<p>상호명 : (주)Giftogether</p>
+			<p>대표자 : MoAdream</p>
+			<p>사업자 등록번호 : 777-77-77777</p>
+			<p>
+				Email: <a href="mailto:777@777.com">777@777.com</a>
+			</p>
+			<p>Tel : 777-7777-7777</p>
+			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
+			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
+			<p>
+				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
+					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
+				</span>
+			</p>
+			<p>
+				Based on <a href="https://wishes.kr/" target="_blank">©2023
+					Wishes</a>, modified by Wishes. View original at <a
+					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
+			</p>
+			<p>
+				<span class="text-gray-200"><a class="" target="_blank"
+					href="private.html">개인정보처리방침</a></span>
+			</p>
+		</div>
+	</div>
+</footer>
 </html>

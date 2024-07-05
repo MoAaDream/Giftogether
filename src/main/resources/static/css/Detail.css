@@ -3,14 +3,22 @@
     justify-content: flex-start;
 }
 .back{
+	margin-top:10px;
 	margin-right: auto;
+	width: 10px;
+	height: 18px;
+	margin-left:5px;
 }
 .toggle{
-	magin-left:auto;
+	margin-left:auto;
 	padding:10px;
+	margin-bottom:5px;
+	align-content: right;
 }
 
+
 #toggle{
+
 	width:20px;
 }
 
@@ -223,6 +231,10 @@ input#menu:checked + nav#main_nav{
 	margin: 15px auto;
 }
 
+p:hover {
+    text-decoration: none; /* 커서를 올렸을 때 밑줄 없애기 */
+}
+
 .copyLink {
 	width: 150px;
 	height: 35px;
@@ -239,4 +251,5 @@ input#menu:checked + nav#main_nav{
 	color: #545454;
 	font-weight: 450;
 }
+
 

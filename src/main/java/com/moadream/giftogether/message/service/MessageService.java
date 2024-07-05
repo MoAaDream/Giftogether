@@ -6,12 +6,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.moadream.giftogether.DataNotFoundException;
 import com.moadream.giftogether.Status;
 import com.moadream.giftogether.funding.model.Funding;
 import com.moadream.giftogether.funding.repository.FundingRepository;
 import com.moadream.giftogether.message.model.Message;
 import com.moadream.giftogether.message.model.MessageFundDto;
 import com.moadream.giftogether.message.repository.MessageRepository;
+import com.moadream.giftogether.product.model.Product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +79,16 @@ public class MessageService {
 		}
 
 		return messageFundDtoList;
+
+	}
+
+	public List<Message> getMessageListByProduct(Product product) {
+		List<Message> messageList = this.messageRepository.findAllByWishlist_Link(product.getWishlist().getLink());
+		if (product!=null) {
+			return messageList;
+		} else {
+			throw new DataNotFoundException("messageList not found");
+		}
 
 	}
 
