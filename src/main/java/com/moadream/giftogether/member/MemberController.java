@@ -419,7 +419,7 @@ public class MemberController {
 
         model.addAttribute("id", memberId);
         model.addAttribute("wishlistlinks", wishlistlinks);
-        
+        log.info(wishlistlinks);
         String url = "https://kapi.kakao.com/v1/api/talk/friends";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -489,7 +489,7 @@ public class MemberController {
     public String message( @RequestParam("friendId") String friendId,
             @RequestParam("wishlistlinks") String wishlistlinks,Model model, HttpSession session) throws JsonProcessingException {
     	String apiUrl = "https://kapi.kakao.com/v1/api/talk/friends/message/default/send";
-
+log.info(wishlistlinks);
     	log.info("friendId -->" + friendId);
     	 String accessToken = (String) session.getAttribute("accessToken");
     	    if (accessToken == null) {
@@ -532,8 +532,8 @@ public class MemberController {
             }
             
             log.info("메시지 보내기 성공");
-            return "redirect:/wishlists/my/0";
-
+            //return "redirect:/wishlists/my/0";
+            return "redirect:/"+wishlistlinks+"/products";
     }
 
 
