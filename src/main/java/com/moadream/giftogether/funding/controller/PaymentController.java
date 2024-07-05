@@ -19,6 +19,7 @@ import com.moadream.giftogether.funding.model.RequestPayDto;
 import com.moadream.giftogether.funding.service.FundingService;
 import com.moadream.giftogether.funding.service.PaymentService;
 import com.moadream.giftogether.global.exception.SessionNotFoundException;
+import com.moadream.giftogether.member.service.MemberService;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
@@ -34,6 +35,7 @@ public class PaymentController {
 
 	private final PaymentService paymentService;
 	private final FundingService fundingService;
+	private final MemberService memberService;
 
 	@GetMapping("/payment/{fundinguid}") // fundingUid (UUid)
 	public String paymentPage(@PathVariable(name = "fundinguid") String fundingUid, Model model) {
@@ -56,11 +58,12 @@ public class PaymentController {
 	@PostMapping("/cancel-payment/{id}")
 	public String cancelPayment(@PathVariable("id") String fundingUid, HttpSession session,
 			RedirectAttributes redirectAttributes) {
-
-		String productLink = fundingService.getProductLinkByFundingUid(fundingUid);
-		try {
-
-			String socialId = checkSession(session);
+		String socialId = checkSession(session);
+		long idM = memberService.getMemberBySocialId(socialId).getId();
+		
+//		String productLink = fundingService.getProductLinkByFundingUid(fundingUid);
+		
+		try {			
 			boolean result = paymentService.cancelPayment(fundingUid, socialId);
 			if (result) {
 				redirectAttributes.addFlashAttribute("successMessage", "결제가 성공적으로 취소되었습니다.");
@@ -71,8 +74,10 @@ public class PaymentController {
 			log.error("결제 취소 오류", e);
 			redirectAttributes.addFlashAttribute("errorMessage", "시스템 오류로 인한 결제 취소 실패.");
 		}
-		return "redirect:/products/" + productLink;
+		return "redirect:/member/" + idM + "/fundings";
 	}
+	
+
 
 	private String checkSession(HttpSession session) {
 		if (session == null)
