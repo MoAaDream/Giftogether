@@ -2,7 +2,6 @@ package com.moadream.giftogether.bank.controller;
 
 import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,17 +42,20 @@ public class BankController {
 	}
 
 	@PostMapping("/{productLink}")
-	public ResponseEntity<?> processRefund(@ModelAttribute BankForm bankForm,
-
+	public String processRefund(@ModelAttribute BankForm bankForm,
 			@PathVariable("productLink") String productLink, HttpSession session,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes) { 
+		
 		try {
 			String socialId = checkSession(session);
 			bankService.refund(bankForm, productLink, socialId);
-			return ResponseEntity.ok().body("환불 완료!");
+			redirectAttributes.addFlashAttribute("successMessage", "계좌로 환불 완료");
+ 
 		} catch (IllegalStateException e) {
-			return ResponseEntity.badRequest().body("환불 금액이 0원 이거나 실패하였습니다.");
-		}
+			redirectAttributes.addFlashAttribute("errorMessage", "환불 금액이 0원 이거나 실패하였습니다.");
+		} 
+		
+		return "redirect:/products/" + productLink;
 	}
 
 	private String checkSession(HttpSession session) {

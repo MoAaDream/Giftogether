@@ -94,6 +94,8 @@ body {
 		<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
 			<span th:text="${errorMessage}"></span>
 		</div>
+		
+		
 		<div class="row align-items-center mt-4 mb-4" style="width: 520px;">
 			<div class="col-1">
 				<button id="backButton">
@@ -166,18 +168,18 @@ body {
             const successAlert = document.querySelector('.alert-success');
             const errorAlert = document.querySelector('.alert-danger');
 
-            // 성공 알림이 있다면 5초 후에 사라지게 함
+            // 성공 알림이 있다면 4초 후에 사라지게 함
             if (successAlert) {
                 setTimeout(function() {
                     successAlert.style.display = 'none';
-                }, 3000);
+                }, 4000);
             }
 
-            // 에러 알림이 있다면 5초 후에 사라지게 함
+            // 에러 알림이 있다면 4초 후에 사라지게 함
             if (errorAlert) {
                 setTimeout(function() {
                     errorAlert.style.display = 'none';
-                }, 3000);
+                }, 4000);
             }
         });
 		
