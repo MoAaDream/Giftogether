@@ -19,11 +19,12 @@
 	margin-right:10px;
 	height: 20px;
 	width: auto;
-	
+	text-decoration: none;
 }
 
 .menu img{
 	margin-left : 10px;
+	text-decoration: none;
 }
 
 .info_box{
