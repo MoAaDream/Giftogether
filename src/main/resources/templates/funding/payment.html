@@ -7,72 +7,110 @@
 <script type="text/javascript"
 	src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <link rel="stylesheet" href="/css/nav.css">
-<style>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 
+<style>
 .main-content {
 	margin: 0 auto;
 	background: #EBF5F3;
-	width: 600px; /* 내용의 너비를 600px로 설정 */ 
+	width: 600px; /* 내용의 너비를 600px로 설정 */
+	padding: 15px 40px; /* 안쪽 여백 */
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
 	display: flex;
 	align-items: center; /* 수직 중앙 정렬 */
 	flex-direction: column; /* 내부 요소를 수직 방향으로 배치 */
-	border-radius: 10px; /* 모서리 둥글게 */
 	height: auto;
 	min-height: 900px;
 }
 
 .lead {
-	margin-top: 40%; /* 제목과 내용 사이 간격 */
+	margin-top: 25%; /* 제목과 내용 사이 간격 */
 	font-size: 30px; /* 글자 크기 */
 	color: #242424; /* 글자 색상 */
-	margin-bottom: 20px; /* 단락과 버튼 사이 간격 */
-	
+	margin-bottom: 30px; /* 단락과 버튼 사이 간격 */
 }
 
-button {
+.bu {
 	background-color: #343434; /* 버튼 배경색 */
 	color: white; /* 버튼 글자색 */
 	border: none; /* 테두리 없음 */
-	margin: 10px; /* 버튼 간 간격 */
+	margin: 15px; /* 버튼 간 간격 */
 	cursor: pointer; /* 마우스 오버시 커서 변경 */
 	transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
-	width: 220px; /* 상자의 너비를 부모 요소에 맞춤 */
+	width: 250px; /* 상자의 너비를 부모 요소에 맞춤 */
 	padding: 12px 24px;
 	border-radius: 24px; /* 하단 꼭지점만 둥글게 */
 }
 
-button:hover {
+.bu:hover {
 	background-color: #020202; /* 마우스 오버시 버튼 색상 변경 */
+}
+
+.fa-solid {
+	font-size: 24px; /* 아이콘 크기 조정 */
+}
+
+#backButton {
+	background: none; /* 배경 제거 */
+	border: none; /* 테두리 제거 */
+	color: inherit; /* 상속된 색상 사용 */
+	padding: 0; /* 패딩 제거 */
+	cursor: pointer; /* 마우스 커서를 포인터로 설정 */
+	outline: none; /* 누를 때 테두리 제거 */
 }
 </style>
 </head>
 <body>
-<div class="nav">	
-	<a class="logo" th:href="@{/main}">
-		<img src="/images/logo.png" alt="logo">
-	</a>
-	<div class ="menu">
-		<a class="myWish" th:href="@{/wishlists/my/0}">
-			<img src="/images/mywishButton.png" alt="mywish">
+	<div class="nav">
+		<a class="logo" th:href="@{/main}"> <img src="/images/logo.png"
+			alt="logo">
 		</a>
-		<a class="mypage" th:href="@{/mypage}">
-			<img src="/images/mypageButton.png" alt="mypage">
-		</a>
+		<div class="menu">
+			<a class="myWish" th:href="@{/wishlists/my/0}"> <img
+				src="/images/mywishButton.png" alt="mywish">
+			</a> <a class="mypage" th:href="@{/mypage}"> <img
+				src="/images/mypageButton.png" alt="mypage">
+			</a>
+		</div>
 	</div>
-</div>
+
 	<div class="main-content">
+
+		<div class="row align-items-center" style="width: 520px;">
+			<div class="col-1">
+				<button id="backButton" >
+					<i class="fa-solid fa-angle-left"> </i>
+				</button>
+			</div>
+			<div class="col-10">
+				<h4 class="mt-4 mb-4" style="text-align: center;">모금 결제 하기</h4>
+			</div>
+			<div class="col-1"></div>
+		</div>
+
 		<div th:with="requestDto = ${requestDto}"></div>
 		<p th:if="${requestDto != null}" class="lead">
 			결제 금액 : <span
 				th:text="${#numbers.formatDecimal(requestDto.paymentAmount, 0, 'COMMA', 0, 'POINT')} + '원'"></span>
 		</p>
-		<button onclick="ka_requestPay()">카카오페이 결제하기</button>
-		<button onclick="kg_requestPay()">KG이니시스 결제하기</button>
+		<button class="bu" onclick="ka_requestPay()">카카오페이 결제하기</button>
+		<button class="bu" onclick="kg_requestPay()">KG이니시스 결제하기</button>
 	</div>
 	<link id="impCode"
 		th:data-contextPath="${@environment.getProperty('PORTONE_CODE')}" />
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 	<script>
+		document.getElementById('backButton').onclick = function() {
+			window.history.back();
+		};
 		const IMP_CODE = document.querySelector("#impCode").getAttribute(
 				"data-contextPath");
 
@@ -124,12 +162,12 @@ button:hover {
 										'/products/' + productLink);
 								alert('결제 완료!');
 								window.location.replace('/products/'
-										+ productLink);  
+										+ productLink);
 							})
 				} else {
 					// alert("success? "+ rsp.success+ ", 결제에 실패하였습니다. 에러 내용: " + JSON.stringify(rsp));
 					window.history.replaceState(null, null, '/products/'
-							+ productLink);  
+							+ productLink);
 					alert('결제 실패!');
 					window.location.replace('/products/' + productLink);
 				}
@@ -164,19 +202,21 @@ button:hover {
 							"funding_uid" : rsp.merchant_uid
 						// 주문번호
 						})
-					}).done(function(response) {
-						console.log(response);
-						// 가맹점 서버 결제 API 성공시 로직
-						//alert('Please, Check your payment result page!!' + rsp);
-						window.history.replaceState(null, null, '/products/'
-								+ productLink);  
-						alert('결제 완료!');
-						window.location.replace('/products/' + productLink);
-					})
+					}).done(
+							function(response) {
+								console.log(response);
+								// 가맹점 서버 결제 API 성공시 로직
+								//alert('Please, Check your payment result page!!' + rsp);
+								window.history.replaceState(null, null,
+										'/products/' + productLink);
+								alert('결제 완료!');
+								window.location.replace('/products/'
+										+ productLink);
+							})
 				} else {
 					// alert("success? "+ rsp.success+ ", 결제에 실패하였습니다. 에러 내용: " + JSON.stringify(rsp));
 					window.history.replaceState(null, null, '/products/'
-							+ productLink);  
+							+ productLink);
 					alert('결제 실패!');
 					window.location.replace('/products/' + productLink);
 				}
@@ -184,7 +224,8 @@ button:hover {
 		}
 	</script>
 </body>
-<footer th:fragment="footerFragment" id="footer" class="mb-[60px] relative">
+<footer th:fragment="footerFragment" id="footer"
+	class="mb-[60px] relative">
 	<div class="info_box flex justify-between">
 		<div>
 			<p>상호명 : (주)Giftogether</p>
