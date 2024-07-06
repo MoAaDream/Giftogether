@@ -1,12 +1,9 @@
 package com.moadream.giftogether.global.admin.controller;
 
-import com.moadream.giftogether.global.admin.dto.StaticsDto;
-import com.moadream.giftogether.global.admin.service.AdminService;
-import com.moadream.giftogether.global.exception.SessionNotFoundException;
-import com.moadream.giftogether.member.model.Member;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import com.moadream.giftogether.global.admin.dto.StaticsDto;
+import com.moadream.giftogether.global.admin.service.AdminService;
+import com.moadream.giftogether.global.exception.SessionNotFoundException;
+import com.moadream.giftogether.member.model.Member;
 
-import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESSION_NOT_FOUND;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
@@ -25,6 +27,18 @@ import static com.moadream.giftogether.global.exception.GlobalExceptionCode.SESS
 public class AdminController {
 
     private final AdminService adminService;
+    
+
+    @GetMapping("")
+    public String adminStart(HttpSession session, Model model){
+        String socialId = checkSession(session);
+
+        adminService.checkAdmin(socialId);
+
+        return "admin/index";
+    }
+
+
 
     @GetMapping("/statics")
     public String getAdminPage(HttpSession session, Model model){

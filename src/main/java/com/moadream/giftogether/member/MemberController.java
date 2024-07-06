@@ -316,6 +316,8 @@ public class MemberController {
 		model.addAttribute("member", getMemberRes);
 		
 
+		boolean isAdmin = member.getRole()==Role.ADMIN ? true : false;
+		model.addAttribute("isAdmin", isAdmin);
 		model.addAttribute("ongoingWishlists", wishListService.getListsByStatusAndPage(id,Status.A, 0));  // 진행중인 위시리스트 
 		model.addAttribute("expiredWishlists" , wishListService.getListsByStatusAndPage(id, Status.I, 0)); // 종료된 위시리스트
 		

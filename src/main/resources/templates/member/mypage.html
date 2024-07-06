@@ -171,6 +171,10 @@
 	<a class="logo" th:href="@{/main}">
 		<img src="/images/logo.png" alt="logo">
 	</a>
+	<div th:if="${isAdmin != null && isAdmin == true}" class="buttons" style="margin-bottom: 0px;">
+        <button style="width: 100%; margin-left: 44px;" onclick="location.href='/admin'" >관리자 페이지</button>
+        
+    </div>
 	<div class ="menu">
 		<a class="myWish" th:href="@{/wishlists/my/0}">
 			<img src="/images/mywishButton.png" alt="mywish">
