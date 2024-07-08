@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>구매</title>
-<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-<script type="text/javascript"
-	src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script> 
 <link rel="stylesheet" href="/css/nav.css">
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -99,20 +97,41 @@
 		<button class="bu" onclick="ka_requestPay()">카카오페이 결제하기</button>
 		<button class="bu" onclick="kg_requestPay()">KG이니시스 결제하기</button>
 	</div>
-	<link id="impCode"
-		th:data-contextPath="${@environment.getProperty('PORTONE_CODE')}" />
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-	<script
-		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+	<footer th:fragment="footerFragment" id="footer"
+		class="mb-[60px] relative">
+		<div class="info_box flex justify-between">
+			<div>
+				<p>상호명 : (주)Giftogether</p>
+				<p>대표자 : MoAdream</p>
+				<p>사업자 등록번호 : 777-77-77777</p>
+				<p>
+					Email: <a href="mailto:777@777.com">777@777.com</a>
+				</p>
+				<p>Tel : 777-7777-7777</p>
+				<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
+				<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
+				<p>
+					Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
+						by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
+					</span>
+				</p>
+				<p>
+					Based on <a href="https://wishes.kr/" target="_blank">©2023
+						Wishes</a>, modified by Wishes. View original at <a
+						href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
+				</p>
+				<p>
+					<span class="text-gray-200"><a class="" target="_blank"
+						href="private.html">개인정보처리방침</a></span>
+				</p>
+			</div>
+		</div>
+	</footer>
 	<script>
 		document.getElementById('backButton').onclick = function() {
 			window.history.back();
 		};
-		const IMP_CODE = document.querySelector("#impCode").getAttribute(
-				"data-contextPath");
 
 		var IMP = window.IMP;
 		//IMP.init(IMP_CODE);
@@ -138,11 +157,13 @@
 				buyer_addr : buyerAddress, // 구매자 주소
 				buyer_postcode : '123-456', // 임의의 값
 			}, function(rsp) {
+
+				console.log(1);
+				console.log(rsp);
 				if (rsp.success) {
 					//alert('call back!!: ' + JSON.stringify(rsp));
 					// 결제 성공 시: 결제 승인 또는 가상계좌 발급에 성공한 경우
 					// jQuery로 HTTP 요청
-					console.log(1);
 					jQuery.ajax({
 						url : "/fundings/payment",
 						method : "POST",
@@ -162,11 +183,16 @@
 						console.log(2);
 						alert('결제 완료!');
 						window.location.replace('/products/' + productLink);
-					})
+					}).fail(
+							function(jqXHR, textStatus, errorThrown) {
+								console.log(3);
+								console.log("Ajax Request Failed: "
+										+ textStatus + ", " + errorThrown);
+							})
 				} else {
 					// alert("success? "+ rsp.success+ ", 결제에 실패하였습니다. 에러 내용: " + JSON.stringify(rsp));
- 
-					console.log(3);
+
+					console.log(4);
 					alert('결제 실패!');
 					window.location.replace('/products/' + productLink);
 				}
@@ -222,35 +248,11 @@
 			});
 		}
 	</script>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-<footer th:fragment="footerFragment" id="footer"
-	class="mb-[60px] relative">
-	<div class="info_box flex justify-between">
-		<div>
-			<p>상호명 : (주)Giftogether</p>
-			<p>대표자 : MoAdream</p>
-			<p>사업자 등록번호 : 777-77-77777</p>
-			<p>
-				Email: <a href="mailto:777@777.com">777@777.com</a>
-			</p>
-			<p>Tel : 777-7777-7777</p>
-			<p>Address : 서울 종로구 창경궁로 254 6층, 6층 603호</p>
-			<p>통신판매번호 : 2024-ㅁㅁㅁㅁ-7777</p>
-			<p>
-				Copyright &#169;2024 Giftogether, <span class="text-gray-200">icon
-					by <a class="" target="_blank" href="https://icons8.com">Icons8</a>
-				</span>
-			</p>
-			<p>
-				Based on <a href="https://wishes.kr/" target="_blank">©2023
-					Wishes</a>, modified by Wishes. View original at <a
-					href="https://wishes.kr/" target="_blank">©2023 Wishes</a>
-			</p>
-			<p>
-				<span class="text-gray-200"><a class="" target="_blank"
-					href="private.html">개인정보처리방침</a></span>
-			</p>
-		</div>
-	</div>
-</footer>
+
 </html>
