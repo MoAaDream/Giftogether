@@ -81,7 +81,7 @@
 
 		<div class="row align-items-center" style="width: 520px;">
 			<div class="col-1">
-				<button id="backButton" >
+				<button id="backButton">
 					<i class="fa-solid fa-angle-left"> </i>
 				</button>
 			</div>
@@ -115,7 +115,8 @@
 				"data-contextPath");
 
 		var IMP = window.IMP;
-		IMP.init(IMP_CODE);
+		//IMP.init(IMP_CODE);
+		IMP.init("imp21002744");
 		var fundingUid = '[[${requestDto.fundingUid}]]';
 		var paymentAmount = '[[${requestDto.paymentAmount}]]';
 		var buyerAddress = '[[${requestDto.buyerAddress}]]';
@@ -141,6 +142,7 @@
 					//alert('call back!!: ' + JSON.stringify(rsp));
 					// 결제 성공 시: 결제 승인 또는 가상계좌 발급에 성공한 경우
 					// jQuery로 HTTP 요청
+					console.log(1);
 					jQuery.ajax({
 						url : "/fundings/payment",
 						method : "POST",
@@ -152,22 +154,19 @@
 							"funding_uid" : rsp.merchant_uid
 						// 주문번호
 						})
-					}).done(
-							function(response) {
-								console.log(response);
-								// 가맹점 서버 결제 API 성공시 로직
-								//alert('Please, Check your payment result page!!' + rsp);
-								//뒤로가기 막음
-								window.history.replaceState(null, null,
-										'/products/' + productLink);
-								alert('결제 완료!');
-								window.location.replace('/products/'
-										+ productLink);
-							})
+					}).done(function(response) {
+						console.log(response);
+						// 가맹점 서버 결제 API 성공시 로직
+						//alert('Please, Check your payment result page!!' + rsp);
+						//뒤로가기 막음
+						console.log(2);
+						alert('결제 완료!');
+						window.location.replace('/products/' + productLink);
+					})
 				} else {
 					// alert("success? "+ rsp.success+ ", 결제에 실패하였습니다. 에러 내용: " + JSON.stringify(rsp));
-					window.history.replaceState(null, null, '/products/'
-							+ productLink);
+ 
+					console.log(3);
 					alert('결제 실패!');
 					window.location.replace('/products/' + productLink);
 				}
