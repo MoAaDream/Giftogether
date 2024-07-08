@@ -77,8 +77,10 @@ public class FundingController {
 		FundingRequest request = new FundingRequest(socialId, productLink, amount, messageF);
 
 		CompletableFuture<FundingRequest> future = queueManager.addFundingRequest(request);
+		log.info("ㅁㅁㅁ 1");
 		return future.thenApply(r -> {
 			// 처리가 완료된 후의 로직
+			log.info("ㅁㅁㅁ 2");
 			redirectAttributes.addFlashAttribute("message", "주문이 접수되었습니다. 처리 중입니다.");
 			return "redirect:/fundings/payment/" + r.getFundingUid();
 		}).exceptionally(e -> {

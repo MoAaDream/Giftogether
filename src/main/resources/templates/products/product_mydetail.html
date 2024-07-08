@@ -207,11 +207,12 @@ a:hover {
 						</a>
 					</div>
 					<div th:if="${(product.currentAmount - product.goalAmount) != 0}">
-						<form
+						<form method="post"
 							th:action="@{/fundings/{productLink} (productLink=${product.productLink})}"
 							alt="">
 							<input type="hidden" name="amount"
-								th:value="${insufficientAmount}" /> <input type="hidden"
+								th:value="${insufficientAmount}" /> 
+								<input type="hidden"
 								name="message" value="부족한 금액 스스로 충전" />
 							<button type="submit" class="orderButton">
 								<p class="goOrder">부족한 금액 결제하고 주문하기</p>
